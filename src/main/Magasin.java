@@ -3,7 +3,7 @@ package main;
 public class Magasin {
     private int idMag;
     private String nomMag;
-    private String villeMag;
+    private String villeMag; 
 
     public Magasin(int id, String nom, String ville)
     {
