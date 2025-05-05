@@ -16,4 +16,7 @@ public class Livre {
         this.prix=prix;
     }
     
+    public double getPrix(){
+        return this.prix;
+    }
 }
