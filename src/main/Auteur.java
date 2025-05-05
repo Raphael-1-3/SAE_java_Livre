@@ -1,3 +1,4 @@
+package main;
 public class Auteur{
 
     private int idAut;
@@ -13,4 +14,5 @@ public class Auteur{
         this.anneeMort=anneeM;
         this.anneeNaissance=anneeN;
     }
+
 }

@@ -11,10 +11,9 @@ import org.junit.runners.Suite;
     testClassification.class,
     testClient.class,
     testCommande.class,
-    test.Editeur.class,
+    testEditeur.class,
     testLivre.class,
     testMagasin.class,
     testVendeur.class
 })
-public class AllTests {
-}
+public class AllTests {}
