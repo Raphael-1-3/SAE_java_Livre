@@ -19,11 +19,33 @@ public class Commande{
     public List<Livre> consulterPanier(){
         return new ArrayList<>();
     }
-    public double prixPanier(){
-        return 0.0;
-    }
+   
     public int nbLivre(){
         return 0;
+    }
+    
+    public void ajouterArticle(Livre livre){
+        this.panier.add(livre);
+    }
+
+    public void enleverArticle(Livre livre){
+        this.panier.remove(livre);
+    }
+
+    public double prixPanier(){
+        double res=0.0;
+        for (Livre livre : this.panier){
+            res+=livre.getPrix();
+        }
+        return res;
+    }
+
+    public int nombreArticle(){
+        int res=0;
+        for (Livre livre : this.panier){
+            res+=1;
+        }
+        return res;
     }
     
 }
