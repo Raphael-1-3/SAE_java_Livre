@@ -30,7 +30,15 @@ public class Client extends User {
         this.commandes = commandes;
     }
 
-    public void faireCommande(){}
+    public void CommanderCommande(){
+        System.out.println("╭────────────────────────────╮");
+        System.out.println("│       Menu                 │");
+        System.out.println("├────────────────────────────┤");
+        System.out.println("│ 1 : exemple                │");
+        System.out.println("│ 2 : exemple                │");
+        System.out.println("│ Q : quitter                │");
+        System.out.println("╰────────────────────────────╯");
+    }
 
     public void changerModeReception() {}
 
