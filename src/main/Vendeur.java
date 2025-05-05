@@ -6,7 +6,9 @@ public class Vendeur extends User{
         super(id, prenom, nom, mag);
     }
 
-    public void ajouterLivre(){}
+    public void ajouterLivre(){
+        
+    }
 
     public void updateStock() {}
 

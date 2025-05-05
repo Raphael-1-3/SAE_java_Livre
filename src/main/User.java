@@ -14,4 +14,7 @@ public abstract class User {
         this.magasin = mag;
     }
 
+    public String getPrenom(){return this.prenom;}
+    public String getNom(){return this.nom;}
+    public int getId(){return this.id;}
 }

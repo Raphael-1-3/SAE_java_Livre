@@ -15,4 +15,10 @@ public class Auteur{
         this.anneeNaissance=anneeN;
     }
 
+    public int getIdAuteur(){return this.idAut;}
+    public String getNomAuteur(){return this.nomAuteur;}
+    public String getAnneeNaissance(){return this.anneeNaissance;}
+    public String getAnneeMort(){return this.anneeMort;}
+    public boolean getEstMort(){return this.estmort;}
+
 }

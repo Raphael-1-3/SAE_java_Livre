@@ -9,5 +9,8 @@ public class Classification {
         this.iddewey=iddewey;
         this.nomedit=nomedit;
     }
+
+    public int getIddewey(){return this.iddewey;}
+    public String getNomEdit(){return this.nomedit;}
     
 }
