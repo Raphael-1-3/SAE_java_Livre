@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Arrays;
+import java.util.Scanner;
 
 public class Commande{
 
@@ -87,6 +88,9 @@ public class Commande{
 
             }
 
+            else if(commande.equals("2")){
+                livraison();
+            }
 
 
             else if(commande.equals("3")){
@@ -122,4 +126,34 @@ public class Commande{
         }
     }
 
+
+    public static void livraison(){
+        Scanner scanner = new Scanner(System.in);
+        System.out.println("Quel est le numéro de votre adresse ? :" );
+        String num = scanner.nextLine();
+        Scanner scanner2 = new Scanner(System.in);
+        System.out.println("Quel est le nom de la rue ? :" );
+        String rue = scanner.nextLine();
+        Scanner scanner3 = new Scanner(System.in);
+        System.out.println("Quel est votre adresse postale :" );
+        String adp = scanner.nextLine();
+        Scanner scanner4 = new Scanner(System.in);
+        System.out.println("Votre adresse est bien : " +num+" "+rue+" "+adp+" ? Y/N");
+        String verif = scanner.nextLine();
+        verifLivraison(verif);
+
+    }
+
+    public static void verifLivraison(String verif){
+        if(verif.equals("Y")){
+            System.out.println("Vos informations sont bien enregistré dans notre base de donné. Votre colis arriveras d'ici peu");
+        }
+        else{
+            System.out.println("Veuillez retaper vos informations");
+            livraison();
+        }
+    }
+
 }
+
+
