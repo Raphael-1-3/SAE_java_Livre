@@ -40,7 +40,6 @@ public class Client extends User {
         System.out.println("╰────────────────────────────╯");
     }
 
-    public void changerModeReception() {}
 
     public void choisirMagasin() {}
 

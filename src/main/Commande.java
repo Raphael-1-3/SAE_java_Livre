@@ -48,4 +48,5 @@ public class Commande{
         return res;
     }
     
+    public void changerModeReception(){}
 }
