@@ -1,5 +1,6 @@
 package main;
-    
+import java.sql.*;
+
 public class ActionBD{
     //inserer attribut connexion
     //private ConnexionSQL connexion;
@@ -8,8 +9,9 @@ public class ActionBD{
         //this.connexion = connexion;
     }
 
-    public static void PasserCommande(Commande commande){
-        
+    public static void PasserCommande(Client client, Commande commande, Magasin mag){
+        //PreparedStatement com = this.connexion.prepareStatement("insert into COMMANDE values (?, ?, ?, ?, ?, ?)");
+        //PreparedStatement detailCom 
     }
     
     public static void GetListeLivre(){}
