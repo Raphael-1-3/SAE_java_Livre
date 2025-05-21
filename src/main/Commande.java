@@ -1,16 +1,21 @@
 package main;
 
 import java.util.List;
+import java.sql.Date;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Arrays;
 import java.util.Scanner;
+import java.util.Map;
 
 public class Commande{
 
     private int idcommande;
     private HashMap<Livre, Integer> panier;
     private Livre livre;
+    private Date datecom;
+    private String enligne;
+    private String livraison;
 
     public Commande(int idcommande){
         this.idcommande=idcommande;
@@ -22,9 +27,29 @@ public class Commande{
     public List<Livre> consulterPanier(){
         return new ArrayList<>();
     }
+
+    public String getLivraison()
+    {
+        return this.livraison;
+    }
+
+    public String getEnLigne()
+    {
+        return this.enligne;
+    }
    
     public int nbLivre(){
         return 0;
+    }
+
+    public Date getDate()
+    {
+        return this.datecom;
+    }
+
+    public HashMap<Livre, Integer> getPanier()
+    {
+        return this.panier;
     }
     
     public void ajouterArticle(Livre livre){
