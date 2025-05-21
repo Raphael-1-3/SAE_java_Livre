@@ -127,7 +127,7 @@ public class ActionBD{
      * @return
      * @throws SQLException
      */
-    public Livre getLivreATitre(String titreLivre) throws SQLException, EmptySetException
+    public Livre getLivreParTitre(String titreLivre) throws SQLException, EmptySetException
     {
         PreparedStatement ps = this.connexion.prepareStatement(
             "SELECT isbn, titre, nbpages, datepubli, prix FROM LIVRE WHERE titre = ?"
@@ -190,7 +190,6 @@ public class ActionBD{
     {
         PreparedStatement ps = this.connexion.prepareStatement("select iddewey, nomclass from CLASSIFICATION natural join THEMES natural join LIVRE where isbn =?");
         ps.setLong(1, livre.getISBN());
-        this.st = this.connexion.createStatement();
         ResultSet rs = ps.executeQuery();
         HashMap<Integer, String> classLivre = new HashMap<>();
         if (rs.next())
@@ -203,6 +202,21 @@ public class ActionBD{
         return classLivre;
     }
 
-
+    public List<Livre> getLivreParIddewey(int iddewey) throws SQLException, EmptySetException
+    {
+        PreparedStatement ps = this.connexion.prepareStatement(
+            "select titre, iddewey FROM CLASSIFICATION NATURAL JOIN THEMES NATURAL JOIN LIVRE WHERE iddewey = ?");
+        ps.setInt(1, iddewey);
+        ResultSet rs = ps.executeQuery();
+        List<Livre> res = new ArrayList<>();
+        while (rs.next())
+        {
+            res.add(getLivreParTitre(rs.getString("titre")));
+        }
+        if (res.isEmpty()) throw new EmptySetException();
+        ps.close();
+        rs.close();
+        return res;
+    }
 
 }

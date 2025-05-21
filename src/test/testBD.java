@@ -35,21 +35,16 @@ public class testBD
         catch (SQLException e) {
             System.out.println("Connexion échouée : " + e.getMessage());
         } 
-        this.connexion = connexion;   
-    }
-
-    @Before
-    public void init()
-    {
-        this.bd = new ActionBD(this.connexion);
+        this.connexion = connexion; 
+        this.bd = new ActionBD(this.connexion);  
     }
 
     @Test
-    public void testgetLivreATitre() throws SQLException
+    public void testgetLivreParTitre() throws SQLException
     {
         try
         {
-            Livre livre = bd.getLivreATitre("La torpille");
+            Livre livre = bd.getLivreParTitre("La torpille");
             assertTrue(livre != null);
             Long isbn = 9782871295914L;
             assertTrue(livre.getISBN()==isbn && livre.getTitre().equals("La torpille") 
@@ -60,6 +55,7 @@ public class testBD
         {
             System.err.println("Aucun résultat trouvé (empty set).");
         }
+        assertThrows(EmptySetException.class, () -> bd.getLivreParTitre("ce livre n'existe pas")); // appris sur cette sae
     }
 
     @Test
@@ -67,17 +63,19 @@ public class testBD
     {
         try
         {
-            Livre livre = bd.getLivreATitre("Final cut");
+            Livre livre = bd.getLivreParTitre("Final cut");
             HashMap<Integer, String> iddewey = bd.getClassification(livre);
             Map<Integer, String> test = Map.of(740, "Arts décoratifs");
             assertEquals(iddewey.entrySet(), test.entrySet());
             assertEquals("Arts décoratifs", iddewey.get(740));
+            
             
         }
         catch(EmptySetException ese) 
         {
             System.err.println("Aucun résultat trouvé (empty set).");
         }
+        assertThrows(EmptySetException.class, () -> bd.getClassification(bd.getLivreParTitre("livre qui n'existe pas")));
         
     }
 
@@ -86,12 +84,12 @@ public class testBD
     {
         try
         {
-            List<Livre> tabLivre = Arrays.asList(bd.getLivreATitre("Final cut"), 
-                                    bd.getLivreATitre("Du monde et de l'étranger"), 
-                                    bd.getLivreATitre("Trois républiques pour une France"), 
-                                    bd.getLivreATitre("Tahiti, Polynésie française"), 
-                                    bd.getLivreATitre("Ecritures dramatiques") ,
-                                    bd.getLivreATitre("Un livre"));
+            List<Livre> tabLivre = Arrays.asList(bd.getLivreParTitre("Final cut"), 
+                                    bd.getLivreParTitre("Du monde et de l'étranger"), 
+                                    bd.getLivreParTitre("Trois républiques pour une France"), 
+                                    bd.getLivreParTitre("Tahiti, Polynésie française"), 
+                                    bd.getLivreParTitre("Ecritures dramatiques") ,
+                                    bd.getLivreParTitre("Un livre"));
         
         HashMap<Integer, String> dicoIddewey = bd.getClassificationAPartirHistorique(tabLivre);
         Map<Integer, String> test = Map.of(740, "Arts décoratifs", 
@@ -102,11 +100,38 @@ public class testBD
                                         840, "Littérature française");
 
         assertEquals(test, dicoIddewey);
-
-        } catch (EmptySetException e) 
+        } 
+        catch (EmptySetException e) 
         {
             System.err.println("Aucun résultat trouvé (empty set).");
         }
+    }
+
+    @Test
+    public void testgetLivreParIddewey() throws SQLException
+    {
+        try
+        {
+            // liste de livre ayant un iddewey 100 selon : select titre, iddewey FROM CLASSIFICATION NATURAL JOIN THEMES NATURAL JOIN LIVRE WHERE iddewey = 100;
+            List<Livre> expected = Arrays.asList(bd.getLivreParTitre("Dictionnaire des auteurs et des the  mes de la philosophie"), 
+                                    bd.getLivreParTitre("Créer le réel"), 
+                                    bd.getLivreParTitre("Le champ mimétique"), 
+                                    bd.getLivreParTitre("Pour un catastrophisme éclairé"), 
+                                    bd.getLivreParTitre("Je m'explique") ,
+                                    bd.getLivreParTitre("La condition anarchique"),
+                                    bd.getLivreParTitre("Fragments"),
+                                    bd.getLivreParTitre("Traités"),
+                                    bd.getLivreParTitre("Alter ego"),
+                                    bd.getLivreParTitre("L'ironie"),
+                                    bd.getLivreParTitre("Le Sujet de la philosophie"));
+        List<Livre> test = bd.getLivreParIddewey(100);
+        assertEquals(expected, test);
+        }
+        catch (EmptySetException e) 
+        {
+            System.err.println("Aucun résultat trouvé (empty set).");
+        }
+        assertThrows(EmptySetException.class, () -> bd.getLivreParIddewey(9999)); 
     }
 
     
