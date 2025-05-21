@@ -2,7 +2,9 @@ package main;
 
 import java.util.List;
 import java.math.RoundingMode;
-public class AfficherMenu {
+public class AfficherMenu 
+{
+    private AfficherMenu(){}
     public static String Menu(String titre, List<String> options)
     {
         String str = "╭────────────────────────────╮ \n"
