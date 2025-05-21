@@ -86,7 +86,7 @@ public class ActionBD{
     public static void ChargerUtilisateur() {}
 
     
-    public int getMaxNumCom()
+    public int getMaxNumCom() throws SQLException
     {
         ResultSet rs = this.connexion.createStatement().executeQuery("select max(numcom) from COMMANDE");
         rs.next();
@@ -104,7 +104,7 @@ public class ActionBD{
             livre = new Livre(Long.parseLong(rs.getString("isbn")), 
                                     rs.getString("titre"), 
                                     Integer.parseInt(rs.getString("nbpages")), 
-                                    rs.getString("datepubli"), 
+                                    Integer.parseInt(rs.getString("datepubli")), 
                                     Double.parseDouble(rs.getString("prix")));
         }
         return livre;
@@ -130,7 +130,7 @@ public class ActionBD{
     public HashMap<Integer, String> getClassification(Livre livre) throws SQLException
     {
         this.st = this.connexion.createStatement();
-        int isbnLivre = livre.getISBN();
+        long isbnLivre = livre.getISBN();
         HashMap<Integer, String> classLivre = new HashMap<>();
         ResultSet rs = this.st.executeQuery("select iddewey, nomclass from CLASSIFICATION natural join THEMES natural join LIVRE where isbn ="+isbnLivre);
         while (rs.next())
