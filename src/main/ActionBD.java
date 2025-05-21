@@ -6,7 +6,7 @@ import java.util.Map;
 public class ActionBD{
     //inserer attribut connexion
     private ConnexionMySQL connexion;
-    public ActionBD()
+    public ActionBD( ConnexionMySQL connexion)
     {
         this.connexion = connexion;
     }
@@ -52,10 +52,12 @@ public class ActionBD{
     public static void InfosTableauBord(){}
     public static void ChargerUtilisateur() {}
 
-    public int getMaxNumCom()
+    public int getMaxNumCom() throws SQLException
     {
-        //TODO
-        return 0;
+        ResultSet rs = this.connexion.createStatement().executeQuery("select max(numcom) from COMMANDE");
+        rs.next();
+
+        return rs.getInt("max(numcom)");
     }
 
 
