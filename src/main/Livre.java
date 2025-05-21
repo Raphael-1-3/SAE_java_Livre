@@ -1,14 +1,15 @@
 package main;
+import java.sql.*;
 
 public class Livre {
 
     private int isbn;
     private String titre;
     private int nbpages;
-    private String datepubli;
+    private Date datepubli;
     private double prix;
 
-    public Livre(int isbn,String titre, int nbpages, String datepubli, double prix){
+    public Livre(int isbn,String titre, int nbpages, Date datepubli, double prix){
         this.isbn=isbn;
         this.titre=titre;
         this.nbpages=nbpages;
@@ -20,7 +21,7 @@ public class Livre {
     public int getISBN(){return this.isbn;}
     public int getNbpages(){return this.nbpages;}
     public String getTitre(){return this.titre;}
-    public String getDatepubli(){return this.datepubli;}
+    public Date getDatepubli(){return this.datepubli;}
 
     @Override
     public int hashCode()

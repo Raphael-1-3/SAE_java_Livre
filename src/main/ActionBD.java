@@ -1,6 +1,8 @@
 package main;
 import java.sql.*;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class ActionBD{
@@ -38,9 +40,21 @@ public class ActionBD{
             numligne ++;
             detailCom.executeUpdate();
         }
+        com.close();
     }
     
-    public static void GetListeLivre(){}
+    public List<Livre> GetListeLivre() throws SQLException{
+        List<Livre> res = new ArrayList<>();
+        ResultSet rs = this.connexion.createStatement().executeQuery("select * from LIVRE");
+
+        while (rs.next())
+        {
+            Livre l = new Livre(rs.getInt("isbn"), rs.getString("titre"), rs.getInt("nbpages"), rs.getDate("datepubli"), rs.getDouble("prix"));
+            res.add(l);
+        }
+        rs.close();
+        return res;
+    }
     public static void OnVousRecommande(){}
     public static void AddLivre(){}
     public static void UpdateStock(){}
