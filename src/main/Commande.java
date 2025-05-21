@@ -187,6 +187,30 @@ public class Commande{
         }  
     }
 
+    public static void Panier(){
+        List<String> maListe = new ArrayList<>();
+        maListe.add("Afficher articles");
+        maListe.add("Afficher prix total");
+        maListe.add("Retour");
+
+        boolean commande_faite = false;
+        while(!commande_faite){
+            System.out.println(AfficherMenu.Menu("Application",maListe));
+            System.out.println("Que veut tu faire ? : ");
+            String commande_brute = System.console().readLine();
+            String commande = commande_brute.strip().toLowerCase();
+
+            if (commande.equals("1")){
+                commande_faite=true;
+
+            }
+
+            if (commande.equals("2")){
+                commande_faite=true;
+            }
+        }  
+    }
+
 }
 
 
