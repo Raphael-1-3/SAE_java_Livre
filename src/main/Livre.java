@@ -9,7 +9,7 @@ public class Livre {
     private int datepubli;
     private double prix;
 
-    public Livre(int isbn,String titre, int nbpages, int datepubli, double prix){
+    public Livre(long isbn,String titre, int nbpages, int datepubli, double prix){
         this.isbn=isbn;
         this.titre=titre;
         this.nbpages=nbpages;
