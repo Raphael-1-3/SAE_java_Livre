@@ -202,6 +202,13 @@ public class ActionBD{
         return classLivre;
     }
 
+    /**
+     * Permet de créer une Liste de livre a partir d'un iddewey (une classification)
+     * @param iddewey
+     * @return Liste de livre
+     * @throws SQLException
+     * @throws EmptySetException
+     */
     public List<Livre> getLivreParIddewey(int iddewey) throws SQLException, EmptySetException
     {
         PreparedStatement ps = this.connexion.prepareStatement(
@@ -218,5 +225,27 @@ public class ActionBD{
         rs.close();
         return res;
     }
+
+    /**
+     * Renvoie une liste de recommendation pour un client en fonction de ses achats passé
+     * @return
+     */
+    public List<Livre> onVousRecommande() throws SQLException, PasDHistoriqueException
+    {
+
+    }
+    /*
+     * Votre application devra proposer aux clients une liste de livres recommandés. 
+Le principe est de trouver pour un client donné, un ou plusieurs autres clients ayant 
+acheté des titres communs. Seront alors recommandés les livres achetés par ces 
+autres clients, mais pas par le client à qui s’adresse la liste de recommandations
+
+un peu chiantos ça change de ce qu'on avait prévue
+
+idée
+    - récuperer tout les historique de chaque client et les comparé a "ce" client
+    - Recupere l'historique avec le plus grand poucentage de ressemblance 
+    - recommandé les livres qu'il n'a pas acheté dans cette historique  
+     */
 
 }
