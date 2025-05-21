@@ -2,11 +2,13 @@ package main;
 import java.sql.*;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.List;
 
 public class ActionBD{
     //inserer attribut connexion
-    private ConnexionMySQL connexion;
-    public ActionBD()
+    ConnexionMySQL connexion;
+    Statement st;
+    public  ActionBD(ConnexionMySQL connexion )
     {
         this.connexion = connexion;
     }
@@ -24,7 +26,7 @@ public class ActionBD{
         com.executeUpdate();
         
         //Insertion des informations pour la table DETAILCOMMANDE
-         
+
         Map<Livre, Integer> panier = commande.getPanier();
         int numligne = 1;
         for (Livre l : panier.keySet())
@@ -41,7 +43,7 @@ public class ActionBD{
     }
     
     public static void GetListeLivre(){}
-    public static void OnVousRecommande(){}
+    public static void OnVousRecommande(Client client){}
     public static void AddLivre(){}
     public static void UpdateStock(){}
     public static void VoirStockMag(){}
@@ -56,6 +58,52 @@ public class ActionBD{
     {
         //TODO
         return 0;
+    }
+
+    public Livre getLivreATitre(String titreLivre) throws SQLException
+    {
+        this.st = this.connexion.createStatement();
+        ResultSet rs = this.st.executeQuery("Select isbn, titre, nbpages, datepubli, prix from LIVRE where titre="+titreLivre);
+        Livre livre = null;
+        while (rs.next())   
+        {
+            livre = new Livre(Long.parseLong(rs.getString("isbn")), 
+                                    rs.getString("titre"), 
+                                    Integer.parseInt(rs.getString("nbpages")), 
+                                    rs.getString("datepubli"), 
+                                    Double.parseDouble(rs.getString("prix")));
+        }
+        return livre;
+    }
+
+    /**
+     * Renvoie un HashMap avec pour clé les iddewey et en valeur leur description a partir d'une liste de livre
+     * @param tabLivre
+     * @return
+     */
+    public static HashMap<Integer, String> getClassificationAPartirHistorique(List<Livre> tabLivre)
+    {
+
+        return new HashMap<>();
+    }
+
+    /**
+     * Permet d'obenir un dictionnaire contenant toute les class d'un livre
+     * @param livre
+     * @return HashMap
+     * @throws SQLException
+     */
+    public HashMap<Integer, String> getClassification(Livre livre) throws SQLException
+    {
+        this.st = this.connexion.createStatement();
+        int isbnLivre = livre.getISBN();
+        HashMap<Integer, String> classLivre = new HashMap<>();
+        ResultSet rs = this.st.executeQuery("select iddewey, nomclass from CLASSIFICATION natural join THEMES natural join LIVRE where isbn ="+isbnLivre);
+        while (rs.next())
+        {
+            classLivre.put(Integer.parseInt(rs.getString("iddewey")), rs.getString("nomclass"));
+        }
+        return classLivre;
     }
 
 
