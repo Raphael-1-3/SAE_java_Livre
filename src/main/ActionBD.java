@@ -71,7 +71,9 @@ public class ActionBD{
 
     }
 
-    public static void UpdateStock(){}
+    public static void UpdateStock(Livre l, int nv){
+        
+    }
     
     public static void VoirStockMag(){}
     public static void Transfer (){}
