@@ -34,7 +34,7 @@ public class ActionBD{
             PreparedStatement detailCom = this.connexion.prepareStatement("insert into DETAILCOMMANDE VALUES (?, ?, ?, ?, ?)");    
             detailCom.setInt(1, numcom);
             detailCom.setInt(2, numligne);
-            detailCom.setInt(3, l.getISBN());
+            detailCom.setLong(3, l.getISBN());
             detailCom.setInt(4, panier.get(l));
             detailCom.setDouble(5, l.getPrix() * panier.get(l)); 
             numligne ++;
@@ -49,15 +49,30 @@ public class ActionBD{
 
         while (rs.next())
         {
-            Livre l = new Livre(rs.getInt("isbn"), rs.getString("titre"), rs.getInt("nbpages"), rs.getDate("datepubli"), rs.getDouble("prix"));
+            Livre l = new Livre(rs.getInt("isbn"), rs.getString("titre"), rs.getInt("nbpages"), rs.getInt("datepubli"), rs.getDouble("prix"));
             res.add(l);
         }
         rs.close();
         return res;
     }
     public static void OnVousRecommande(){}
-    public static void AddLivre(){}
+
+    public void AddLivre(Livre l) throws SQLException
+    {
+        PreparedStatement ps = this.connexion.prepareStatement("insert into LIVRE values (?, ?, ?, ?, ?)");
+        ps.setLong(1, l.getISBN());
+        ps.setString(2, l.getTitre());
+        ps.setInt(3, l.getNbpages());
+        ps.setInt(4, l.getDatepubli());
+        ps.setDouble(5, l.getPrix());
+
+        ps.executeUpdate();
+        ps.close();
+
+    }
+
     public static void UpdateStock(){}
+    
     public static void VoirStockMag(){}
     public static void Transfer (){}
     public static void AddVendeur(){}
