@@ -9,6 +9,7 @@ public class Client extends User {
     private String villeCli;
     private String adresseCli;
     private List<Commande> commandes;
+    private ActionBD bd;
 
     public Client(int id, String prenom, String nom, Magasin magasin, int codePostal, String villeCli, String adresseCli)
     {
@@ -18,6 +19,7 @@ public class Client extends User {
         this.villeCli = villeCli;
         this.adresseCli = adresseCli;
         this.commandes = new ArrayList<>();
+
     }
 
     public Client(int id, String prenom, String nom, Magasin magasin, int codePostal, String villeCli, String adresseCli, List<Commande> commandes)

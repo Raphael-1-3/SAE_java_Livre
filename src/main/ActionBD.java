@@ -94,6 +94,8 @@ public class ActionBD{
             Livre l = new Livre(rs.getLong("isbn"), rs.getString("titre"), rs.getInt("nbpages"), rs.getInt("datepubli"), rs.getDouble("prix"));
             map.put(l, rs.getInt("qte"));
         }
+        rs.close();
+        ps.close();
 
         return map;
     }
@@ -104,58 +106,100 @@ public class ActionBD{
     public static void InfosTableauBord(){}
     public static void ChargerUtilisateur() {}
 
-    
+    /**
+     * renvoie le numéro de commande le plus élever
+     * @return
+     * @throws SQLException
+     */
     public int getMaxNumCom() throws SQLException
     {
         ResultSet rs = this.connexion.createStatement().executeQuery("select max(numcom) from COMMANDE");
         rs.next();
+        int maxNumCommande = rs.getInt("max(numcom)");
+        rs.close();
 
-        return rs.getInt("max(numcom)");
+        return maxNumCommande;
     }
 
-    public Livre getLivreATitre(String titreLivre) throws SQLException
+    /**
+     * Permet de creer un object Livre a partir d'un titre de livre présent dans la base (Raphaël)
+     * @param titreLivre
+     * @return
+     * @throws SQLException
+     */
+    public Livre getLivreATitre(String titreLivre) throws SQLException, EmptySetException
     {
-        this.st = this.connexion.createStatement();
-        ResultSet rs = this.st.executeQuery("Select isbn, titre, nbpages, datepubli, prix from LIVRE where titre="+titreLivre);
+        PreparedStatement ps = this.connexion.prepareStatement(
+            "SELECT isbn, titre, nbpages, datepubli, prix FROM LIVRE WHERE titre = ?"
+        );
+        ps.setString(1, titreLivre);
+        ResultSet rs = ps.executeQuery();
         Livre livre = null;
-        while (rs.next())   
-        {
-            livre = new Livre(Long.parseLong(rs.getString("isbn")), 
-                                    rs.getString("titre"), 
-                                    Integer.parseInt(rs.getString("nbpages")), 
-                                    Integer.parseInt(rs.getString("datepubli")), 
-                                    Double.parseDouble(rs.getString("prix")));
+        if (rs.next()) {
+            livre = new Livre(
+                rs.getLong("isbn"),
+                rs.getString("titre"),
+                rs.getInt("nbpages"),
+                rs.getInt("datepubli"),
+                rs.getDouble("prix")
+            );
+        } else {
+            throw new EmptySetException();
         }
+        rs.close();
+        ps.close();
         return livre;
     }
 
     /**
-     * Renvoie un HashMap avec pour clé les iddewey et en valeur leur description a partir d'une liste de livre
+     * Renvoie un HashMap avec pour clé les iddewey et en valeur leur description a partir d'une liste de livre (Raphaël)
      * @param tabLivre
      * @return
      */
-    public static HashMap<Integer, String> getClassificationAPartirHistorique(List<Livre> tabLivre)
+    public  HashMap<Integer, String> getClassificationAPartirHistorique(List<Livre> tabLivre)
     {
+        HashMap<Integer, String> res = new HashMap<>();
+        HashMap<Integer, String> tmp = new HashMap<>();
 
-        return new HashMap<>();
+        for (Livre lvr : tabLivre)
+        {
+            try
+            {
+                tmp = getClassification(lvr);
+                res.putAll(tmp);
+            }
+            catch(EmptySetException ese) 
+            {
+                System.err.println("Aucun résultat trouvé (empty set).");
+            }
+            catch(SQLException sql) 
+            {
+                System.err.println(sql.getErrorCode());
+            }
+        }
+        return res;
     }
 
     /**
-     * Permet d'obenir un dictionnaire contenant toute les class d'un livre
+     * Permet d'obenir un dictionnaire contenant toute les class d'un livre (Raphaël)
      * @param livre
      * @return HashMap
      * @throws SQLException
      */
-    public HashMap<Integer, String> getClassification(Livre livre) throws SQLException
+    public HashMap<Integer, String> getClassification(Livre livre) throws SQLException, EmptySetException
     {
+        PreparedStatement ps = this.connexion.prepareStatement("select iddewey, nomclass from CLASSIFICATION natural join THEMES natural join LIVRE where isbn =?");
+        ps.setLong(1, livre.getISBN());
         this.st = this.connexion.createStatement();
-        long isbnLivre = livre.getISBN();
+        ResultSet rs = ps.executeQuery();
         HashMap<Integer, String> classLivre = new HashMap<>();
-        ResultSet rs = this.st.executeQuery("select iddewey, nomclass from CLASSIFICATION natural join THEMES natural join LIVRE where isbn ="+isbnLivre);
-        while (rs.next())
+        if (rs.next())
         {
             classLivre.put(Integer.parseInt(rs.getString("iddewey")), rs.getString("nomclass"));
         }
+        else throw new EmptySetException();
+        ps.close();
+        rs.close();
         return classLivre;
     }
 

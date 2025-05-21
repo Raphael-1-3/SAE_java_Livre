@@ -3,6 +3,11 @@ import org.junit.Test;
 import static org.junit.Assert.*;
 
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import org.junit.Before;
 import main.*;
@@ -19,7 +24,7 @@ public class testBD
         {
 
             connexion = new ConnexionMySQL();
-            connexion.connecter("localhost", "Librairie", "raphael", "raphe");
+            connexion.connecter("localhost", "Librairie", "root", "raphe");
             if (connexion.isConnecte()) {
                 System.out.println("Connexion réussie !");
             }
@@ -36,24 +41,77 @@ public class testBD
     @Before
     public void init()
     {
-        this.bd = new ActionBD(null);
+        this.bd = new ActionBD(this.connexion);
     }
 
+    @Test
+    public void testgetLivreATitre() throws SQLException
+    {
+        try
+        {
+            Livre livre = bd.getLivreATitre("La torpille");
+            assertTrue(livre != null);
+            Long isbn = 9782871295914L;
+            assertTrue(livre.getISBN()==isbn && livre.getTitre().equals("La torpille") 
+                    && livre.getNbpages()==48 && livre.getDatepubli()==2004);
+            
+        }
+        catch(EmptySetException ese) 
+        {
+            System.err.println("Aucun résultat trouvé (empty set).");
+        }
+    }
+
+    @Test
     public void testGetClassification() throws SQLException
     {
-        Livre livre = bd.getLivreATitre("La torpille");
-        assertTrue(livre != null);
-        Long isbn = 9782871295914L;
-        assertTrue(livre.getISBN()==isbn && livre.getTitre()=="La torpille" 
-                    && livre.getNbpages()==48 && livre.getDatepubli()==2004);
+        try
+        {
+            Livre livre = bd.getLivreATitre("Final cut");
+            HashMap<Integer, String> iddewey = bd.getClassification(livre);
+            Map<Integer, String> test = Map.of(740, "Arts décoratifs");
+            assertEquals(iddewey.entrySet(), test.entrySet());
+            assertEquals("Arts décoratifs", iddewey.get(740));
+            
+        }
+        catch(EmptySetException ese) 
+        {
+            System.err.println("Aucun résultat trouvé (empty set).");
+        }
         
     }
 
-    public void testgetLivreATitre() throws SQLException
+    @Test
+    public void testGetClassificationAPartirHistorique() throws SQLException
     {
-        String titre = "La torpille";
-        bd.getLivreATitre(titre);
+        try
+        {
+            List<Livre> tabLivre = Arrays.asList(bd.getLivreATitre("Final cut"), 
+                                    bd.getLivreATitre("Du monde et de l'étranger"), 
+                                    bd.getLivreATitre("Trois républiques pour une France"), 
+                                    bd.getLivreATitre("Tahiti, Polynésie française"), 
+                                    bd.getLivreATitre("Ecritures dramatiques") ,
+                                    bd.getLivreATitre("Un livre"));
+        
+        HashMap<Integer, String> dicoIddewey = bd.getClassificationAPartirHistorique(tabLivre);
+        Map<Integer, String> test = Map.of(740, "Arts décoratifs", 
+                                        950, "Histoire de l'Asie",
+                                        940, "Histoire de l'Europe",
+                                        910, "Géographie et voyages",
+                                        800, "Littérature",
+                                        840, "Littérature française");
+
+        assertEquals(test, dicoIddewey);
+
+        } catch (EmptySetException e) 
+        {
+            System.err.println("Aucun résultat trouvé (empty set).");
+        }
     }
+
+    
+
+    
 
 
 
