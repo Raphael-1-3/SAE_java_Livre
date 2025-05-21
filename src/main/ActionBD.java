@@ -73,11 +73,30 @@ public class ActionBD{
 
     }
 
-    public static void UpdateStock(Livre l, int nv){
-        
+    public void UpdateStock(Livre l, Magasin mag, int nv) throws SQLException
+    {
+        PreparedStatement ps = this.connexion.prepareStatement("update POSSEDER set qte = ? where idmag = ? and isbn = ?");
+        ps.setInt(1, nv);
+        ps.setInt(2, mag.getIdmag());
+        ps.setLong(3, l.getISBN());
+        ps.executeUpdate();
+        ps.close();
     }
     
-    public static void VoirStockMag(){}
+    public HashMap<Livre, Integer> VoirStockMag(Magasin mag) throws SQLException
+    {
+        PreparedStatement ps = this.connexion.prepareStatement("select isbn, titre, nbpages, datepubli, prix, qte from POSSEDER natural join MAGASIN natural join LIVRE where idmag = ?");
+        ps.setInt(1, mag.getIdmag());
+        ResultSet rs = ps.executeQuery();
+        HashMap<Livre, Integer> map = new HashMap<>();
+        while (rs.next())
+        {
+            Livre l = new Livre(rs.getLong("isbn"), rs.getString("titre"), rs.getInt("nbpages"), rs.getInt("datepubli"), rs.getDouble("prix"));
+            map.put(l, rs.getInt("qte"));
+        }
+
+        return map;
+    }
     public static void Transfer (){}
     public static void AddVendeur(){}
     public static void AddClient(){}
