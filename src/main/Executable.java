@@ -60,16 +60,22 @@ public class Executable{
 
                 //List<Livre> recommandations = bd.onVousRecommande(bd.getClientAPartirNomPrenomCodePostal("","",0);
                 HashMap<Client, List<Livre>> historiqueAllClient = bd.getHistoriqueAllClient();
+                double sommeRessemblance = 0.0;
+                int nbComparaisons = 0;
                 for (Client client1 : historiqueAllClient.keySet()) {
                     for (Client client2 : historiqueAllClient.keySet()) {
                         if (!client1.equals(client2)) {
                             double ressemblance = bd.ressemblanceHistorique(historiqueAllClient.get(client1), historiqueAllClient.get(client2));
-                            if (ressemblance == 0 && client1.getPrenom().equals("Emma") && client2.getPrenom().equals("Jean"))
+                            sommeRessemblance += ressemblance;
+                            nbComparaisons++;
+                            if (true)
                             System.out.println("Ressemblance entre " + client1.getPrenom()+client1.getNom()+client1.getCodePostal() + " et " + client2.getPrenom()+client2.getNom()+client2.getCodePostal() + " : " + ressemblance);
+                            
                         }
                     }
+                    
                 }
-                
+                System.out.println("Moyenne de ressemblance : "+(sommeRessemblance/nbComparaisons));
             }
         } catch (ClassNotFoundException e) {
             System.out.println("Pilote JDBC non trouvé : " + e.getMessage());
