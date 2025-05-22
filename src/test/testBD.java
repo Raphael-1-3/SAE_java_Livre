@@ -134,10 +134,64 @@ public class testBD
         assertThrows(EmptySetException.class, () -> bd.getLivreParIddewey(9999)); 
     }
 
-    
+    @Test
+    public void testGetClientAPartirNomPrenomcodePostal() throws SQLException
+    {
+        try{
+        Client expected = new Client(9, "Bouzid",  "Raul", 38000, "Grenoble", "23 chemin de la Forêt");
+        Client Atester = bd.getClientAPartirNomPrenomCodePostal("Bouzid", "Raul", 38000);
+        assertEquals(expected, Atester);
+        }
+        catch (PasDeTelUtilisateurException pdtue)
+        {
+            System.err.println("Cette utilisateur n'existe pas (empty set)");
+        }
+        assertThrows(PasDeTelUtilisateurException.class, () -> bd.getClientAPartirNomPrenomCodePostal("null", "null", 0));
 
-    
+    }
 
+    @Test
+    public void testgetHistoriqueClient() throws SQLException, PasDeTelUtilisateurException
+    {
+        try
+        {
+            Client client = bd.getClientAPartirNomPrenomCodePostal("Rodriguez", "Fatima", 45000);
+            HashMap<Client, List<Livre>> aTester = bd.getHistoriqueClient(client);
+            Map<Client, List<Livre>> expected = Map.of(client, Arrays.asList(bd.getLivreParTitre("L'aéroport"),
+                                                                        bd.getLivreParTitre("Les journalistes en France (1880-1950)"),
+                                                                        bd.getLivreParTitre("Terres lointaines"),
+                                                                        bd.getLivreParTitre("Quatorze jours sur un banc de glace"),
+                                                                        bd.getLivreParTitre("Histoire des parachutistes français"),
+                                                                        bd.getLivreParTitre("L' homme dans le rétroviseur"),
+                                                                        bd.getLivreParTitre("Chambres d'hôtes au château dans les vignes"),
+                                                                        bd.getLivreParTitre("Le tableau diabolique"),
+                                                                        bd.getLivreParTitre("Les Romains à petits pas"),
+                                                                        bd.getLivreParTitre("Les machos expliqués à mon frère"),
+                                                                        bd.getLivreParTitre("Aufklärung"),
+                                                                        bd.getLivreParTitre("Un arche ologue au pays de la Bible"),
+                                                                        bd.getLivreParTitre("Jugendstil et art nouveau"),
+                                                                        bd.getLivreParTitre("égypte"),
+                                                                        bd.getLivreParTitre("C'est oblige  de dire merci?")));
+
+            assertEquals(expected, aTester);
+        }
+        catch (EmptySetException e) 
+        {
+            System.err.println("Aucun résultat trouvé (empty set).");
+        }
+        catch (PasDHistoriqueException e) 
+        {
+            System.err.println("Aucun résultat trouvé (null).");
+        }
+        try{
+        System.out.println(bd.getHistoriqueClient(bd.getClientAPartirNomPrenomCodePostal("Pereira", "Tiago", 69001)));
+        }
+        catch (PasDHistoriqueException e) 
+        {
+            System.err.println("Aucun résultat trouvé (null).");
+        }
+        assertThrows(PasDHistoriqueException.class, () -> bd.getHistoriqueClient(bd.getClientAPartirNomPrenomCodePostal("Pereira", "Tiago", 69001)));
+    }
 
 
 }

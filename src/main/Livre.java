@@ -37,4 +37,15 @@ public class Livre {
         Livre l = (Livre) o;
         return l.isbn == this.isbn;
     }
+
+    @Override
+    public String toString() {
+        return "Livre{" +
+                "isbn=" + this.isbn +
+                ", titre='" + this.titre + '\'' +
+                ", nbpages=" + this.nbpages +
+                ", datepubli=" + this.datepubli +
+                ", prix=" + this.prix +
+                '}';
+    }
 }

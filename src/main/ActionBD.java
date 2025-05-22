@@ -230,9 +230,65 @@ public class ActionBD{
      * Renvoie une liste de recommendation pour un client en fonction de ses achats passé
      * @return
      */
-    public List<Livre> onVousRecommande() throws SQLException, PasDHistoriqueException
+    public List<Livre> onVousRecommande(Client client) throws SQLException, PasDHistoriqueException
     {
+        
+        
+            return new ArrayList<>();
+    }
 
+    /**
+     * Permet d'obtenir l'historique d'achat d'un client a partir d'un client
+     * @param client
+     * @return
+     * @throws SQLException
+     * @throws PasDHistoriqueException
+     */
+    public HashMap<Client, List<Livre>> getHistoriqueClient(Client client) throws SQLException, PasDHistoriqueException
+    {
+        PreparedStatement ps = this.connexion.prepareStatement(
+            "select idcli,  numcom, titre from CLIENT natural left join COMMANDE natural left join DETAILCOMMANDE natural left join LIVRE where idcli = ? group by titre order by numcom;");
+        ps.setInt(1, client.getId());
+        ResultSet rs = ps.executeQuery();
+        HashMap<Client,List<Livre>> historique = new HashMap<>();
+        historique.put(client, new ArrayList<>());
+        while (rs.next())
+        {
+            try
+            {
+            historique.get(client).add(getLivreParTitre(rs.getString("titre")));
+            }
+            catch (EmptySetException ese)
+            {
+                System.err.println("Aucun résultat trouvé (empty set).");
+                throw new PasDHistoriqueException();
+            }
+        }
+        if (historique.get(client).isEmpty()) throw new PasDHistoriqueException();
+        ps.close();
+        rs.close();
+        return historique;
+    }
+
+    public Client getClientAPartirNomPrenomCodePostal(String nom, String prenom, int codepaostal) throws SQLException, PasDeTelUtilisateurException
+    {
+        PreparedStatement ps = this.connexion.prepareStatement(
+            "select * FROM CLIENT WHERE nomcli = ? and prenomcli = ? and codepostal = ?");
+        ps.setString(1, nom);
+        ps.setString(2, prenom);
+        ps.setInt(3, codepaostal);
+        ResultSet rs = ps.executeQuery();
+        Client client = null;
+        if (rs.next())
+        {
+            client = new Client(rs.getInt("idcli"), nom, prenom,
+                            
+                            rs.getInt("codepostal"),
+                            rs.getString("villecli"),
+                            rs.getString("adressecli"));
+        }
+        else throw new PasDeTelUtilisateurException();
+        return client;
     }
     /*
      * Votre application devra proposer aux clients une liste de livres recommandés. 

@@ -10,12 +10,12 @@ import java.util.Scanner;
 public class Executable{
     public static void main (String [] args)
     {
-        List<String> maListe = new ArrayList<>();
-        maListe.add("");
-        maListe.add("Banane");
-        maListe.add("Cerise");
-        maListe.add("Orange");
-        Commande.changerModeReception();
+        //List<String> maListe = new ArrayList<>();
+        //maListe.add("");
+        //maListe.add("Banane");
+        //maListe.add("Cerise");
+        //maListe.add("Orange");
+        //Commande.changerModeReception();
 
         Scanner scanner = new Scanner(System.in);
 
@@ -38,12 +38,18 @@ public class Executable{
             if (connexion.isConnecte()) {
                 System.out.println("Connexion réussie !");
                 // Ici tu peux exécuter des requêtes SQL
+                ActionBD bd = new ActionBD(connexion);
+                System.out.println(bd.getHistoriqueClient(bd.getClientAPartirNomPrenomCodePostal("Pereira", "Tiago", 69001)));
             }
         } catch (ClassNotFoundException e) {
             System.out.println("Pilote JDBC non trouvé : " + e.getMessage());
         } catch (SQLException e) {
             System.out.println("Connexion échouée : " + e.getMessage());
-        } finally {
+        }  catch (PasDeTelUtilisateurException e) {
+            System.out.println("utilisateur inexistant");
+        }   catch (PasDHistoriqueException e) {
+            System.out.println("utilisateur sans historique");
+        }finally {
             if (connexion != null && connexion.isConnecte()) {
                 try {
                     connexion.close();

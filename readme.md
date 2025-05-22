@@ -12,5 +12,5 @@
 
 ## Compilation sur windows 
 
-- Compiler le projet : ```javac -d -cp "lib/*;src" src/main/*.java src/test/*.java```
+- Compiler le projet : ```javac -d bin -cp "lib/*;src" src/main/*.java src/test/*.java```
 - Lancer les tests : ```java -cp "bin;lib/*" org.junit.runner.JUnitCore test.AllTests`
