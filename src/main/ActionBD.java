@@ -57,7 +57,6 @@ public class ActionBD{
         rs.close();
         return res;
     }
-    public static void OnVousRecommande(Client client){}
 
     public void AddLivre(Livre l) throws SQLException
     {
@@ -232,9 +231,47 @@ public class ActionBD{
      */
     public List<Livre> onVousRecommande(Client client) throws SQLException, PasDHistoriqueException
     {
+        List<Livre> recommandationTmp = new ArrayList<>();
+        List<Livre> historiqueClient = getHistoriqueClient(client).get(client);
+        HashMap<Client, List<Livre>> historiqueAllClient = getHistoriqueAllClient();
+        historiqueAllClient.remove(client);
+        Double maxPourcentage = null;
+        Double pourcentageCurrent = null;
+        for (Map.Entry<Client, List<Livre>> entry : historiqueAllClient.entrySet()) 
+        {
+            List<Livre> current = entry.getValue();
+            pourcentageCurrent = ressemblanceHistorique(historiqueClient, current);
+            if (maxPourcentage == null || pourcentageCurrent > maxPourcentage)
+            {
+                maxPourcentage = pourcentageCurrent;
+                recommandationTmp = current;
+            }
+        }
         
-        
-            return new ArrayList<>();
+        List<Livre> recommandation = new ArrayList<>(); // retire tout les livre que le client a déjà acheté
+        for (Livre livre : recommandationTmp)
+        {
+            if (!historiqueClient.contains(livre)) recommandation.add(livre);
+        }
+        return recommandation;
+    }
+
+    /**
+     * renvoie un pourcentage de ressemblance entre deux liste de livre, dans notre cas des historique d'achat de client
+     * @param historiqueClient1
+     * @param historiqueClient2
+     * @return
+     */
+    public double ressemblanceHistorique(List<Livre> historiqueClient1, List<Livre> historiqueClient2)
+    {
+        double tailleMoyenneListe = (historiqueClient1.size() + historiqueClient2.size()) / 2;
+        List<Livre> tabLivreIdentique = new ArrayList<>();
+        for (Livre livre : historiqueClient2)
+        {
+            if (historiqueClient1.contains(livre)) tabLivreIdentique.add(livre);
+        }
+        double pourcentageRessemblance = (tabLivreIdentique.size() / tailleMoyenneListe) * 100;
+        return pourcentageRessemblance;
     }
 
     /**
@@ -259,10 +296,7 @@ public class ActionBD{
             historique.get(client).add(getLivreParTitre(rs.getString("titre")));
             }
             catch (EmptySetException ese)
-            {
-                System.err.println("Aucun résultat trouvé (empty set).");
-                throw new PasDHistoriqueException();
-            }
+            {}
         }
         if (historique.get(client).isEmpty()) throw new PasDHistoriqueException();
         ps.close();
@@ -270,6 +304,40 @@ public class ActionBD{
         return historique;
     }
 
+    /**
+     * renvoie un dictionnaire contenant en clé tout les client et en valeur une liste de livre représentant leur achat passé
+     * @param client
+     * @return
+     * @throws SQLException
+     * @throws PasDHistoriqueException
+     */
+    public HashMap<Client, List<Livre>> getHistoriqueAllClient() throws SQLException, PasDHistoriqueException
+    {
+        HashMap<Client, List<Livre>> AllHistorique = new HashMap<>();
+        List<Client> AllClient = getAllClients();
+        
+        for (Client client : AllClient)
+        {
+            try 
+            {
+                AllHistorique.putAll(getHistoriqueClient(client));
+            }    
+            catch (PasDHistoriqueException e)  
+            {}
+            // On ignore ce client et on continue
+        }
+        return AllHistorique;
+    }
+
+    /**
+     * Permet de charger un client depuis le base de donnée a partir des son nom prénom et codepostal
+     * @param nom
+     * @param prenom
+     * @param codepaostal
+     * @return
+     * @throws SQLException
+     * @throws PasDeTelUtilisateurException
+     */
     public Client getClientAPartirNomPrenomCodePostal(String nom, String prenom, int codepaostal) throws SQLException, PasDeTelUtilisateurException
     {
         PreparedStatement ps = this.connexion.prepareStatement(
@@ -289,6 +357,27 @@ public class ActionBD{
         }
         else throw new PasDeTelUtilisateurException();
         return client;
+    }
+
+    /**
+     * Charge la liste de tout les clients
+     * @return
+     * @throws SQLException
+     */
+    public List<Client> getAllClients() throws SQLException
+    {
+        ResultSet rs = this.connexion.createStatement().executeQuery("select * from CLIENT");
+        List<Client> tabClient = new ArrayList<>();
+        while (rs.next())
+        {
+            tabClient.add(new Client(rs.getInt("idcli"), rs.getString("nomcli"), rs.getString("prenomcli"),
+                            
+                            rs.getInt("codepostal"),
+                            rs.getString("villecli"),
+                            rs.getString("adressecli")));
+        }
+        rs.close();
+        return tabClient;
     }
     /*
      * Votre application devra proposer aux clients une liste de livres recommandés. 

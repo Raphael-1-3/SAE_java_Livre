@@ -4,6 +4,7 @@ import java.sql.*;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Scanner;
 
@@ -37,16 +38,45 @@ public class Executable{
             connexion.connecter(nomServeur, nomBase, nomLogin, motDePasse);
             if (connexion.isConnecte()) {
                 System.out.println("Connexion réussie !");
-                // Ici tu peux exécuter des requêtes SQL
                 ActionBD bd = new ActionBD(connexion);
-                System.out.println(bd.getHistoriqueClient(bd.getClientAPartirNomPrenomCodePostal("Pereira", "Tiago", 69001)));
+
+                // Afficher les recommandations pour chaque client
+                //List<Client> clients = bd.getAllClients();
+                //for (Client client : clients) {
+                //    try {
+                //        List<Livre> recommandations = bd.onVousRecommande(client);
+                //        System.out.println("Recommandations pour " + client.getPrenom() + " " + client.getNom() + " :");
+                //        if (recommandations.isEmpty()) {
+                //            System.out.println("  Aucune recommandation.");
+                //        } else {
+                //            for (Livre livre : recommandations) {
+                //                System.out.println("  - " + livre.getTitre());
+                //            }
+                //        }
+                //    } catch (PasDHistoriqueException e) {
+                //        System.out.println("Pas d'historique pour " + client.getPrenom() + " " + client.getNom() + " " + client.getCodePostal());
+                //    }
+                //}
+
+                //List<Livre> recommandations = bd.onVousRecommande(bd.getClientAPartirNomPrenomCodePostal("","",0);
+                HashMap<Client, List<Livre>> historiqueAllClient = bd.getHistoriqueAllClient();
+                for (Client client1 : historiqueAllClient.keySet()) {
+                    for (Client client2 : historiqueAllClient.keySet()) {
+                        if (!client1.equals(client2)) {
+                            double ressemblance = bd.ressemblanceHistorique(historiqueAllClient.get(client1), historiqueAllClient.get(client2));
+                            if (ressemblance == 0 && client1.getPrenom().equals("Emma") && client2.getPrenom().equals("Jean"))
+                            System.out.println("Ressemblance entre " + client1.getPrenom()+client1.getNom()+client1.getCodePostal() + " et " + client2.getPrenom()+client2.getNom()+client2.getCodePostal() + " : " + ressemblance);
+                        }
+                    }
+                }
+                
             }
         } catch (ClassNotFoundException e) {
             System.out.println("Pilote JDBC non trouvé : " + e.getMessage());
         } catch (SQLException e) {
             System.out.println("Connexion échouée : " + e.getMessage());
-        }  catch (PasDeTelUtilisateurException e) {
-            System.out.println("utilisateur inexistant");
+        //}  catch (PasDeTelUtilisateurException e) {
+            //System.out.println("utilisateur inexistant");
         }   catch (PasDHistoriqueException e) {
             System.out.println("utilisateur sans historique");
         }finally {

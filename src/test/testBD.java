@@ -38,6 +38,13 @@ public class testBD
         this.connexion = connexion; 
         this.bd = new ActionBD(this.connexion);  
     }
+    @Test
+    public void testAddLivre()
+    {} //TODO
+
+    @Test
+    public void testUpdateStock()
+    {} //TODO
 
     @Test
     public void testgetLivreParTitre() throws SQLException
@@ -143,9 +150,7 @@ public class testBD
         assertEquals(expected, Atester);
         }
         catch (PasDeTelUtilisateurException pdtue)
-        {
-            System.err.println("Cette utilisateur n'existe pas (empty set)");
-        }
+        {}
         assertThrows(PasDeTelUtilisateurException.class, () -> bd.getClientAPartirNomPrenomCodePostal("null", "null", 0));
 
     }
@@ -176,22 +181,104 @@ public class testBD
             assertEquals(expected, aTester);
         }
         catch (EmptySetException e) 
-        {
-            System.err.println("Aucun résultat trouvé (empty set).");
-        }
+        {}
         catch (PasDHistoriqueException e) 
-        {
-            System.err.println("Aucun résultat trouvé (null).");
-        }
-        try{
-        System.out.println(bd.getHistoriqueClient(bd.getClientAPartirNomPrenomCodePostal("Pereira", "Tiago", 69001)));
-        }
-        catch (PasDHistoriqueException e) 
-        {
-            System.err.println("Aucun résultat trouvé (null).");
-        }
+        {}
         assertThrows(PasDHistoriqueException.class, () -> bd.getHistoriqueClient(bd.getClientAPartirNomPrenomCodePostal("Pereira", "Tiago", 69001)));
     }
 
+    @Test
+    public void testressemblanceHistorique() throws SQLException, EmptySetException, PasDeTelUtilisateurException {
+        try
+        {
+        // cas 0.0 de ressemblance
+        Client emma = bd.getClientAPartirNomPrenomCodePostal("Fournier", "Emma", 44000);
+        Client jean = bd.getClientAPartirNomPrenomCodePostal("Lefebvre", "Jean", 38000);
+        List<Livre> histEmma = bd.getHistoriqueClient(emma).get(emma);
+        List<Livre> histJean = bd.getHistoriqueClient(jean).get(jean);
+        double res1 = bd.ressemblanceHistorique(histEmma, histJean);
+        assertEquals(12.5, res1, 0.01);
+
+        // cas 12.5 de ressemblance
+        Client jeanB = bd.getClientAPartirNomPrenomCodePostal("Bernard", "Jean", 33000);
+        Client elodie = bd.getClientAPartirNomPrenomCodePostal("Thomas", "Elodie", 31000);
+        List<Livre> histJeanB = bd.getHistoriqueClient(jeanB).get(jeanB);
+        List<Livre> histElodie = bd.getHistoriqueClient(elodie).get(elodie);
+        double res2 = bd.ressemblanceHistorique(histJeanB, histElodie);
+        assertEquals(0.0, res2, 0.01);
+
+        // cas 25.0 % (le poucentage maximum)
+        Client paolo = bd.getClientAPartirNomPrenomCodePostal("Bouzid", "Paolo", 13001);
+        Client laura = bd.getClientAPartirNomPrenomCodePostal("Martin", "Laura", 6000);
+        List<Livre> histPaolo = bd.getHistoriqueClient(paolo).get(paolo);
+        List<Livre> histLaura = bd.getHistoriqueClient(laura).get(laura);
+        double res3 = bd.ressemblanceHistorique(histPaolo, histLaura);
+        assertEquals(25.0, res3, 0.01);
+        }
+        catch (PasDHistoriqueException e) 
+        {}
+    } 
+
+    @Test
+    public void testonVousRecommande() throws SQLException, EmptySetException, PasDeTelUtilisateurException 
+    {
+        try
+        {
+            // Test pour Camille Martin
+            Client camille = bd.getClientAPartirNomPrenomCodePostal("Martin", "Camille", 33000);
+            List<Livre> expectedCamille = Arrays.asList(
+                bd.getLivreParTitre("Ce que les hommes disent aux dieux"),
+                bd.getLivreParTitre("Le passager de la maison du temps"),
+                bd.getLivreParTitre("L' opérette en France"),
+                bd.getLivreParTitre("Petit ours brun et les chaussures"),
+                bd.getLivreParTitre("Pagaille au chenil"),
+                bd.getLivreParTitre("Paris en poésie"),
+                bd.getLivreParTitre("Passion passions"),
+                bd.getLivreParTitre("Cookies délices"),
+                bd.getLivreParTitre("Swan"),
+                bd.getLivreParTitre("Barye"),
+                bd.getLivreParTitre("Rendez l'argent!")
+            );
+            List<Livre> recommandationsCamille = bd.onVousRecommande(camille);
+            assertEquals(expectedCamille, recommandationsCamille);
+
+            // Test pour Hugo David
+            Client hugo = bd.getClientAPartirNomPrenomCodePostal("David", "Hugo", 44000);
+            List<Livre> expectedHugo = Arrays.asList(
+                bd.getLivreParTitre("Les trois fileuses"),
+                bd.getLivreParTitre("Attirances"),
+                bd.getLivreParTitre("Les signes du temps et l'art moderne"),
+                bd.getLivreParTitre("Rose activité mortelle"),
+                bd.getLivreParTitre("Master histoire"),
+                bd.getLivreParTitre("Les sept pièces"),
+                bd.getLivreParTitre("La légende du sang")
+            );
+            List<Livre> recommandationsHugo = bd.onVousRecommande(hugo);
+            assertEquals(expectedHugo, recommandationsHugo);
+
+            // Test pour Louis Garcia
+            Client louis = bd.getClientAPartirNomPrenomCodePostal("Garcia", "Louis", 37000);
+            List<Livre> expectedLouis = Arrays.asList(
+                bd.getLivreParTitre("La vie quotidienne en France au temps du Front Populaire, 1935-1938."),
+                bd.getLivreParTitre("Le guide Hachette des vins 2006"),
+                bd.getLivreParTitre("La mort opportune"),
+                bd.getLivreParTitre("La femme dans la Grèce antique"),
+                bd.getLivreParTitre("Le dico de l'argot fin de siècle"),
+                bd.getLivreParTitre("Choisir ses poissons d'eau de mer"),
+                bd.getLivreParTitre("Une Grève de la faim"),
+                bd.getLivreParTitre("Le plaisir des yeux"),
+                bd.getLivreParTitre("Le rêve pluie"),
+                bd.getLivreParTitre("Vous n'aurez pas le dernier mot!"),
+                bd.getLivreParTitre("Bestiaire imaginaire"),
+                bd.getLivreParTitre("Les miserables"),
+                bd.getLivreParTitre("Qui a fondé la christianisme"),
+                bd.getLivreParTitre("La promeneuse d'oiseaux")
+            );
+            List<Livre> recommandationsLouis = bd.onVousRecommande(louis);
+            assertEquals(expectedLouis, recommandationsLouis);
+        }
+        catch (PasDHistoriqueException e) 
+        {}
+    }
 
 }
