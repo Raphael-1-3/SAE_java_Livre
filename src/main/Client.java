@@ -2,6 +2,7 @@ package main;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Scanner;
 
 public class Client extends User {
     private char modeReception;
@@ -60,6 +61,44 @@ public class Client extends User {
     public String getAdresseCli() {
         return adresseCli;
     }
+
+
+    public static void application(){
+        List<String> maListe = new ArrayList<>();
+        maListe.add("Creer un compte");
+        maListe.add("Se connecter");
+        maListe.add("Commander");
+        maListe.add("Paramètres");
+        maListe.add("Quitter");
+
+        boolean commande_faite = false;
+        while(!commande_faite){
+            System.out.println(AfficherMenu.Menu("Application",maListe));
+            System.out.println("Que veut tu faire ? : ");
+            Scanner scanner_test = new Scanner(System.in);
+            String commande_brute = scanner_test.nextLine();
+
+            String commande = commande_brute.strip().toLowerCase();
+
+            if (commande.equals("5")){
+                commande_faite=true;
+
+            }
+
+            if (commande.equals("1")){
+                commande_faite=true;
+            }
+
+            if (commande.equals("2")){
+                commande_faite=true;}
+                
+        
+                 
+
+            if (commande.equals("3")){
+                Commande.menu_rechercher();}
+            }}
+            
 
     @Override
     public boolean equals(Object o) {
