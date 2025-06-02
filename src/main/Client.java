@@ -91,13 +91,13 @@ public class Client extends User {
 
             if (commande.equals("2")){
                 commande_faite=true;}
-                
-        
-                 
 
             if (commande.equals("3")){
                 Commande.menu_rechercher();}
-            }}
+            scanner_test.close();
+            }
+
+        }
             
 
     @Override
