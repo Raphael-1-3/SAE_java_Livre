@@ -18,6 +18,8 @@ public class Executable{
         //maListe.add("Orange");
         //Commande.changerModeReception();
 
+        Client.application();
+
         Scanner scanner = new Scanner(System.in);
 
         System.out.print("Entrer le nom du serveur : ");
