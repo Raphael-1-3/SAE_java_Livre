@@ -8,21 +8,21 @@ public class Magasin {
     private String nomMag;
     private String villeMag;
     private List<Livre> listeLivre;
-    private String adresse;
+    
 
-    public Magasin(int id, String nom, String ville,String adresse)
+    public Magasin(int id, String nom, String ville)
     {
         this.idMag = id;
         this.nomMag = nom;
         this.villeMag = ville;
         this.listeLivre= new ArrayList<>();
-        this.adresse=adresse;
+
     }
 
     public int getIdmag(){return this.idMag;}
     public String getNomMag(){return this.nomMag;}
     public String getVilleMag(){return this.villeMag;}
-    public String getAdresse(){return this.adresse;}
+    
 
     public static void rechercheLivre(Magasin mag){
         List<String> maListe = new ArrayList<>();
@@ -52,7 +52,7 @@ public class Magasin {
 
     }
 
-   
+
 }
 }
 

@@ -18,8 +18,9 @@ public class Executable{
         //maListe.add("Orange");
         //Commande.changerModeReception();
 
-        Client.application();
+        //Client.application();
 
+        System.out.println("Connexion base");
         Scanner scanner = new Scanner(System.in);
 
         System.out.print("Entrer le nom du serveur : ");
@@ -42,7 +43,20 @@ public class Executable{
             connexion.connecter(nomServeur, nomBase, nomLogin, motDePasse);
             if (connexion.isConnecte()) 
             {
+                ActionBD bd = new ActionBD(connexion);
                 System.out.println("Connexion réussie !");
+                System.out.println("Connexion a un utilisateru");
+
+                System.out.print("Entrer le email (nom.prenom.codePostal@ex.fr): ");
+                String email = scanner.nextLine();
+
+                System.out.print("Entrer le mot de passe (mdp+id): ");
+                String mdp = scanner.nextLine();
+
+                // (3, 'Martin', 'Martin.Julie.45000@ex.fr', 'mdp3', "CLIENT"),
+                User user = bd.connexionRole(email, mdp);
+                System.out.println(user);
+
             }
                 
         } catch (ClassNotFoundException e) {

@@ -379,18 +379,75 @@ public class ActionBD{
         rs.close();
         return tabClient;
     }
-    /*
-     * Votre application devra proposer aux clients une liste de livres recommandés. 
-Le principe est de trouver pour un client donné, un ou plusieurs autres clients ayant 
-acheté des titres communs. Seront alors recommandés les livres achetés par ces 
-autres clients, mais pas par le client à qui s’adresse la liste de recommandations
 
-un peu chiantos ça change de ce qu'on avait prévue
+    public Magasin magAPartirNom(String nomMagasin) throws SQLException
+    {
+        ResultSet rs = this.connexion.createStatement().executeQuery("select * from MAGASIN where nommag = "+nomMagasin);
+        Magasin mag = null;
+        if (rs.next())
+        { 
+            mag = new Magasin(rs.getInt("idmag"), rs.getString("nommag"), 
+                                    rs.getString("villemag"));
+        }
+        else System.out.println("ce magasin n existe pas");
+        rs.close();
+        return mag;
+    }
 
-idée
-    - récuperer tout les historique de chaque client et les comparé a "ce" client
-    - Recupere l'historique avec le plus grand poucentage de ressemblance 
-    - recommandé les livres qu'il n'a pas acheté dans cette historique  
+    /**
+     * permet a partir d une adresse mail est d un mot de passe le statut/role d un user
+     * @return
      */
+    public User connexionRole(String email, String mdp) throws SQLException
+    {
+        PreparedStatement ps = this.connexion.prepareStatement("select idu, role from USER where email = ? and motDePasse = ?");
+        ps.setString(1, email);
+        ps.setString(2, mdp);
+        ResultSet rs = ps.executeQuery();
+        Integer id = null;
+        String role = null;
+        User user =  null;
+        if (rs.next())
+        { 
+            id = rs.getInt(1);
+            role = rs.getString(2);
+        }
+        else System.out.println("email ou mot de passse incorrect");
+
+        switch (role) 
+        {
+            case "CLIENT":
+                ResultSet rsC = this.connexion.createStatement().executeQuery("select * from CLIENT where idcli ="+id);
+                if (rsC.next())
+                {
+                    user = new Client(rsC.getInt("idcli"), rsC.getString("nomcli"), rsC.getString("prenomcli"),
+                            rsC.getInt("codepostal"),
+                            rsC.getString("villecli"),
+                            rsC.getString("adressecli"));
+                }
+                break;
+        
+            case "ADMIN":
+                ResultSet rsA = this.connexion.createStatement().executeQuery("select * from USER join ADMIN on idu = idad  where idad ="+id);
+                if (rsA.next())
+                {
+                    user = new Administrateur(rsA.getInt("idad"), rsA.getString("nomad"), 
+                                            rsA.getString("prenomad"), null);
+                }
+                break;
+            case "VENDEUR":
+                ResultSet rsV = this.connexion.createStatement().executeQuery("select * from USER join VENDEUR on idu = idve  where idve ="+id);
+                if (rsV.next())
+                {
+                    user = new Vendeur(rsV.getInt("idad"), rsV.getString("prenomven"), 
+                                            rsV.getString("nom"), magAPartirNom(rsV.getString("magasin")));
+                }
+                break;
+            default:
+                System.out.println("role inconnu.");
+                break;
+        }
+        return user;
+    }
 
 }
