@@ -15,6 +15,14 @@ public class ActionBD{
         this.connexion = connexion;
     }
 
+    /**
+     * renvoir la connexion, utile pour les tests dans test.testBD
+     * @return
+     */
+    public ConnexionMySQL getConnexion() {
+        return this.connexion;
+    }
+
     public void PasserCommande(Client client, Commande commande, Magasin mag) throws SQLException{
         PreparedStatement com = this.connexion.prepareStatement("insert into COMMANDE values (?, ?, ?, ?, ?, ?)");
         // insertion des informations de la commande dans la table CLIENT de la base de donnees
@@ -118,6 +126,14 @@ public class ActionBD{
         rs.close();
 
         return maxNumCommande;
+    }
+
+    public  int getIdUserMax() throws SQLException
+    {
+        ResultSet rs = this.connexion.createStatement().executeQuery("select max(idu) from USER");
+        rs.next();
+        int idmax = rs.getInt("max(idu)");
+        return idmax;
     }
 
     /**
@@ -412,7 +428,7 @@ public class ActionBD{
             id = rs.getInt(1);
             role = rs.getString(2);
         }
-        else System.out.println("email ou mot de passse incorrect");
+        else System.out.println("email ou mot de passse incorrect ou utilisateur inexistant");
 
         switch (role) 
         {
@@ -449,5 +465,63 @@ public class ActionBD{
         }
         return user;
     }
+
+
+    /**
+     * Crée un nouvel utilisateur dans la table USER.
+     * @param nom le nom de l'utilisateur
+     * @param email l'email de l'utilisateur
+     * @param motDePasse le mot de passe de l'utilisateur
+     * @param role le rôle de l'utilisateur (ex: "CLIENT", "ADMIN", "VENDEUR")
+     * @return true si l'utilisateur a été créé avec succès, false sinon
+     * @throws SQLException
+     */
+    private boolean createUser(int idu, String nom, String email, String motDePasse, String role) throws SQLException {
+        PreparedStatement ps = this.connexion.prepareStatement(
+            "INSERT INTO USER (idu, nom, email, motDePasse, role) VALUES (?, ?, ?, ?, ?)"
+        );
+        ps.setInt(1, idu);
+        ps.setString(2, nom);
+        ps.setString(3, email);
+        ps.setString(4, motDePasse);
+        ps.setString(5, role);
+        int rows = ps.executeUpdate();
+        ps.close();
+        return rows > 0;
+    }
+
+    /**
+     * Creer un nouveau client et l ajoute a la base de donnee
+     * @param nom
+     * @param prenom
+     * @param codePostal
+     * @param villeCli
+     * @param adresseCli
+     * @param email
+     * @param mdp
+     * @return
+     * @throws SQLException
+     */
+    public boolean creerClient(String nom, String prenom, int codePostal, String villeCli, String adresseCli, String email, String mdp) throws SQLException
+    {
+        int idu = getIdUserMax() + 1;
+        boolean userCreated = createUser(idu, nom, email, mdp, "CLIENT");
+        if (!userCreated) {
+            return false;
+        }
+        PreparedStatement ps = this.connexion.prepareStatement(
+            "INSERT INTO CLIENT (idcli, nomcli, prenomcli, adressecli, codepostal, villecli) VALUES (?, ?, ?, ?, ?, ?)"
+        );
+        ps.setInt(1, idu);
+        ps.setString(2, nom);
+        ps.setString(3, prenom);
+        ps.setInt(4, codePostal);
+        ps.setString(5, villeCli);
+        ps.setString(6, adresseCli);
+        int rows = ps.executeUpdate();
+        ps.close();
+        return rows > 0;
+    }
+
 
 }
