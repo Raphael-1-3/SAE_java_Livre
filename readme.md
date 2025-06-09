@@ -22,3 +22,6 @@
 - passage de la table client en entite faible
 - ajout des dependance nessecaire 
 - ajout des information dans jeucomplet 
+
+javac -d bin -cp "lib/*;src" src/main/*.java src/test/*.java
+java -cp "bin;lib/*" main.Executable

@@ -511,13 +511,14 @@ public class ActionBD{
         }
         PreparedStatement ps = this.connexion.prepareStatement(
             "INSERT INTO CLIENT (idcli, nomcli, prenomcli, adressecli, codepostal, villecli) VALUES (?, ?, ?, ?, ?, ?)"
+            
         );
         ps.setInt(1, idu);
         ps.setString(2, nom);
         ps.setString(3, prenom);
-        ps.setInt(4, codePostal);
-        ps.setString(5, villeCli);
-        ps.setString(6, adresseCli);
+        ps.setString(4, adresseCli);
+        ps.setInt(5, codePostal);
+        ps.setString(6, villeCli);
         int rows = ps.executeUpdate();
         ps.close();
         return rows > 0;

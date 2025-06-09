@@ -1,0 +1,32 @@
+User-Client, 11 User, _11 Client
+:
+User: id, nom, email, mdp, role
+User-Admin, 11 User, _11 Admin
+Admin: 
+
+:
+User-Employe, 11 User, _11 Employe
+Employe: 
+
+CLIENT: idcli, nomcli, prenomcli, adressecli, codepostal, villecli
+EFFECTUER, 0N CLIENT, 11 COMMANDE
+COMMANDE: numcom, datecom, enligne, livraison
+CONCERNER, 1N COMMANDE, 0N MAGASIN
+
+DF, _11 COMMANDE, 1N DETAILCOMMANDE
+:
+MAGASIN: idmag, nommag, villemag
+
+DETAILCOMMANDE: numlig, qte, prixvente
+DF, _11 LIVRE, 1N DETAILCOMMANDE
+POSSEDER,  0N MAGASIN, 0N LIVRE : qte
+
+AUTEUR: idauteur, nomauteur, anneenais, anneedeces
+ECRIRE, 0N AUTEUR, 0N LIVRE
+LIVRE: isbn, titre, nbpages, datepubli, prix
+EDITER, 0N EDITEUR, 0N LIVRE
+EDITEUR: idedit, nomedit
+
+THEMES, 0N LIVRE, 0N CLASSIFICATION
+
+CLASSIFICATION: iddewey, nomclass
