@@ -414,7 +414,7 @@ public class ActionBD{
      * permet a partir d une adresse mail est d un mot de passe le statut/role d un user
      * @return
      */
-    public User connexionRole(String email, String mdp) throws SQLException
+    public User connexionRole(String email, String mdp) throws SQLException, PasDeTelUtilisateurException
     {
         PreparedStatement ps = this.connexion.prepareStatement("select idu, role from USER where email = ? and motDePasse = ?");
         ps.setString(1, email);
@@ -428,7 +428,7 @@ public class ActionBD{
             id = rs.getInt(1);
             role = rs.getString(2);
         }
-        else System.out.println("email ou mot de passse incorrect ou utilisateur inexistant");
+        else throw new PasDeTelUtilisateurException();
 
         switch (role) 
         {

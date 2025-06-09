@@ -1,5 +1,6 @@
 package main;
 
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
@@ -33,23 +34,6 @@ public class Client extends User {
         this.commandes = commandes;
     }
 
-    public void CommanderCommande(){
-        System.out.println("╭────────────────────────────╮");
-        System.out.println("│       Menu                 │");
-        System.out.println("├────────────────────────────┤");
-        System.out.println("│ 1 : exemple                │");
-        System.out.println("│ 2 : exemple                │");
-        System.out.println("│ Q : quitter                │");
-        System.out.println("╰────────────────────────────╯");
-    }
-
-
-    public void choisirMagasin() {}
-
-    public void consulterCatalogue() {}
-
-    public void avoirRecommandations() {}
-    
     public int getCodePostal() {
         return codePostal;
     }
@@ -62,6 +46,89 @@ public class Client extends User {
         return adresseCli;
     }
 
+
+    
+            
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Client)) return false;
+        if (!super.equals(o)) return false;
+        Client client = (Client) o;
+        return this.modeReception == client.modeReception &&
+                this.codePostal == client.getCodePostal() &&
+                this.villeCli.equals(client.getVilleCli()) &&
+                this.adresseCli.equals(client.getAdresseCli());
+    }
+
+    
+
+    @Override
+    public int hashCode() {
+        return this.id * 3131  + this.nom.hashCode() + this.prenom.hashCode();
+    }
+
+    @Override
+    public String toString() {
+        return "Client{" +
+                "id=" + this.id +
+                ", nom='" + this.nom + '\'' +
+                ", prenom='" + this.prenom + '\'' +
+                ", codePostal=" + this.codePostal +
+                ", villeCli='" + this.villeCli + '\'' +
+                ", adresseCli='" + this.adresseCli + '\'' +
+                '}';
+    }
+
+
+    public static boolean creerCompteClient(ActionBD bd) throws SQLException
+    {
+        Scanner scanner = new Scanner(System.in);
+
+        System.out.print("Entrez votre nom : ");
+        String nom = scanner.nextLine();
+
+        System.out.print("Entrez votre prénom : ");
+        String prenom = scanner.nextLine();
+
+        System.out.print("Entrez votre code postal : ");
+        int codePostal = Integer.parseInt(scanner.nextLine());
+
+        System.out.print("Entrez votre ville : ");
+        String villeCli = scanner.nextLine();
+
+        System.out.print("Entrez votre adresse : ");
+        String adresseCli = scanner.nextLine();
+
+        System.out.print("Entrez votre email : ");
+        String email = scanner.nextLine();
+
+        System.out.print("Entrez votre mot de passe : ");
+        String mdp = scanner.nextLine();
+
+        boolean creationCompte = bd.creerClient(nom, prenom, codePostal, villeCli, adresseCli, email, mdp);
+        if (!creationCompte) 
+        { 
+            System.out.println("Un probleme rencontré lors de la création de compte");
+            return false;
+        }
+        else
+        {
+            System.out.println("Compte créé avec succès !");
+            return true;
+        }
+    }
+
+    public void CommanderCommande(){
+        System.out.println("╭────────────────────────────╮");
+        System.out.println("│       Menu                 │");
+        System.out.println("├────────────────────────────┤");
+        System.out.println("│ 1 : exemple                │");
+        System.out.println("│ 2 : exemple                │");
+        System.out.println("│ Q : quitter                │");
+        System.out.println("╰────────────────────────────╯");
+    }
 
     public static void application(){
         List<String> maListe = new ArrayList<>();
@@ -98,36 +165,10 @@ public class Client extends User {
             }
 
         }
-            
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof Client)) return false;
-        if (!super.equals(o)) return false;
-        Client client = (Client) o;
-        return this.modeReception == client.modeReception &&
-                this.codePostal == client.getCodePostal() &&
-                this.villeCli.equals(client.getVilleCli()) &&
-                this.adresseCli.equals(client.getAdresseCli());
-    }
+    public void choisirMagasin() {}
 
-    
+    public void consulterCatalogue() {}
 
-    @Override
-    public int hashCode() {
-        return this.id * 3131  + this.nom.hashCode() + this.prenom.hashCode();
-    }
-
-    @Override
-    public String toString() {
-        return "Client{" +
-                "id=" + this.id +
-                ", nom='" + this.nom + '\'' +
-                ", prenom='" + this.prenom + '\'' +
-                ", codePostal=" + this.codePostal +
-                ", villeCli='" + this.villeCli + '\'' +
-                ", adresseCli='" + this.adresseCli + '\'' +
-                '}';
-    }
+    public void avoirRecommandations() {}
 }
