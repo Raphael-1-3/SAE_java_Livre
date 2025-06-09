@@ -10,23 +10,21 @@ public class Client extends User {
     private int codePostal;
     private String villeCli;
     private String adresseCli;
+    private String prenom;
     private List<Commande> commandes;
-    private ActionBD bd;
 
-    public Client(int id, String nom, String prenom, int codePostal, String villeCli, String adresseCli)
-    {
-        super(id, prenom, nom);
+    // Ajout des paramètres manquants pour User : email, motDePasse, role
+    public Client(int id, String email, String nom, String prenom, String motDePasse, String role, int codePostal, String villeCli, String adresseCli) {
+        super(id, email, nom, motDePasse, role);
         this.modeReception = 'M';
         this.codePostal = codePostal;
         this.villeCli = villeCli;
         this.adresseCli = adresseCli;
         this.commandes = new ArrayList<>();
-
     }
 
-    public Client(int id, String nom, String prenom, int codePostal, String villeCli, String adresseCli, List<Commande> commandes)
-    {
-        super(id, prenom, nom);
+    public Client(int id, String email, String nom, String prenom, String motDePasse, String role, int codePostal, String villeCli, String adresseCli, List<Commande> commandes) {
+        super(id, email, nom, motDePasse, role);
         this.modeReception = 'M';
         this.codePostal = codePostal;
         this.villeCli = villeCli;
@@ -34,12 +32,6 @@ public class Client extends User {
         this.commandes = commandes;
     }
 
-    public void choisirMagasin() {}
-
-    public void consulterCatalogue() {}
-
-    public void avoirRecommandations() {}
-    
     public int getCodePostal() {
         return codePostal;
     }
@@ -52,9 +44,10 @@ public class Client extends User {
         return adresseCli;
     }
 
-
-    
-            
+    // Ajout du getter pour le prénom (hérité du parent)
+    public String getPrenom() {
+        return this.prenom;
+    }
 
     @Override
     public boolean equals(Object o) {
@@ -63,33 +56,30 @@ public class Client extends User {
         if (!super.equals(o)) return false;
         Client client = (Client) o;
         return this.modeReception == client.modeReception &&
-                this.codePostal == client.getCodePostal() &&
-                this.villeCli.equals(client.getVilleCli()) &&
-                this.adresseCli.equals(client.getAdresseCli());
+                this.codePostal == client.codePostal &&
+                this.villeCli.equals(client.villeCli) &&
+                this.adresseCli.equals(client.adresseCli);
     }
-
-    
 
     @Override
     public int hashCode() {
-        return this.id * 3131  + this.nom.hashCode() + this.prenom.hashCode();
+        return super.hashCode() * 31 + codePostal + villeCli.hashCode() + adresseCli.hashCode();
     }
 
     @Override
     public String toString() {
         return "Client{" +
-                "id=" + this.id +
-                ", nom='" + this.nom + '\'' +
-                ", prenom='" + this.prenom + '\'' +
-                ", codePostal=" + this.codePostal +
-                ", villeCli='" + this.villeCli + '\'' +
-                ", adresseCli='" + this.adresseCli + '\'' +
+                "id=" + getId() +
+                ", email='" + getEmail() + '\'' +
+                ", nom='" + getNom() + '\'' +
+                ", prenom='" + getPrenom() + '\'' +
+                ", codePostal=" + codePostal +
+                ", villeCli='" + villeCli + '\'' +
+                ", adresseCli='" + adresseCli + '\'' +
                 '}';
     }
 
-
-    public static boolean creerCompteClient(ActionBD bd) throws SQLException
-    {
+    public static boolean creerCompteClient(ActionBD bd) throws SQLException {
         Scanner scanner = new Scanner(System.in);
 
         System.out.print("Entrez votre nom : ");
@@ -114,19 +104,17 @@ public class Client extends User {
         String mdp = scanner.nextLine();
 
         boolean creationCompte = bd.creerClient(nom, prenom, codePostal, villeCli, adresseCli, email, mdp);
-        if (!creationCompte) 
-        { 
+        if (!creationCompte) {
             System.out.println("Un probleme rencontré lors de la création de compte");
             return false;
-        }
-        else
-        {
+        } else {
             System.out.println("Compte créé avec succès !");
             return true;
         }
     }
 
-    public void CommanderCommande(){
+    // Les méthodes suivantes sont des exemples ou des stubs, à compléter selon les besoins
+    public void CommanderCommande() {
         System.out.println("╭────────────────────────────╮");
         System.out.println("│       Menu                 │");
         System.out.println("├────────────────────────────┤");
@@ -136,7 +124,7 @@ public class Client extends User {
         System.out.println("╰────────────────────────────╯");
     }
 
-    public static void application(){
+    public static void application() {
         List<String> maListe = new ArrayList<>();
         maListe.add("Creer un compte");
         maListe.add("Se connecter");
@@ -145,32 +133,27 @@ public class Client extends User {
         maListe.add("Quitter");
 
         boolean commande_faite = false;
-        while(!commande_faite){
-            System.out.println(AfficherMenu.Menu("Application",maListe));
+        Scanner scanner_test = new Scanner(System.in);
+        while (!commande_faite) {
+            System.out.println(AfficherMenu.Menu("Application", maListe));
             System.out.println("Que veut tu faire ? : ");
-            Scanner scanner_test = new Scanner(System.in);
             String commande_brute = scanner_test.nextLine();
-
             String commande = commande_brute.strip().toLowerCase();
 
-            if (commande.equals("5")){
-                commande_faite=true;
-
+            if (commande.equals("5")) {
+                commande_faite = true;
             }
-
-            if (commande.equals("1")){
-                commande_faite=true;
+            if (commande.equals("1")) {
+                commande_faite = true;
             }
-
-            if (commande.equals("2")){
-                commande_faite=true;}
-
-            if (commande.equals("3")){
-                Commande.menu_rechercher();}
-            scanner_test.close();
+            if (commande.equals("2")) {
+                commande_faite = true;
             }
-
+            if (commande.equals("3")) {
+                Commande.menu_rechercher();
+            }
         }
+    }
 
     public void choisirMagasin() {}
 

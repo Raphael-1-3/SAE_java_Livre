@@ -146,9 +146,19 @@ public class testBD
     public void testGetClientAPartirNomPrenomcodePostal() throws SQLException
     {
         try{
-        Client expected = new Client(9, "Bouzid",  "Raul", 38000, "Grenoble", "23 chemin de la Forêt");
-        Client Atester = bd.getClientAPartirNomPrenomCodePostal("Bouzid", "Raul", 38000);
-        assertEquals(expected, Atester);
+            Client expected = new Client(
+                9, 
+                "Bouzid.Raul.38000@ex.fr", 
+                "Bouzid", 
+                "Raul", 
+                "mdp9", 
+                "CLIENT", 
+                38000, 
+                "Grenoble", 
+                "23 chemin de la Forêt" 
+            );
+            Client Atester = bd.getClientAPartirNomPrenomCodePostal("Bouzid", "Raul", 38000);
+            assertEquals(expected, Atester);
         }
         catch (PasDeTelUtilisateurException pdtue)
         {}

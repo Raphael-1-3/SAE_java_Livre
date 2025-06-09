@@ -405,7 +405,7 @@ public class ActionBD{
     public Client getClientAPartirNomPrenomCodePostal(String nom, String prenom, int codepaostal) throws SQLException, PasDeTelUtilisateurException
     {
         PreparedStatement ps = this.connexion.prepareStatement(
-            "select * FROM CLIENT WHERE nomcli = ? and prenomcli = ? and codepostal = ?");
+            "select * FROM CLIENT join USER ON idu = idcli WHERE nomcli = ? and prenomcli = ? and codepostal = ?");
         ps.setString(1, nom);
         ps.setString(2, prenom);
         ps.setInt(3, codepaostal);
@@ -413,11 +413,17 @@ public class ActionBD{
         Client client = null;
         if (rs.next())
         {
-            client = new Client(rs.getInt("idcli"), nom, prenom,
-                            
-                            rs.getInt("codepostal"),
-                            rs.getString("villecli"),
-                            rs.getString("adressecli"));
+            client = new Client(
+                rs.getInt("idcli"),
+                rs.getString("email"),
+                rs.getString("nomcli"),
+                rs.getString("prenomcli"),
+                rs.getString("motDePasse"),
+                rs.getString("role"),
+                rs.getInt("codepostal"),
+                rs.getString("villecli"),
+                rs.getString("adressecli")
+            );
         }
         else throw new PasDeTelUtilisateurException();
         return client;
@@ -430,15 +436,21 @@ public class ActionBD{
      */
     public List<Client> getAllClients() throws SQLException
     {
-        ResultSet rs = this.connexion.createStatement().executeQuery("select * from CLIENT");
+        ResultSet rs = this.connexion.createStatement().executeQuery("select * from CLIENT join USER on idu = idcli");
         List<Client> tabClient = new ArrayList<>();
         while (rs.next())
         {
-            tabClient.add(new Client(rs.getInt("idcli"), rs.getString("nomcli"), rs.getString("prenomcli"),
-                            
-                            rs.getInt("codepostal"),
-                            rs.getString("villecli"),
-                            rs.getString("adressecli")));
+            tabClient.add(new Client(
+                rs.getInt("idcli"),
+                rs.getString("email"),
+                rs.getString("nomcli"),
+                rs.getString("prenomcli"),
+                rs.getString("motDePasse"),
+                rs.getString("role"),
+                rs.getInt("codepostal"),
+                rs.getString("villecli"),
+                rs.getString("adressecli")
+            ));
         }
         rs.close();
         return tabClient;
@@ -481,30 +493,55 @@ public class ActionBD{
         switch (role) 
         {
             case "CLIENT":
-                ResultSet rsC = this.connexion.createStatement().executeQuery("select * from CLIENT where idcli ="+id);
+                ResultSet rsC = this.connexion.createStatement().executeQuery(
+                    "select * from CLIENT join USER on idu = idcli where idcli =" + id);
                 if (rsC.next())
                 {
-                    user = new Client(rsC.getInt("idcli"), rsC.getString("nomcli"), rsC.getString("prenomcli"),
-                            rsC.getInt("codepostal"),
-                            rsC.getString("villecli"),
-                            rsC.getString("adressecli"));
+                    user = new Client(
+                        rsC.getInt("idcli"),
+                        rsC.getString("email"),
+                        rsC.getString("nomcli"),
+                        rsC.getString("prenomcli"),
+                        rsC.getString("motDePasse"),
+                        rsC.getString("role"),
+                        rsC.getInt("codepostal"),
+                        rsC.getString("villecli"),
+                        rsC.getString("adressecli")
+                    );
                 }
+                rsC.close();
                 break;
         
             case "ADMIN":
-                ResultSet rsA = this.connexion.createStatement().executeQuery("select * from USER join ADMIN on idu = idad  where idad ="+id);
+                ResultSet rsA = this.connexion.createStatement().executeQuery(
+                    "select * from USER join ADMIN on idu = idad where idad =" + id);
                 if (rsA.next())
                 {
-                    user = new Administrateur(rsA.getInt("idad"), rsA.getString("nomad"), 
-                                            rsA.getString("prenomad"), null);
+                    user = new Administrateur(
+                        rsA.getInt("idad"),
+                        rsA.getString("email"),
+                        rsA.getString("nomad"),
+                        rsA.getString("motDePasse"),
+                        role,
+                        rsA.getString("prenomad"),
+                        magAPartirNom(rsA.getString("magasin"))
+                    );
                 }
+                rsA.close();
                 break;
             case "VENDEUR":
                 ResultSet rsV = this.connexion.createStatement().executeQuery("select * from USER join VENDEUR on idu = idve  where idve ="+id);
                 if (rsV.next())
                 {
-                    user = new Vendeur(rsV.getInt("idad"), rsV.getString("prenomven"), 
-                                            rsV.getString("nom"), magAPartirNom(rsV.getString("magasin")));
+                user = new Vendeur(
+                    rsV.getInt("idve"),
+                    rsV.getString("email"),
+                    rsV.getString("nom"),
+                    rsV.getString("motDePasse"),
+                    role,
+                    rsV.getString("prenomven"),
+                    magAPartirNom(rsV.getString("magasin"))
+                );
                 }
                 break;
             default:
