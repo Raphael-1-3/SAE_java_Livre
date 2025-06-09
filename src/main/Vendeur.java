@@ -1,12 +1,18 @@
 package main;
 
 public class Vendeur extends User{
-    private Magasin magasin;
-    public Vendeur(int id , String prenom, String nom, Magasin mag)
+    private String prenom;
+    private Magasin mag;
+    public Vendeur(int idve, String email, String nom, String mdp, String role, String prenom, Magasin mag)
     {
-        super(id, prenom, nom);
-        this.magasin = mag;
+        super(idve, email,nom, mdp, role);
+        this.prenom = prenom;
+        this.mag = mag;
     }
+
+    public String getPrenom() {return this.prenom;}
+    public Magasin getMagasin() {return this.mag;}
+    public int getIdMag() {return this.mag.getIdmag();}
 
     public void ajouterLivre(){
         

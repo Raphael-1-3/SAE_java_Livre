@@ -147,8 +147,16 @@ public class ActionBD{
         }
 
     }
-    public static void AddVendeur(){}
-    public static void AddClient(){}
+    public void AddVendeur(Vendeur v) throws SQLException{
+        this.createUser(v.getId(), v.getNom(), v.getEmail(), v.getMdp(), v.getRole());
+        PreparedStatement ps = this.connexion.prepareStatement("insert into VENDEUR (prenomven, magasin, idve) values (?, ?, ?)");
+        ps.setString(1, v.getPrenom());
+        ps.setInt(2, v.getIdMag());
+        ps.setInt(3, v.getId());
+        ps.executeUpdate();
+        ps.close();
+    }
+    
     public static void AddLibrairie(){}
     public static void InfosTableauBord(){}
     public static void ChargerUtilisateur() {}

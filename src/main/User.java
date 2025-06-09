@@ -1,34 +1,39 @@
 package main;
 
 public abstract class User {
-    protected int id;
-    protected String prenom;
+    protected int idu;
+    protected String email;
     protected String nom;
-    protected Magasin magasin;
+    protected String motDePasse;
+    protected String role;
 
-    public User(int id, String prenom, String nom)
+    public User(int idu, String email, String nom, String mdp, String role)
     {
-        this.id = id;
-        this.prenom = prenom;
+        this.idu = idu;
+        this.email = email;
         this.nom = nom;
+        this.motDePasse = mdp;
+        this.role = role;
     }
 
-    public String getPrenom(){return this.prenom;}
+    public String getEmail(){return this.email;}
     public String getNom(){return this.nom;}
-    public int getId(){return this.id;}
+    public int getId(){return this.idu;}
+    public String getMdp() {return this.motDePasse;}
+    public String getRole() {return this.role;}
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         User user = (User) o;
-        return this.id == user.getId() &&
-            this.prenom.equals(user.getPrenom()) &&
+        return this.idu == user.getId() &&
+            this.email.equals(user.getEmail()) &&
             this.nom.equals(user.getNom());
     }
 
     @Override
     public int hashCode() {
-        return java.util.Objects.hash(id, prenom, nom);
+        return java.util.Objects.hash(idu, email, nom);
     }
 }
