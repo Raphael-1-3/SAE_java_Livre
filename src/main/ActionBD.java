@@ -106,7 +106,47 @@ public class ActionBD{
 
         return map;
     }
-    public static void Transfer (){}
+    public void Transfer (long isbn, Magasin depart, Magasin arrivee, int qte) throws SQLException, PasAssezLivreException{
+        PreparedStatement nbLivreDep = this.connexion.prepareStatement("select qte from POSSEDER where idmag = ? and isbn = ?");
+        nbLivreDep.setInt(1, depart.getIdmag());
+        nbLivreDep.setLong(2, isbn);
+        ResultSet nbLivre = nbLivreDep.executeQuery();
+        nbLivre.next();
+        int qteDep = nbLivre.getInt("qte");
+        if (qteDep < qte)
+        {
+            throw new PasAssezLivreException();
+        }
+        else
+        {
+            nbLivreDep.close();
+            nbLivre.close();
+            qteDep -= qte;
+            PreparedStatement RetirerLivreDep = this.connexion.prepareStatement("update POSSEDER set qte = ? where idmag = ? and isbn = ?");
+            RetirerLivreDep.setInt(1, qteDep);
+            RetirerLivreDep.setInt(2, depart.getIdmag());
+            RetirerLivreDep.setLong(3, isbn);
+            RetirerLivreDep.executeUpdate();
+            RetirerLivreDep.close();
+
+            PreparedStatement recupQteArrivee = this.connexion.prepareStatement("select qte from POSSEDER where isbn = ? and idmag = ?");
+            recupQteArrivee.setLong(1, isbn);
+            recupQteArrivee.setInt(2, arrivee.getIdmag());
+            ResultSet rs = recupQteArrivee.executeQuery();
+            rs.next();
+            int qteArriv = rs.getInt("qte");
+            recupQteArrivee.close();
+            rs.close();
+            
+            PreparedStatement ajouterArrivee = this.connexion.prepareStatement("update POSSEDER set qte = ? where idmag = ? and isbn = ?");
+            ajouterArrivee.setInt(1, qteArriv);
+            ajouterArrivee.setInt(2, arrivee.getIdmag());
+            ajouterArrivee.setLong(3, isbn);
+            ajouterArrivee.executeUpdate();
+            ajouterArrivee.close();
+        }
+
+    }
     public static void AddVendeur(){}
     public static void AddClient(){}
     public static void AddLibrairie(){}
@@ -159,7 +199,7 @@ public class ActionBD{
                 rs.getDouble("prix")
             );
         } else {
-            throw new EmptySetException();
+            throw new EmptySetException(); 
         }
         rs.close();
         ps.close();
