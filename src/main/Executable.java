@@ -11,15 +11,7 @@ import java.util.Scanner;
 public class Executable{
     public static void main (String [] args)
     {
-        //List<String> maListe = new ArrayList<>();
-        //maListe.add("");
-        //maListe.add("Banane");
-        //maListe.add("Cerise");
-        //maListe.add("Orange");
-        //Commande.changerModeReception();
-
-        Client.application();
-
+        System.out.println("Connexion base");
         Scanner scanner = new Scanner(System.in);
 
         System.out.print("Entrer le nom du serveur : ");
@@ -35,60 +27,75 @@ public class Executable{
         String motDePasse = scanner.nextLine();
 
         ConnexionMySQL connexion = null;
+
         try {
             connexion = new ConnexionMySQL();
             connexion.connecter(nomServeur, nomBase, nomLogin, motDePasse);
-            if (connexion.isConnecte()) {
-                System.out.println("Connexion réussie !");
+            if (connexion.isConnecte()) 
+            {
                 ActionBD bd = new ActionBD(connexion);
-
-                // Afficher les recommandations pour chaque client
-                //List<Client> clients = bd.getAllClients();
-                //for (Client client : clients) {
-                //    try {
-                //        List<Livre> recommandations = bd.onVousRecommande(client);
-                //        System.out.println("Recommandations pour " + client.getPrenom() + " " + client.getNom() + " :");
-                //        if (recommandations.isEmpty()) {
-                //            System.out.println("  Aucune recommandation.");
-                //        } else {
-                //            for (Livre livre : recommandations) {
-                //                System.out.println("  - " + livre.getTitre());
-                //            }
-                //        }
-                //    } catch (PasDHistoriqueException e) {
-                //        System.out.println("Pas d'historique pour " + client.getPrenom() + " " + client.getNom() + " " + client.getCodePostal());
-                //    }
-                //}
-
-                //List<Livre> recommandations = bd.onVousRecommande(bd.getClientAPartirNomPrenomCodePostal("","",0);
-                HashMap<Client, List<Livre>> historiqueAllClient = bd.getHistoriqueAllClient();
-                double sommeRessemblance = 0.0;
-                int nbComparaisons = 0;
-                for (Client client1 : historiqueAllClient.keySet()) {
-                    for (Client client2 : historiqueAllClient.keySet()) {
-                        if (!client1.equals(client2)) {
-                            double ressemblance = bd.ressemblanceHistorique(historiqueAllClient.get(client1), historiqueAllClient.get(client2));
-                            sommeRessemblance += ressemblance;
-                            nbComparaisons++;
-                            if (true)
-                            System.out.println("Ressemblance entre " + client1.getPrenom()+client1.getNom()+client1.getCodePostal() + " et " + client2.getPrenom()+client2.getNom()+client2.getCodePostal() + " : " + ressemblance);
-                            
+                System.out.println("Connexion réussie !");
+                boolean authentifie = false;
+                while (!authentifie) {
+                    System.out.println("Connexion a un utilisateur");
+                    System.out.println("Menu :");
+                    System.out.println("1. Se connecter");
+                    System.out.println("2. Créer un compte");
+                    System.out.print("Votre choix : ");
+                    int choix = Integer.parseInt(scanner.nextLine());
+                    
+                    if (choix == 2)
+                    {
+                        System.out.println("Nous sommes ravis de vous accueillir en tant que nouveau client !");
+                        if (!creerCompteClient(bd)) {
+                            System.out.println("Retour au menu principal.");
+                            continue;
+                        } else {
+                            System.out.println("Veuillez maintenant vous connecter.");
                         }
                     }
-                    
+
+                    System.out.print("Entrer le email (nom.prenom.codePostal@ex.fr): ");
+                    String email = scanner.nextLine();
+
+                    System.out.print("Entrer le mot de passe (mdp+id): ");
+                    String mdp = scanner.nextLine();
+
+                    User user = bd.connexionRole(email, mdp);
+                    if (user == null) {
+                        System.out.println("Identifiants incorrects. Retour au menu.");
+                        continue;
+                    }
+                    System.out.println(user);
+                    switch (user.getClass().getSimpleName()) 
+                    {
+                        case "Client":
+                            System.out.println("Bienvenue, client !");
+                            // Actions client
+                            break;
+                        case "Vendeur":
+                            System.out.println("Bienvenue, vendeur !");
+                            // Actions vendeur
+                            break;
+                        case "Admin":
+                            System.out.println("Bienvenue, administrateur !");
+                            // Actions admin
+                            break;
+                        default:
+                            System.out.println("Rôle inconnu.");
+                            break;
+                    }
+                    authentifie = true;
                 }
-                System.out.println("Moyenne de ressemblance : "+(sommeRessemblance/nbComparaisons));
             }
+                
         } catch (ClassNotFoundException e) {
             System.out.println("Pilote JDBC non trouvé : " + e.getMessage());
         } catch (SQLException e) {
             System.out.println("Connexion échouée : " + e.getMessage());
-        //}  catch (PasDeTelUtilisateurException e) {
-            //System.out.println("utilisateur inexistant");
-        }   catch (PasDHistoriqueException e) {
-            System.out.println("utilisateur sans historique");
-        }finally {
-            if (connexion != null && connexion.isConnecte()) {
+        }  
+        finally {
+            if (connexion != null && connexion.isConnecte()) { //partie pour fermer le connexion a la lors de la fin de l'éxécution de l'app
                 try {
                     connexion.close();
                 } catch (SQLException e) {
@@ -96,6 +103,44 @@ public class Executable{
                 }
             }
             scanner.close();
+        }
+    }
+
+    public static boolean creerCompteClient(ActionBD bd) throws SQLException
+    {
+        Scanner scanner = new Scanner(System.in);
+
+        System.out.print("Entrez votre nom : ");
+        String nom = scanner.nextLine();
+
+        System.out.print("Entrez votre prénom : ");
+        String prenom = scanner.nextLine();
+
+        System.out.print("Entrez votre code postal : ");
+        int codePostal = Integer.parseInt(scanner.nextLine());
+
+        System.out.print("Entrez votre ville : ");
+        String villeCli = scanner.nextLine();
+
+        System.out.print("Entrez votre adresse : ");
+        String adresseCli = scanner.nextLine();
+
+        System.out.print("Entrez votre email : ");
+        String email = scanner.nextLine();
+
+        System.out.print("Entrez votre mot de passe : ");
+        String mdp = scanner.nextLine();
+
+        boolean creationCompte = bd.creerClient(nom, prenom, codePostal, villeCli, adresseCli, email, mdp);
+        if (!creationCompte) 
+        { 
+            System.out.println("Un probleme rencontré lors de la création de compte");
+            return false;
+        }
+        else
+        {
+            System.out.println("Compte créé avec succès !");
+            return true;
         }
     }
 }

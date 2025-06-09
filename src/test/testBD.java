@@ -2,6 +2,7 @@ package test;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
+import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -23,8 +24,8 @@ public class testBD
         try 
         {
 
-            connexion = new ConnexionMySQL();
-            connexion.connecter("localhost", "Librairie", "root", "raphe");
+            connexion = new ConnexionMySQL(); // a changer en fonction de la machine 
+            connexion.connecter("localhost", "LibrairieJava", "root", "raphe");
             if (connexion.isConnecte()) {
                 System.out.println("Connexion réussie !");
             }
@@ -280,5 +281,59 @@ public class testBD
         catch (PasDHistoriqueException e) 
         {}
     }
+
+    /**
+     * Pour test cette méthode on prend la valeur actuel,
+     *  on ajoute une commande fictif, on verifie que la valeur est augmenté puis en la suppime
+     * @throws SQLException
+     */@Test
+    public void testGetMaxNumCom() throws SQLException 
+    {
+        int maxAvant = bd.getMaxNumCom();
+
+        int numTest = maxAvant + 1;
+        PreparedStatement ps = this.connexion.prepareStatement(
+            "INSERT INTO COMMANDE (numcom, datecom, enligne, livraison, idcli, idmag) VALUES (?, CURRENT_DATE, 'O', 'N', 1, 1)"
+        );
+        ps.setInt(1, numTest);
+        ps.executeQuery();
+
+        int maxApres = bd.getMaxNumCom();
+        assertEquals(numTest, maxApres);
+
+        ps.executeUpdate("DELETE FROM COMMANDE WHERE numcom = " + numTest + ";");
+        ps.close();
+    }
+
+    /**
+     * Pour test cette méthode on prend la valeur actuel,
+     *  on ajoute un user fictif, on verifie que la valeur est augmenté puis en le suppime
+     * @throws SQLException
+     */
+    @Test
+    public void testGetIdUserMax() throws SQLException 
+    {
+        int maxAvant = bd.getIdUserMax(); // 
+        int idTest = maxAvant + 1;
+        PreparedStatement ps = this.connexion.prepareStatement(
+            "INSERT INTO USER (idu, nom, email, motDePasse, role) VALUES (" 
+            + idTest + ", 'Test', 'test@example.com', 'testpassword', 'client')");
+        ps.executeQuery();
+
+        int maxApres = bd.getIdUserMax();
+        assertEquals(idTest, maxApres);
+
+        ps.executeUpdate("DELETE FROM USER WHERE idu = " + idTest + ";");
+        ps.close();
+    }
+
+// TODO: Tester PasserCommande
+// TODO: Tester GetListeLivre
+// TODO: Tester AddLivre
+// TODO: Tester UpdateStock
+// TODO: Tester VoirStockMag
+// TODO: Tester magAPartirNom
+// TODO: Tester connexionRole
+// TODO: Tester creerClient
 
 }

@@ -15,6 +15,14 @@ public class ActionBD{
         this.connexion = connexion;
     }
 
+    /**
+     * renvoir la connexion, utile pour les tests dans test.testBD
+     * @return
+     */
+    public ConnexionMySQL getConnexion() {
+        return this.connexion;
+    }
+
     public void PasserCommande(Client client, Commande commande, Magasin mag) throws SQLException{
         PreparedStatement com = this.connexion.prepareStatement("insert into COMMANDE values (?, ?, ?, ?, ?, ?)");
         // insertion des informations de la commande dans la table CLIENT de la base de donnees
@@ -118,6 +126,14 @@ public class ActionBD{
         rs.close();
 
         return maxNumCommande;
+    }
+
+    public  int getIdUserMax() throws SQLException
+    {
+        ResultSet rs = this.connexion.createStatement().executeQuery("select max(idu) from USER");
+        rs.next();
+        int idmax = rs.getInt("max(idu)");
+        return idmax;
     }
 
     /**
@@ -379,18 +395,133 @@ public class ActionBD{
         rs.close();
         return tabClient;
     }
-    /*
-     * Votre application devra proposer aux clients une liste de livres recommandés. 
-Le principe est de trouver pour un client donné, un ou plusieurs autres clients ayant 
-acheté des titres communs. Seront alors recommandés les livres achetés par ces 
-autres clients, mais pas par le client à qui s’adresse la liste de recommandations
 
-un peu chiantos ça change de ce qu'on avait prévue
+    public Magasin magAPartirNom(String nomMagasin) throws SQLException
+    {
+        ResultSet rs = this.connexion.createStatement().executeQuery("select * from MAGASIN where nommag = "+nomMagasin);
+        Magasin mag = null;
+        if (rs.next())
+        { 
+            mag = new Magasin(rs.getInt("idmag"), rs.getString("nommag"), 
+                                    rs.getString("villemag"));
+        }
+        else System.out.println("ce magasin n existe pas");
+        rs.close();
+        return mag;
+    }
 
-idée
-    - récuperer tout les historique de chaque client et les comparé a "ce" client
-    - Recupere l'historique avec le plus grand poucentage de ressemblance 
-    - recommandé les livres qu'il n'a pas acheté dans cette historique  
+    /**
+     * permet a partir d une adresse mail est d un mot de passe le statut/role d un user
+     * @return
      */
+    public User connexionRole(String email, String mdp) throws SQLException
+    {
+        PreparedStatement ps = this.connexion.prepareStatement("select idu, role from USER where email = ? and motDePasse = ?");
+        ps.setString(1, email);
+        ps.setString(2, mdp);
+        ResultSet rs = ps.executeQuery();
+        Integer id = null;
+        String role = null;
+        User user =  null;
+        if (rs.next())
+        { 
+            id = rs.getInt(1);
+            role = rs.getString(2);
+        }
+        else System.out.println("email ou mot de passse incorrect ou utilisateur inexistant");
+
+        switch (role) 
+        {
+            case "CLIENT":
+                ResultSet rsC = this.connexion.createStatement().executeQuery("select * from CLIENT where idcli ="+id);
+                if (rsC.next())
+                {
+                    user = new Client(rsC.getInt("idcli"), rsC.getString("nomcli"), rsC.getString("prenomcli"),
+                            rsC.getInt("codepostal"),
+                            rsC.getString("villecli"),
+                            rsC.getString("adressecli"));
+                }
+                break;
+        
+            case "ADMIN":
+                ResultSet rsA = this.connexion.createStatement().executeQuery("select * from USER join ADMIN on idu = idad  where idad ="+id);
+                if (rsA.next())
+                {
+                    user = new Administrateur(rsA.getInt("idad"), rsA.getString("nomad"), 
+                                            rsA.getString("prenomad"), null);
+                }
+                break;
+            case "VENDEUR":
+                ResultSet rsV = this.connexion.createStatement().executeQuery("select * from USER join VENDEUR on idu = idve  where idve ="+id);
+                if (rsV.next())
+                {
+                    user = new Vendeur(rsV.getInt("idad"), rsV.getString("prenomven"), 
+                                            rsV.getString("nom"), magAPartirNom(rsV.getString("magasin")));
+                }
+                break;
+            default:
+                System.out.println("role inconnu.");
+                break;
+        }
+        return user;
+    }
+
+
+    /**
+     * Crée un nouvel utilisateur dans la table USER.
+     * @param nom le nom de l'utilisateur
+     * @param email l'email de l'utilisateur
+     * @param motDePasse le mot de passe de l'utilisateur
+     * @param role le rôle de l'utilisateur (ex: "CLIENT", "ADMIN", "VENDEUR")
+     * @return true si l'utilisateur a été créé avec succès, false sinon
+     * @throws SQLException
+     */
+    private boolean createUser(int idu, String nom, String email, String motDePasse, String role) throws SQLException {
+        PreparedStatement ps = this.connexion.prepareStatement(
+            "INSERT INTO USER (idu, nom, email, motDePasse, role) VALUES (?, ?, ?, ?, ?)"
+        );
+        ps.setInt(1, idu);
+        ps.setString(2, nom);
+        ps.setString(3, email);
+        ps.setString(4, motDePasse);
+        ps.setString(5, role);
+        int rows = ps.executeUpdate();
+        ps.close();
+        return rows > 0;
+    }
+
+    /**
+     * Creer un nouveau client et l ajoute a la base de donnee
+     * @param nom
+     * @param prenom
+     * @param codePostal
+     * @param villeCli
+     * @param adresseCli
+     * @param email
+     * @param mdp
+     * @return
+     * @throws SQLException
+     */
+    public boolean creerClient(String nom, String prenom, int codePostal, String villeCli, String adresseCli, String email, String mdp) throws SQLException
+    {
+        int idu = getIdUserMax() + 1;
+        boolean userCreated = createUser(idu, nom, email, mdp, "CLIENT");
+        if (!userCreated) {
+            return false;
+        }
+        PreparedStatement ps = this.connexion.prepareStatement(
+            "INSERT INTO CLIENT (idcli, nomcli, prenomcli, adressecli, codepostal, villecli) VALUES (?, ?, ?, ?, ?, ?)"
+        );
+        ps.setInt(1, idu);
+        ps.setString(2, nom);
+        ps.setString(3, prenom);
+        ps.setInt(4, codePostal);
+        ps.setString(5, villeCli);
+        ps.setString(6, adresseCli);
+        int rows = ps.executeUpdate();
+        ps.close();
+        return rows > 0;
+    }
+
 
 }
