@@ -34,6 +34,12 @@ public class Client extends User {
         this.commandes = commandes;
     }
 
+    public void choisirMagasin() {}
+
+    public void consulterCatalogue() {}
+
+    public void avoirRecommandations() {}
+    
     public int getCodePostal() {
         return codePostal;
     }
