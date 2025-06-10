@@ -124,11 +124,10 @@ public class Client extends User {
         System.out.println("╰────────────────────────────╯");
     }
 
-    public static void application() {
+    public static void application(ActionBD bd, User client) {
         List<String> maListe = new ArrayList<>();
-        maListe.add("Creer un compte");
-        maListe.add("Se connecter");
         maListe.add("Commander");
+        maListe.add("Catalogue");
         maListe.add("Paramètres");
         maListe.add("Quitter");
 
@@ -140,14 +139,14 @@ public class Client extends User {
             String commande_brute = scanner_test.nextLine();
             String commande = commande_brute.strip().toLowerCase();
 
-            if (commande.equals("5")) {
+            if (commande.equals("4")) {
                 commande_faite = true;
             }
             if (commande.equals("1")) {
                 commande_faite = true;
             }
             if (commande.equals("2")) {
-                commande_faite = true;
+                choisirMagasin(bd);
             }
             if (commande.equals("3")) {
                 Commande.menu_rechercher();
@@ -155,7 +154,27 @@ public class Client extends User {
         }
     }
 
-    public void choisirMagasin() {}
+    public static void choisirMagasin(ActionBD bd){
+        List<String> maListe = new ArrayList<>();
+        List<Magasin> tabMag = null; //bd.listeMagasin()
+        //parcour + ajout menu
+        maListe.add("");
+        maListe.add("Retour");
+        boolean commande_faite = false;
+        while(!commande_faite){
+            System.out.println(AfficherMenu.Menu("Choix Magasins",maListe));
+            System.out.println("Dans quel magasin ? : ");
+            String commande_brute=System.console().readLine();
+            String commande = commande_brute.strip().toLowerCase();
+            if (commande.equals("5")){
+                commande_faite=true;
+
+            }
+
+        
+
+        }
+    }
 
     public void consulterCatalogue() {}
 

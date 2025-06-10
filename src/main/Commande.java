@@ -109,7 +109,7 @@ public class Commande{
             String commande_brute=System.console().readLine();
             String commande = commande_brute.strip().toLowerCase();
             if (commande.equals("1")){
-                choisirMagasin();
+                Client.choisirMagasin();
 
             }
 
@@ -128,28 +128,7 @@ public class Commande{
         
     }
 
-    public static void choisirMagasin(){
-        List<String> maListe = new ArrayList<>();
-        maListe.add("Magasin Robin");
-        maListe.add("Magasin Coco");
-        maListe.add("Magasin Raphael");
-        maListe.add("Magasin Jorris");
-        maListe.add("Retour");
-        boolean commande_faite = false;
-        while(!commande_faite){
-            System.out.println(AfficherMenu.Menu("Choix Magasins",maListe));
-            System.out.println("Dans quel magasin ? : ");
-            String commande_brute=System.console().readLine();
-            String commande = commande_brute.strip().toLowerCase();
-            if (commande.equals("5")){
-                commande_faite=true;
-
-            }
-
-        
-
-        }
-    }
+    
 
 
     public static void livraison(){

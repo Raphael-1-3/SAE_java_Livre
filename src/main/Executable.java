@@ -90,7 +90,7 @@ public class Executable{
                         {
                             case "Client":
                                 System.out.println("Bienvenue, client !");
-                                Client.application();
+                                Client.application(bd, user);
                                 break;
                             case "Vendeur":
                                 System.out.println("Bienvenue, vendeur !");
