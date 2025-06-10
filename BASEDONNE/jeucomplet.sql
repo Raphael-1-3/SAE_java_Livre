@@ -621,7 +621,7 @@ INSERT INTO USER (idu, nom, email, motDePasse, role) VALUES
 
 -- insert de l admin
 
-INSERT INTO Admin (idad,prenomad) VALUES (501, 'Jango');
+INSERT INTO ADMIN (idad,prenomad) VALUES (501, 'Jango');
 
 
 -- les clients
