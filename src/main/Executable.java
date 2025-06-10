@@ -47,7 +47,14 @@ public class Executable{
                     System.out.println("│ 2 : Créer un compte        │");
                     System.out.println("│ 3 : quitter                │");
                     System.out.println("╰────────────────────────────╯");
-                    int choix = Integer.parseInt(scanner.nextLine());
+                    Integer choix = null;
+                    try 
+                    {
+                        choix = Integer.parseInt(scanner.nextLine());
+                    }catch (NumberFormatException nfe) {
+                        System.out.println("vous n'avez pas rentre un entre correct");
+                        continue;
+                    }
                     
                     if (choix == 1)
                     {
@@ -58,7 +65,7 @@ public class Executable{
                         System.out.print("Entrer le mot de passe (mdp+id): ");
                         String mdp = scanner.nextLine();
 
-                        boolean retry = true;
+                        
                         
                             try 
                             {
@@ -83,7 +90,7 @@ public class Executable{
                         {
                             case "Client":
                                 System.out.println("Bienvenue, client !");
-                                // Actions client
+                                Client.application();
                                 break;
                             case "Vendeur":
                                 System.out.println("Bienvenue, vendeur !");
@@ -109,10 +116,10 @@ public class Executable{
                             System.out.println("Veuillez maintenant vous connecter.");
                         }
                     }
+                    if (choix == 3) authentifie = true;
+                    else  System.out.println("vous avez rentrer un truc incorrecte");
                     
-                    else  authentifie = true;
                     
-                    authentifie = true;
                     }
                 }
             }
