@@ -111,7 +111,10 @@ public class ActionBD{
         nbLivreDep.setInt(1, depart.getIdmag());
         nbLivreDep.setLong(2, isbn);
         ResultSet nbLivre = nbLivreDep.executeQuery();
-        nbLivre.next();
+        if (!nbLivre.next())
+        {
+            throw new PasAssezLivreException();
+        }
         int qteDep = nbLivre.getInt("qte");
         if (qteDep < qte)
         {
@@ -157,9 +160,15 @@ public class ActionBD{
         ps.close();
     }
     
-    public static void AddLibrairie(){}
+    public void AddLibrairie(Magasin m) throws SQLException{
+        PreparedStatement ps = this.connexion.prepareStatement("insert into MAGASIN (idmag, nommag, villemag) values (?, ?, ?)");
+        ps.setInt(1, m.getIdmag());
+        ps.setString(2, m.getNomMag());
+        ps.setString(3, m.getVilleMag());
+        ps.executeUpdate();
+        ps.close();
+    }
     public static void InfosTableauBord(){}
-    public static void ChargerUtilisateur() {}
 
     /**
      * renvoie le numéro de commande le plus élever
