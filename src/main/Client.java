@@ -128,6 +128,7 @@ public class Client extends User {
         List<String> maListe = new ArrayList<>();
         maListe.add("Commander");
         maListe.add("Catalogue");
+        maListe.add("Choisir un magasin");
         maListe.add("Paramètres");
         maListe.add("Quitter");
 
@@ -146,7 +147,7 @@ public class Client extends User {
                 commande_faite = true;
             }
             if (commande.equals("2")) {
-                choisirMagasin(bd);
+                rechercheLivre(bd);
             }
             if (commande.equals("3")) {
                 Commande.menu_rechercher();
@@ -176,7 +177,10 @@ public class Client extends User {
         }
     }
 
-    public void consulterCatalogue() {}
+    public static  void rechercheLivre(ActionBD bd) 
+    {
+        //TODO   fair en sorte que cette fonction appel cherhcherLivreApproximative(String nomApproximativeLivre)
+    }
 
     public void avoirRecommandations() {}
 }

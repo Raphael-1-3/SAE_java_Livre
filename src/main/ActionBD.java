@@ -609,5 +609,79 @@ public class ActionBD{
         return rows > 0;
     }
 
+    /**
+     * Permet de renvoyer une liste de livre a partir d un nom approximatife 
+     * @param nomApproximativeLivre
+     * @return
+     * @throws SQLException
+     */
+    public List<Livre> cherhcherLivreApproximative(String nomApproximativeLivre) throws SQLException
+    {
+        PreparedStatement ps = this.connexion.prepareStatement("SELECT * FROM LIVRE WHERE LOWER(titre) LIKE ?");
+        ps.setString(1, "%" + nomApproximativeLivre.toLowerCase() + "%");
+        ResultSet rs = ps.executeQuery();
+        List<Livre> livres = new ArrayList<>();
+        while (rs.next()) {
+            Livre l = new Livre(
+            rs.getLong("isbn"),
+            rs.getString("titre"),
+            rs.getInt("nbpages"),
+            rs.getInt("datepubli"),
+            rs.getDouble("prix")
+            );
+            livres.add(l);
+        }
+        rs.close();
+        ps.close();
+        return livres;
+    }
+
+    /**
+     * Permet d obtenir la liste de tout les magasin
+     * @return magasin une liste de magasin
+     * @throws SQLException
+     */
+    public List<Magasin> getListMagasin() throws SQLException
+    {
+        ResultSet rs = this.connexion.createStatement().executeQuery("select * from MAGASIN");
+        List<Magasin> magasin = new ArrayList<>();
+        while (rs.next())
+        {
+            magasin.add(new Magasin(
+                rs.getInt("idmag"),
+                rs.getString("nommag"),
+                rs.getString("villemag")
+            ));
+        }
+        rs.close();
+        return magasin;
+    }
+
+    /**
+     * Permert d obtenir la liste des magasins ou un livre un particulier est disponible
+     * @param livre
+     * @return
+     * @throws SQLException
+     */
+    public List<Magasin> getMagasinOuLivreDispo(Livre livre) throws SQLException
+    {
+        List<Magasin> tabMag = new ArrayList<>();
+        PreparedStatement ps = this.connexion.prepareStatement(
+            "select * from MAGASIN natural join POSSEDER natural join LIVRE where titre = ?"
+        );
+        ps.setString(1, livre.getTitre());
+        ResultSet rs = ps.executeQuery();
+        while (rs.next()) {
+            tabMag.add(new Magasin(
+                rs.getInt("idmag"),
+                rs.getString("nommag"),
+                rs.getString("villemag")
+            ));
+        }
+        rs.close();
+        ps.close();
+        return tabMag;
+    }
+
 
 }
