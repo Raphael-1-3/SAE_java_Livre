@@ -7,7 +7,6 @@ import java.util.Map;
 import java.util.List;
 
 public class ActionBD{
-    //inserer attribut connexion
     private ConnexionMySQL connexion;
     public  ActionBD(ConnexionMySQL connexion )
     {
@@ -773,5 +772,60 @@ public class ActionBD{
         return tabMag;
     }
 
+    /**
+     * Permet de recuperer une liste de clients a partir d'un nom et d'un prenom
+     * @param nom Nom du client
+     * @param prenom Prenom du client
+     * @return Liste de clients correspondant a ces caracteristiques
+     * @throws SQLException
+     */
+    public List<Client> getClientNonPrenom(String nom, String prenom) throws SQLException
+    {
+        PreparedStatement ps = this.connexion.prepareStatement("select * from CLIENT join USER on idu = idcli where LOWER(nomcli) LIKE %?% and LOWER(prenomcli) LIKE %?%");
+        ps.setString(1, nom);
+        ps.setString(2, prenom);
+        ResultSet rs = ps.executeQuery();
+        List<Client> liste = new ArrayList<>();
+        while(rs.next())
+        {
+            int id = rs.getInt("idcli");
+            String email = rs.getString("email");
+            String nomC = rs.getString("nomcli");
+            String prenomC = rs.getString("prenomcli");
+            String mdp = rs.getString("motDePasse");
+            String role = rs.getString("role");
+            int codePostal = rs.getInt("codepostal");
+            String ville = rs.getString("villecli");
+            String adresse = rs.getString("adressecli");
+            Client c = new Client(id, email, nomC, prenomC, mdp, role, codePostal, ville, adresse);
+            liste.add(c);
+        }
+        return liste;
 
+    }
+
+    /**
+     * Recupere le client grace a son Id
+     * @param id l'identifiant unique du client
+     * @return L'object correpondant a l'identifiant
+     * @throws SQLException
+     */
+    public Client getClientParId(int id) throws SQLException
+    {
+        PreparedStatement ps = this.connexion.prepareStatement("select * from CLIENT join USER on idu = idcli where idcli = ?");
+        ps.setInt(1, id);
+        ResultSet rs = ps.executeQuery();
+        rs.next();
+        int idc = rs.getInt("idcli");
+        String email = rs.getString("email");
+        String nomC = rs.getString("nomcli");
+        String prenomC = rs.getString("prenomcli");
+        String mdp = rs.getString("motDePasse");
+        String role = rs.getString("role");
+        int codePostal = rs.getInt("codepostal");
+        String ville = rs.getString("villecli");
+        String adresse = rs.getString("adressecli");
+        Client c = new Client(idc, email, nomC, prenomC, mdp, role, codePostal, ville, adresse);
+        return c;
+    }
 }
