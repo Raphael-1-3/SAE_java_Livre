@@ -48,6 +48,7 @@ public class Vendeur extends User{
             Commande commande = new Commande(bd.getMaxNumCom(), bd);
             commande.menu_rechercher(bd);
             bd.PasserCommande(c, commande, mag);
+            scan.close();
         }
         }
             catch (SQLException e)
