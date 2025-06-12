@@ -1,12 +1,14 @@
-User-Client, 11 User, _11 Client
-:
 User: id, nom, email, mdp, role
-User-Admin, 11 User, _11 Admin
-Admin: 
-
+VENDEUR: idve, prenomven, magasin 
 :
-User-Employe, 11 User, _11 Employe
-Employe: 
+:
+:
+
+/XT\ user <- CLIENT, ADMIN, VENDEUR
+ADMIN: idad, prenomad
+:
+:
+:
 
 CLIENT: idcli, nomcli, prenomcli, adressecli, codepostal, villecli
 EFFECTUER, 0N CLIENT, 11 COMMANDE
