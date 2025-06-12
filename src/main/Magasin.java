@@ -50,10 +50,14 @@ public class Magasin {
             System.out.println("Le livre "+livre.getTitre()+" n'est pas présent dans le magasin "+mag.getNomMag());
         }
 
+        }
     }
 
+    public static void ajouterLivre(Magasin mag)
+    {
+        
+    }
 
-}
 }
 
 
