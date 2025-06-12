@@ -901,19 +901,34 @@ public class ActionBD{
         return rs.getDate(1);
     }
 
+    /**
+     * Permet de recuperer un objet Livre a partir d'un isbn
+     * @param isbn l'isbn du livre a recuperer 
+     * @return 
+     * @throws SQLException
+     */
     public Livre getLivreParId(long isbn) throws SQLException
     {
         PreparedStatement ps = this.connexion.prepareStatement("select * from LIVRE where isbn = ?");
         ps.setLong(1, isbn);
         ResultSet rs = ps.executeQuery();
-        rs.next();
-        Livre livre = new Livre(
+        Livre livre = null;
+        if (rs.next())
+        {   livre = new Livre(
                 rs.getLong("isbn"),
                 rs.getString("titre"),
                 rs.getInt("nbpages"),
                 rs.getInt("datepubli"),
                 rs.getDouble("prix")
             );
-        return livre;
+        }
+            return livre;
+    }
+
+    public Long getMaxISBN() throws SQLException
+    {
+        ResultSet rs = this.connexion.createStatement().executeQuery("select max(isbn) from LIVRE");
+        rs.next();
+        return rs.getLong(1);
     }
 }
