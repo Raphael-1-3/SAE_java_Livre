@@ -2,6 +2,7 @@ package main;
 
 import java.util.List;
 import java.sql.Date;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Arrays;
@@ -12,15 +13,31 @@ public class Commande{
 
     private int idcommande;
     private HashMap<Livre, Integer> panier;
-    private Livre livre;
     private Date datecom;
     private String enligne;
     private String livraison;
 
-    public Commande(int idcommande){
+    public Commande(int idcommande, ActionBD bd){
         this.idcommande=idcommande;
         this.panier=new HashMap<>();
+        try
+        {
+            this.datecom = bd.getCurrentDate();
+        }
+        catch (SQLException e)
+        {
+
+        }
+        this.enligne = "O";
+        this.livraison = "M";
     }
+
+    public void setEnLigne(String enligne)
+    {
+        this.enligne = enligne;
+    }
+
+    public int getIdCommande() {return this.idcommande;}
 
     public String getLivraison()
     {
@@ -91,80 +108,115 @@ public class Commande{
             return res;
     }
     
-    public static void changerModeReception(ActionBD bd){
-        List<String> maListe = new ArrayList<>();
-        maListe.add("Magasin");
-        maListe.add("Livraison");
-        maListe.add("Retour");
+    public void changerModeReception(ActionBD bd){
         boolean commande_faite = false;
-        while(!commande_faite){
-            System.out.println(AfficherMenu.Menu("Choix de Livraison",maListe)); 
-            System.out.println("Ou souhaite tu récuperer ta commande ? : ");
-            String commande_brute=System.console().readLine();
+        Scanner scan = new Scanner(System.in);
+        while (!commande_faite)
+        {
+            System.out.println(AfficherMenu.Menu("Choisir Mode Livraison", Arrays.asList("A domicile", "En Magasin", "Retour")));
+            String commande_brute = scan.nextLine();
             String commande = commande_brute.strip().toLowerCase();
-            if (commande.equals("1")){
-                Client.choisirMagasin(bd);
-
+            switch (commande) {
+                case "1":
+                    this.livraison = "C";
+                    commande_faite = true;
+                    break;
+                case "2":
+                    this.livraison = "M";
+                    commande_faite = true;
+                    break;
+                case "3":
+                    commande_faite = true;
             }
+        }
+        scan.close();
+    }
 
-            else if(commande.equals("2")){
-                livraison();
+    public static void rechercher(ActionBD bd){
+        try{
+            Scanner recherche = new Scanner(System.in);
+            System.out.println("Quel est le nom du livre ? :" );
+            String nomLivre = recherche.nextLine();
+            List<Livre> liste = bd.cherhcherLivreApproximative(nomLivre);
+            for (Livre l : liste)
+            {
+                System.out.println(l);
             }
-
-
-            else if(commande.equals("3")){
-                commande_faite=true;
-            }
-
-
+            recherche.close();
+        }
+        catch (SQLException e)
+        {
+            System.out.println("Erreur SQL");
         }
         
-        
     }
 
-    
-
-
-    public static void livraison(){
-        Scanner scanner = new Scanner(System.in);
-        System.out.println("Quel est le numéro de l'adresse ? :" );
-        String num = scanner.nextLine();
-        Scanner scanner2 = new Scanner(System.in);
-        System.out.println("Quel est le nom de la rue ? :" );
-        String rue = scanner.nextLine();
-        Scanner scanner3 = new Scanner(System.in);
-        System.out.println("Quel est l'adresse postale :" );
-        String adp = scanner.nextLine();
-        Scanner scanner4 = new Scanner(System.in);
-        System.out.println("L'adresse est bien : " +num+" "+rue+" "+adp+" ? Y/N");
-        String verif = scanner.nextLine();
-        verifLivraison(verif);
-
-    }
-
-    public static void verifLivraison(String verif){
-        if(verif.equals("Y")){
-            System.out.println("Vos informations sont bien enregistré dans notre base de donné. Votre colis arriveras d'ici peu");
+    public void AjouterAuPanier(ActionBD bd)
+    {
+        try{
+        boolean commande_faite = false;
+        Scanner scan = new Scanner(System.in);
+        while (!commande_faite)
+        {
+            System.out.println(AfficherMenu.Menu("Ajout de livre au panier", Arrays.asList("Par identifiant", "Retour")));
+            String commande_brute = scan.nextLine();
+            String commande = commande_brute.strip().toLowerCase();
+            switch (commande) {
+                case "1":
+                    Long isbn = null;
+                    Integer qteL = null;
+                    boolean bonIsbn = false;
+                    while(!bonIsbn)
+                    {
+                        Scanner scanIsbn = new Scanner(System.in);
+                        System.out.println("Entrez l'isbn du livre a ajouter au panier");
+                        try{
+                        isbn = Long.parseLong(scanIsbn.nextLine());
+                        bonIsbn = true;
+                    }
+                        catch (NumberFormatException e)
+                        {
+                            System.out.println("Veuillez entrer un nombre");
+                        }
+                    }
+                    boolean bonneQte = false;
+                    while (!bonneQte)
+                    {
+                        Scanner qte = new Scanner(System.in);
+                        System.out.println("Selectionnez la quantite a ajouter : ");
+                        try{
+                            qteL = Integer.parseInt(qte.nextLine());
+                            bonneQte = true;
+                        }
+                        catch (NumberFormatException e)
+                        {
+                            System.out.println("Veuillez entrer une quantitee correcte");
+                        }
+                        if (isbn != null && qteL != null)
+                        {
+                            Livre l = bd.getLivreParId(isbn);
+                        this.ajouterArticle(l, qteL);
+                        }
+                    }
+                    commande_faite = true;
+                    break;
+                case "2":
+                    commande_faite = true;
+            }
         }
-        else{
-            System.out.println("Veuillez retaper vos informations");
-            livraison();
+        scan.close();
+        }
+        catch (SQLException e)
+        {
+            System.out.println("Erreur SQL");
         }
     }
 
-    public static void rechercher(){
-        boolean verif=true;
-        Scanner recherche = new Scanner(System.in);
-        System.out.println("Quel est le nom du livre ? :" );
-        String verife = recherche.nextLine();
-        
-    }
-
-
-    public static void menu_rechercher(){
+    public void menu_rechercher(ActionBD bd){
         List<String> maListe = new ArrayList<>();
         maListe.add("Chercher un livre");
         maListe.add("Panier");
+        maListe.add("Ajouter un livre");
         maListe.add("Retour");
 
         boolean commande_faite = false;
@@ -174,18 +226,38 @@ public class Commande{
             String commande_brute = System.console().readLine();
             String commande = commande_brute.strip().toLowerCase();
 
+            switch (commande) {
+                case "1":
+                    rechercher(bd);
+                    commande_faite = true;
+                    break;
+                case "2":
+                    this.Panier();
+                    commande_faite = true;
+                    break;
+                case "3":
+                    this.AjouterAuPanier(bd);
+                    commande_faite = true;
+                    break;
+                case "4":
+                    commande_faite = true;
+                    break;
+            }
             if (commande.equals("1")){
-                rechercher();
+                rechercher(bd);
+                commande_faite = true;
 
             }
 
-            if (commande.equals("2")){
+            if (commande.equals("3")){
+                this.Panier();
                 commande_faite=true;
             }
+
         }  
     }
 
-    public static void Panier(){
+    public void Panier(){
         List<String> maListe = new ArrayList<>();
         maListe.add("Afficher articles");
         maListe.add("Afficher prix total");
