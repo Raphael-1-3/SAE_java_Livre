@@ -7,9 +7,7 @@ import java.util.Map;
 import java.util.List;
 
 public class ActionBD{
-    //inserer attribut connexion
     private ConnexionMySQL connexion;
-    Statement st;
     public  ActionBD(ConnexionMySQL connexion )
     {
         this.connexion = connexion;
@@ -23,6 +21,13 @@ public class ActionBD{
         return this.connexion;
     }
 
+    /**
+     * Permet de passer une commande 
+     * @param client L'objet client destinataire la commande 
+     * @param commande L'objet commande contenant le panier
+     * @param mag L'objet Magasin depuis lequel la commande est passee
+     * @throws SQLException
+     */
     public void PasserCommande(Client client, Commande commande, Magasin mag) throws SQLException{
         PreparedStatement com = this.connexion.prepareStatement("insert into COMMANDE values (?, ?, ?, ?, ?, ?)");
         // insertion des informations de la commande dans la table CLIENT de la base de donnees
@@ -53,6 +58,11 @@ public class ActionBD{
         com.close();
     }
     
+    /**
+     * Recupere tous les livres presents dans la base de donnees
+     * @return La liste des Objets livres present dans la base
+     * @throws SQLException
+     */
     public List<Livre> GetListeLivre() throws SQLException{
         List<Livre> res = new ArrayList<>();
         ResultSet rs = this.connexion.createStatement().executeQuery("select * from LIVRE");
@@ -66,30 +76,73 @@ public class ActionBD{
         return res;
     }
 
+    /**
+     * Ajoute un livre a la base de donnes si il n'existe pas
+     * @param l L'objet du livre que l'on desire ajouter
+     * @throws SQLException
+     */
     public void AddLivre(Livre l) throws SQLException
     {
-        PreparedStatement ps = this.connexion.prepareStatement("insert into LIVRE values (?, ?, ?, ?, ?)");
-        ps.setLong(1, l.getISBN());
-        ps.setString(2, l.getTitre());
-        ps.setInt(3, l.getNbpages());
-        ps.setInt(4, l.getDatepubli());
-        ps.setDouble(5, l.getPrix());
+        PreparedStatement recupLiv = this.connexion.prepareStatement("select * from LIVRE where isbn = ?");
+        recupLiv.setLong(1, l.getISBN());
+        ResultSet rs = recupLiv.executeQuery();
+        if (!rs.next())
+        {
+            PreparedStatement ps = this.connexion.prepareStatement("insert into LIVRE values (?, ?, ?, ?, ?)");
+            ps.setLong(1, l.getISBN());
+            ps.setString(2, l.getTitre());
+            ps.setInt(3, l.getNbpages());
+            ps.setInt(4, l.getDatepubli());
+            ps.setDouble(5, l.getPrix());
 
-        ps.executeUpdate();
-        ps.close();
-
+            ps.executeUpdate();
+            ps.close();
+        }
+        rs.close();
+        recupLiv.close();
     }
 
+    /**
+     * Permet de mettre a jour le stock d'un magasin
+     * @param l Le livre dont on modifie le stock 
+     * @param mag L'objet magasin a modifier
+     * @param nv Le nouveau stock du livre
+     * @throws SQLException
+     */
     public void UpdateStock(Livre l, Magasin mag, int nv) throws SQLException
     {
-        PreparedStatement ps = this.connexion.prepareStatement("update POSSEDER set qte = ? where idmag = ? and isbn = ?");
-        ps.setInt(1, nv);
-        ps.setInt(2, mag.getIdmag());
-        ps.setLong(3, l.getISBN());
-        ps.executeUpdate();
-        ps.close();
+        PreparedStatement nbLivre = this.connexion.prepareStatement("select * from POSSEDER where idmag = ? and isbn = ?");
+        nbLivre.setInt(1, mag.getIdmag());
+        nbLivre.setLong(2, l.getISBN());
+        ResultSet rs = nbLivre.executeQuery();
+        if (rs.next())
+        {
+            PreparedStatement ps = this.connexion.prepareStatement("update POSSEDER set qte = ? where idmag = ? and isbn = ?");
+            ps.setInt(1, nv);
+            ps.setInt(2, mag.getIdmag());
+            ps.setLong(3, l.getISBN());
+            ps.executeUpdate();
+            ps.close();
+        }
+        else
+        {
+            PreparedStatement ps = this.connexion.prepareStatement("insert into POSSEDER (idmag, isbn, qte) values (?, ?, ?)");
+            ps.setInt(1, mag.getIdmag());
+            ps.setLong(2, l.getISBN());
+            ps.setInt(3, mag.getIdmag());
+            ps.executeUpdate();
+            ps.close();
+        }
+        nbLivre.close();
+        rs.close();
     }
     
+    /**
+     * Permet de consulter le stock entier d'un magasin
+     * @param mag L'objet magasin dont on veut consulter le stock
+     * @return Le stock du magasin
+     * @throws SQLException
+     */
     public HashMap<Livre, Integer> VoirStockMag(Magasin mag) throws SQLException
     {
         PreparedStatement ps = this.connexion.prepareStatement("select isbn, titre, nbpages, datepubli, prix, qte from POSSEDER natural join MAGASIN natural join LIVRE where idmag = ?");
@@ -106,6 +159,16 @@ public class ActionBD{
 
         return map;
     }
+
+    /**
+     * Permet d'effectuer un transfer d'un livre depuis un magasin a un autre
+     * @param isbn L'identifiant du livre a tranferer
+     * @param depart L'objet magasin de depart du livre
+     * @param arrivee L'objet magasin d'arrivee du livre
+     * @param qte La quantitee de livres a transferer
+     * @throws SQLException
+     * @throws PasAssezLivreException
+     */
     public void Transfer (long isbn, Magasin depart, Magasin arrivee, int qte) throws SQLException, PasAssezLivreException{
         PreparedStatement nbLivreDep = this.connexion.prepareStatement("select qte from POSSEDER where idmag = ? and isbn = ?");
         nbLivreDep.setInt(1, depart.getIdmag());
@@ -150,6 +213,12 @@ public class ActionBD{
         }
 
     }
+
+    /**
+     * Ajoute un vendeur a la BD
+     * @param v l'objet Vendeur a ajouter
+     * @throws SQLException
+     */
     public void AddVendeur(Vendeur v) throws SQLException{
         this.createUser(v.getId(), v.getNom(), v.getEmail(), v.getMdp(), v.getRole());
         PreparedStatement ps = this.connexion.prepareStatement("insert into VENDEUR (prenomven, magasin, idve) values (?, ?, ?)");
@@ -160,6 +229,11 @@ public class ActionBD{
         ps.close();
     }
     
+    /**
+     * Ajoute un magasin a la base de donnees
+     * @param m L'objet Magasin a ajouter
+     * @throws SQLException
+     */
     public void AddLibrairie(Magasin m) throws SQLException{
         PreparedStatement ps = this.connexion.prepareStatement("insert into MAGASIN (idmag, nommag, villemag) values (?, ?, ?)");
         ps.setInt(1, m.getIdmag());
@@ -185,6 +259,12 @@ public class ActionBD{
         return maxNumCommande;
     }
 
+    /**
+     * Recupere l'identifiant d'utilisateur maximal de la base de donnees.
+     *
+     * @return l'identifiant le plus grand de la BD.
+     * @throws SQLException.
+     */
     public  int getIdUserMax() throws SQLException
     {
         ResultSet rs = this.connexion.createStatement().executeQuery("select max(idu) from USER");
@@ -692,5 +772,60 @@ public class ActionBD{
         return tabMag;
     }
 
+    /**
+     * Permet de recuperer une liste de clients a partir d'un nom et d'un prenom
+     * @param nom Nom du client
+     * @param prenom Prenom du client
+     * @return Liste de clients correspondant a ces caracteristiques
+     * @throws SQLException
+     */
+    public List<Client> getClientNonPrenom(String nom, String prenom) throws SQLException
+    {
+        PreparedStatement ps = this.connexion.prepareStatement("select * from CLIENT join USER on idu = idcli where LOWER(nomcli) LIKE %?% and LOWER(prenomcli) LIKE %?%");
+        ps.setString(1, nom);
+        ps.setString(2, prenom);
+        ResultSet rs = ps.executeQuery();
+        List<Client> liste = new ArrayList<>();
+        while(rs.next())
+        {
+            int id = rs.getInt("idcli");
+            String email = rs.getString("email");
+            String nomC = rs.getString("nomcli");
+            String prenomC = rs.getString("prenomcli");
+            String mdp = rs.getString("motDePasse");
+            String role = rs.getString("role");
+            int codePostal = rs.getInt("codepostal");
+            String ville = rs.getString("villecli");
+            String adresse = rs.getString("adressecli");
+            Client c = new Client(id, email, nomC, prenomC, mdp, role, codePostal, ville, adresse);
+            liste.add(c);
+        }
+        return liste;
 
+    }
+
+    /**
+     * Recupere le client grace a son Id
+     * @param id l'identifiant unique du client
+     * @return L'object correpondant a l'identifiant
+     * @throws SQLException
+     */
+    public Client getClientParId(int id) throws SQLException
+    {
+        PreparedStatement ps = this.connexion.prepareStatement("select * from CLIENT join USER on idu = idcli where idcli = ?");
+        ps.setInt(1, id);
+        ResultSet rs = ps.executeQuery();
+        rs.next();
+        int idc = rs.getInt("idcli");
+        String email = rs.getString("email");
+        String nomC = rs.getString("nomcli");
+        String prenomC = rs.getString("prenomcli");
+        String mdp = rs.getString("motDePasse");
+        String role = rs.getString("role");
+        int codePostal = rs.getInt("codepostal");
+        String ville = rs.getString("villecli");
+        String adresse = rs.getString("adressecli");
+        Client c = new Client(idc, email, nomC, prenomC, mdp, role, codePostal, ville, adresse);
+        return c;
+    }
 }
