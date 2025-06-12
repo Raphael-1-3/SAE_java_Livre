@@ -45,7 +45,9 @@ public class Vendeur extends User{
             System.out.println("Selectioner l'identifiant de l'utilisateur");
             Integer id = Integer.parseInt(scan.nextLine());
             Client c = bd.getClientParId(id);
-            }
+            Commande commande = new Commande(bd.getMaxNumCom());
+            
+        }
         }
             catch (SQLException e)
             {

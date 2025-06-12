@@ -828,4 +828,32 @@ public class ActionBD{
         Client c = new Client(idc, email, nomC, prenomC, mdp, role, codePostal, ville, adresse);
         return c;
     }
+
+    /**
+     * Permet de recuperer la date actuelle 
+     * @return Date
+     * @throws SQLException
+     */
+    public Date getCurrentDate() throws SQLException
+    {
+        ResultSet rs = this.connexion.createStatement().executeQuery("select CURDATE()");
+        rs.next();
+        return rs.getDate(1);
+    }
+
+    public Livre getLivreParId(long isbn) throws SQLException
+    {
+        PreparedStatement ps = this.connexion.prepareStatement("select * from LIVRE where isbn = ?");
+        ps.setLong(1, isbn);
+        ResultSet rs = ps.executeQuery();
+        rs.next();
+        Livre livre = new Livre(
+                rs.getLong("isbn"),
+                rs.getString("titre"),
+                rs.getInt("nbpages"),
+                rs.getInt("datepubli"),
+                rs.getDouble("prix")
+            );
+        return livre;
+    }
 }
