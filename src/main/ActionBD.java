@@ -830,6 +830,66 @@ public class ActionBD{
     }
 
     /**
+     * Renvoie tout les magasins qui contiennent tout les livres de la listes
+     * @param livres
+     * @return
+     * @throws SQLException
+     */
+    public List<Magasin> getMagasinsAvecTousLesLivres(List<Livre> livres) throws SQLException {
+        if (livres == null || livres.isEmpty()) return new ArrayList<>();
+
+        String inClause = "";
+        for (int i = 0; i < livres.size(); i++) {
+            inClause += "?";
+            if (i < livres.size() - 1) inClause += ", ";
+        }
+
+        PreparedStatement ps = connexion.prepareStatement("SELECT * FROM MAGASIN NATURAL JOIN POSSEDER WHERE titre IN (" + inClause + ") GROUP BY idmag, nommag, villemag HAVING COUNT(DISTINCT titre) = ?");
+
+        int index = 1;
+        for (Livre livre : livres) {
+            ps.setString(index++, livre.getTitre());
+        }
+
+        ps.setInt(index, livres.size());
+
+        ResultSet rs = ps.executeQuery();
+        List<Magasin> listMag = new ArrayList<>();
+        while (rs.next()) {
+            listMag.add(new Magasin(
+                rs.getInt("idmag"),
+                rs.getString("nommag"),
+                rs.getString("villemag")
+            ));
+        }
+        rs.close();
+        ps.close();
+        return listMag;
+    }
+
+    public  List<Livre> rechercheLivreAuteurApproximative(String auteurRecherche) throws SQLException
+    {
+        PreparedStatement ps = this.connexion.prepareStatement("SELECT isbn, titre, nbpages, datepubli, prix FROM LIVRE natural join ECRIRE natural join AUTEUR WHERE LOWER(nomauteur) LIKE ?");
+        ps.setString(1, "%" + auteurRecherche.toLowerCase() + "%");
+        ResultSet rs = ps.executeQuery();
+        List<Livre> livres = new ArrayList<>();
+        while (rs.next()) {
+            Livre l = new Livre(
+            rs.getLong("isbn"),
+            rs.getString("titre"),
+            rs.getInt("nbpages"),
+            rs.getInt("datepubli"),
+            rs.getDouble("prix")
+            );
+            livres.add(l);
+        }
+        rs.close();
+        ps.close();
+        return livres;
+    }
+
+
+    /**
      * Permet de recuperer la date actuelle 
      * @return Date
      * @throws SQLException

@@ -138,9 +138,8 @@ public class Client extends User {
     {
         Client clientC = (Client) client;
         List<String> menuListe = new ArrayList<>();
-        menuListe.add("Commander un panier");
-        menuListe.add("rechercher un Livre");
-        menuListe.add("consulter Panier");
+        menuListe.add("Rechercher un Livre");
+        menuListe.add("Consulter Panier");
         menuListe.add("Paramètres");
         menuListe.add("Quitter");
 
@@ -155,23 +154,18 @@ public class Client extends User {
             // On suppose que l'utilisateur entre un numéro de menu (1, 2, 3, ...)
             switch (commande) {
             case "1":
-                System.out.println("emmene vers le menu des commade");
-                // TODO: appeler la méthode pour commander un panier
-                break;
-            case "2":
                 System.out.println("emmene vers le catalogue");
                 rechercheLivre(bd, clientC);
                 break;
-            case "3":
+            case "2":
                 System.out.println("emmene vers consulter Panier");
-                // TODO: afficher le panier du client
                 menuPanier(bd, clientC);
                 break;
-            case "4":
-                System.out.println("emmene vers parametre pour changer mot de passe");
+            case "3":
+                System.out.println("Vous etres maintenant dans le menu panier");
                 // TODO: afficher les paramètres
                 break;
-            case "5":
+            case "4":
             case "q":
             case "quitter":
                 System.out.println("la tu quitte lappli client");
@@ -199,47 +193,16 @@ public class Client extends User {
 
             switch (commande) {
                 case "1":
-                    System.out.println("Recherche par auteur non implémentée.");
+                    System.out.print("Entrez le nom de l'auteur : ");
+                    String auteurRecherche = scanner.nextLine().strip();
+                    List<Livre> livresAuteur = bd.rechercheLivreAuteurApproximative(auteurRecherche);
+                    afficherEtAjouterLivreAuPanier(scanner, client, livresAuteur);
                     break;
                 case "2":
                     System.out.print("Entrez le titre du livre : ");
                     String titreRecherche = scanner.nextLine().strip();
-                    List<Livre> tabLiv = bd.cherhcherLivreApproximative(titreRecherche);
-                    if (tabLiv == null || tabLiv.isEmpty()) {
-                        System.out.println("Aucun livre trouvé.");
-                        break;
-                    }
-                    List<String> tabLivreNom = new ArrayList<>();
-                    for (Livre livre : tabLiv) {
-                        tabLivreNom.add(livre.getTitre());
-                    }
-                    boolean choixFait = false;
-                    while (!choixFait) {
-                        System.out.println(AfficherMenu.Menu("Livres trouvés", tabLivreNom));
-                        System.out.print("Entrez le numéro du livre choisi : ");
-                        String choix = scanner.nextLine().strip();
-                        try {
-                            int indice = Integer.parseInt(choix) - 1 ;
-                            if (indice < 0 || indice >= tabLiv.size()) {
-                                System.out.println("Numéro invalide.");
-                                continue;
-                            }
-                            Livre livreChoisi = tabLiv.get(indice);
-                            System.out.print("Voulez-vous ajouter ce livre au panier ? (oui/non) : ");
-                            String reponse = scanner.nextLine().strip().toLowerCase();
-                            if (reponse.equals("oui") || reponse.equals("o")) {
-                                System.out.println("Le livre a été ajouté au panier.");
-                                client.ajoutePanier(livreChoisi);
-                                choixFait = true;
-                            } else if (reponse.equals("non") || reponse.equals("n")) {
-                                choixFait = true;
-                            } else {
-                                System.out.println("Réponse non reconnue, veuillez répondre par oui ou non.");
-                            }
-                        } catch (NumberFormatException e) {
-                            System.out.println("Votre entrée est incorrecte.");
-                        }
-                    }
+                    List<Livre> livresTitre = bd.cherhcherLivreApproximative(titreRecherche);
+                    afficherEtAjouterLivreAuPanier(scanner, client, livresTitre);
                     break;
                 case "3":
                 case "q":
@@ -253,7 +216,45 @@ public class Client extends User {
         }
     }
 
-    public static void menuPanier(ActionBD bd, Client client) 
+    private static void afficherEtAjouterLivreAuPanier(Scanner scanner, Client client, List<Livre> livres) {
+        if (livres == null || livres.isEmpty()) {
+            System.out.println("Aucun livre trouvé.");
+            return;
+        }
+        List<String> tabLivreNom = new ArrayList<>();
+        for (Livre livre : livres) {
+            tabLivreNom.add(livre.getTitre());
+        }
+        boolean choixFait = false;
+        while (!choixFait) {
+            System.out.println(AfficherMenu.Menu("Livres trouvés", tabLivreNom));
+            System.out.print("Entrez le numéro du livre choisi : ");
+            String choix = scanner.nextLine().strip();
+            try {
+                int indice = Integer.parseInt(choix) - 1;
+                if (indice < 0 || indice >= livres.size()) {
+                    System.out.println("Numéro invalide.");
+                    continue;
+                }
+                Livre livreChoisi = livres.get(indice);
+                System.out.print("Voulez-vous ajouter ce livre au panier ? (oui/non) : ");
+                String reponse = scanner.nextLine().strip().toLowerCase();
+                if (reponse.equals("oui") || reponse.equals("o")) {
+                    System.out.println("Le livre a été ajouté au panier.");
+                    client.ajoutePanier(livreChoisi);
+                    choixFait = true;
+                } else if (reponse.equals("non") || reponse.equals("n")) {
+                    choixFait = true;
+                } else {
+                    System.out.println("Réponse non reconnue, veuillez répondre par oui ou non.");
+                }
+            } catch (NumberFormatException e) {
+                System.out.println("Votre entrée est incorrecte.");
+            }
+        }
+    }
+
+    public static void menuPanier(ActionBD bd, Client client) throws SQLException
     { 
         List<String> menuListe = new ArrayList<>();
         menuListe.add("Afficher le panier");
@@ -284,8 +285,33 @@ public class Client extends User {
                 case "2":
                     if (client.getPanier().isEmpty()) {
                         System.out.println("Votre panier est vide, impossible de commander.");
-                    } else {
-                        // Ici, il faudrait appeler la méthode de commande réelle
+                    } else 
+                    {
+                        List<Magasin> magasins = bd.getMagasinsAvecTousLesLivres(client.getPanier());
+                        if (magasins == null || magasins.isEmpty()) {
+                            System.out.println("Aucun magasin ne possède tous les livres de votre panier.");
+                            break;
+                        }
+                        System.out.println("Voici les magasins où l'ensemble de votre panier est disponible :");
+                        for (int i = 0; i < magasins.size(); i++) {
+                            System.out.println((i + 1) + ". " + magasins.get(i));
+                        }
+                        System.out.print("Choisissez le numéro du magasin pour commander : ");
+                        String choixMagasin = scanner.nextLine().strip();
+                        try {
+                            int indiceMagasin = Integer.parseInt(choixMagasin) - 1;
+                            if (indiceMagasin < 0 || indiceMagasin >= magasins.size()) {
+                                System.out.println("Numéro de magasin invalide.");
+                                break;
+                            }
+                            Magasin magasinChoisi = magasins.get(indiceMagasin);
+                            System.out.println("commande a implementer");
+                            //commanderPanier(bd, client, magasinChoisi);
+                            break;
+                        } catch (NumberFormatException e) {
+                            System.out.println("Entrée invalide.");
+                        }
+                        bd.getMagasinsAvecTousLesLivres(client.getPanier());
                         System.out.println("Commande du panier en cours...");
                         // Exemple : bd.commanderPanier(client);
                         System.out.println("Votre commande a été prise en compte !");
