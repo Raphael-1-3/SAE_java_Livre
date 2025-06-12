@@ -285,6 +285,7 @@ public class Vendeur extends User{
             }
             Magasin m = bd.getMagasinParId(idmag);
             bd.Transfer(isbn, m, this.mag, qte);
+            recherche.close();
 
         }
         catch (SQLException e)
