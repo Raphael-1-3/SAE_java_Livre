@@ -925,10 +925,27 @@ public class ActionBD{
             return livre;
     }
 
+    /**
+     * Recupere le plus grand isbn de la BD
+     * @return un isbn
+     * @throws SQLException
+     */
     public Long getMaxISBN() throws SQLException
     {
         ResultSet rs = this.connexion.createStatement().executeQuery("select max(isbn) from LIVRE");
         rs.next();
         return rs.getLong(1);
+    }
+
+    public Magasin getMagasinParId(Integer idmag) throws SQLException
+    {
+        PreparedStatement ps = this.connexion.prepareStatement("select * from MAGASIN where idmag = ?");
+        ps.setInt(1, idmag);
+        ResultSet rs = ps.executeQuery();
+        rs.next();
+        String nom = rs.getString("nommag");
+        String ville = rs.getString("villemag");
+        Magasin m = new Magasin(idmag, nom, ville);
+        return m;
     }
 }
