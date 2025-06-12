@@ -270,13 +270,21 @@ public class Commande{
             String commande_brute = System.console().readLine();
             String commande = commande_brute.strip().toLowerCase();
 
-            if (commande.equals("1")){
-                commande_faite=true;
-
-            }
-
-            if (commande.equals("2")){
-                commande_faite=true;
+            switch (commande) {
+                case "1":
+                    for (Livre l : this.getPanier().keySet())
+                    {
+                        System.out.println(l.getTitre() + " | Qte : " + this.getPanier().get(l));
+                    }
+                    commande_faite=true;
+                    break;
+                case "2":
+                    System.out.println("Prix total : " + this.prixPanier());
+                    commande_faite=true;
+                    break;
+                case "3":
+                commande_faite = true;
+                    break;
             }
         }  
     }
