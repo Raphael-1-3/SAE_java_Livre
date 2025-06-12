@@ -2,6 +2,7 @@ package main;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Scanner;
 
@@ -11,7 +12,7 @@ public class Client extends User {
     private String adresseCli;
     private String prenom;
     private List<Commande> commandes;
-    private List<Livre> panier;
+    private HashMap<Livre, Integer> panier;
 
     // Ajout des paramètres manquants pour User : email, motDePasse, role
     public Client(int id, String email, String nom, String prenom, String motDePasse, String role, int codePostal, String villeCli, String adresseCli) {
@@ -20,7 +21,7 @@ public class Client extends User {
         this.villeCli = villeCli;
         this.adresseCli = adresseCli;
         this.commandes = new ArrayList<>();
-        this.panier = new ArrayList<>();
+        this.panier = new HashMap<>();
     }
 
     public Client(int id, String email, String nom, String prenom, String motDePasse, String role, int codePostal, String villeCli, String adresseCli, List<Commande> commandes) {
@@ -29,7 +30,7 @@ public class Client extends User {
         this.villeCli = villeCli;
         this.adresseCli = adresseCli;
         this.commandes = commandes;
-        this.panier = new ArrayList<>();
+        this.panier = new HashMap<>();
     }
 
     public int getCodePostal() {
@@ -49,13 +50,21 @@ public class Client extends User {
         return this.prenom;
     }
 
-    public void ajoutePanier(Livre livre)
-    {
-        this.panier.add(livre);
+    // Ajoute un livre au panier (quantité +1 si déjà présent)
+    public void ajoutePanier(Livre livre) {
+        this.panier.put(livre, this.panier.getOrDefault(livre, 0) + 1);
     }
 
-    public List<Livre> getPanier()
+    // Ajoute un livre au panier avec quantité précise
+    public void ajoutePanier(Livre livre, int quantite) {
+        this.panier.put(livre, this.panier.getOrDefault(livre, 0) + quantite);
+    }
+    public void suppPanier(Livre livre)
     {
+        this.panier.remove(livre);
+    }
+
+    public HashMap<Livre, Integer> getPanier() {
         return this.panier;
     }
 
@@ -134,7 +143,7 @@ public class Client extends User {
         System.out.println("╰────────────────────────────╯");
     }
 
-    public static void application(ActionBD bd, User client) throws SQLException
+    public static void application(ActionBD bd, User client, Scanner scanner) throws SQLException
     {
         Client clientC = (Client) client;
         List<String> menuListe = new ArrayList<>();
@@ -144,22 +153,21 @@ public class Client extends User {
         menuListe.add("Quitter");
 
         boolean commande_faite = false;
-        Scanner scanner_test = new Scanner(System.in);
         while (!commande_faite) {
             System.out.println(AfficherMenu.Menu("Application", menuListe));
             System.out.println("Que veut tu faire ? : ");
-            String commande_brute = scanner_test.nextLine();
+            String commande_brute = scanner.nextLine();
             String commande = commande_brute.strip().toLowerCase();
 
             // On suppose que l'utilisateur entre un numéro de menu (1, 2, 3, ...)
             switch (commande) {
             case "1":
                 System.out.println("emmene vers le catalogue");
-                rechercheLivre(bd, clientC);
+                rechercheLivre(bd, clientC, scanner);
                 break;
             case "2":
                 System.out.println("emmene vers consulter Panier");
-                menuPanier(bd, clientC);
+                menuPanier(bd, clientC, scanner);
                 break;
             case "3":
                 System.out.println("Vous etres maintenant dans le menu panier");
@@ -177,14 +185,13 @@ public class Client extends User {
         }
     }
 
-    public static void rechercheLivre(ActionBD bd, Client client) throws SQLException {
+    public static void rechercheLivre(ActionBD bd, Client client, Scanner scanner) throws SQLException {
         List<String> menuListe = new ArrayList<>();
         menuListe.add("Auteur");
         menuListe.add("Nom de livre");
         menuListe.add("Quitter");
 
         boolean commande_faite = false;
-        Scanner scanner = new Scanner(System.in);
         while (!commande_faite) {
             System.out.println(AfficherMenu.Menu("Recherche de livre", menuListe));
             System.out.print("Que veux-tu faire ? : ");
@@ -254,14 +261,14 @@ public class Client extends User {
         }
     }
 
-    public static void menuPanier(ActionBD bd, Client client) throws SQLException
+    public static void menuPanier(ActionBD bd, Client client, Scanner scanner) throws SQLException
     { 
         List<String> menuListe = new ArrayList<>();
         menuListe.add("Afficher le panier");
         menuListe.add("Commander le panier");
+        menuListe.add("Supprimer un livre du panier");
         menuListe.add("Retour");
 
-        Scanner scanner = new Scanner(System.in);
         boolean quitter = false;
         while (!quitter) {
             System.out.println(AfficherMenu.Menu("Menu Panier", menuListe));
@@ -270,55 +277,49 @@ public class Client extends User {
 
             switch (choix) {
                 case "1":
-                    List<Livre> panier = client.getPanier();
+                    HashMap<Livre, Integer> panier = client.getPanier();
                     if (panier.isEmpty()) {
                         System.out.println("Votre panier est vide.");
                     } else {
                         System.out.println("Contenu du panier :");
                         int i = 1;
-                        for (Livre livre : panier) {
-                            System.out.println(i + ". " + livre);
+                        for (Livre livre : panier.keySet()) {
+                            System.out.println(i + ". " + livre + " (quantité : " + panier.get(livre) + ")");
                             i++;
                         }
                     }
                     break;
                 case "2":
-                    if (client.getPanier().isEmpty()) {
-                        System.out.println("Votre panier est vide, impossible de commander.");
-                    } else 
-                    {
-                        List<Magasin> magasins = bd.getMagasinsAvecTousLesLivres(client.getPanier());
-                        if (magasins == null || magasins.isEmpty()) {
-                            System.out.println("Aucun magasin ne possède tous les livres de votre panier.");
-                            break;
-                        }
-                        System.out.println("Voici les magasins où l'ensemble de votre panier est disponible :");
-                        for (int i = 0; i < magasins.size(); i++) {
-                            System.out.println((i + 1) + ". " + magasins.get(i));
-                        }
-                        System.out.print("Choisissez le numéro du magasin pour commander : ");
-                        String choixMagasin = scanner.nextLine().strip();
-                        try {
-                            int indiceMagasin = Integer.parseInt(choixMagasin) - 1;
-                            if (indiceMagasin < 0 || indiceMagasin >= magasins.size()) {
-                                System.out.println("Numéro de magasin invalide.");
-                                break;
-                            }
-                            Magasin magasinChoisi = magasins.get(indiceMagasin);
-                            System.out.println("commande a implementer");
-                            //commanderPanier(bd, client, magasinChoisi);
-                            break;
-                        } catch (NumberFormatException e) {
-                            System.out.println("Entrée invalide.");
-                        }
-                        bd.getMagasinsAvecTousLesLivres(client.getPanier());
-                        System.out.println("Commande du panier en cours...");
-                        // Exemple : bd.commanderPanier(client);
-                        System.out.println("Votre commande a été prise en compte !");
-                        client.getPanier().clear();
-                    }
+                    menuCommande(bd, client, scanner);
                     break;
                 case "3":
+                    panier = client.getPanier();
+                    if (panier.isEmpty()) {
+                        System.out.println("Votre panier est vide.");
+                        break;
+                    }
+                    List<Livre> livresDansPanier = new ArrayList<>(panier.keySet());
+                    System.out.println("Livres dans votre panier :");
+                    for (int i = 0; i < livresDansPanier.size(); i++) {
+                        Livre livre = livresDansPanier.get(i);
+                        System.out.println((i + 1) + ". " + livre + " (quantité : " + panier.get(livre) + ")");
+                    }
+                    System.out.print("Entrez le numéro du livre à supprimer : ");
+                    String numLivreStr = scanner.nextLine().strip();
+                    try {
+                        int numLivre = Integer.parseInt(numLivreStr) - 1;
+                        if (numLivre < 0 || numLivre >= livresDansPanier.size()) {
+                            System.out.println("Numéro invalide.");
+                            break;
+                        }
+                        Livre livreASupprimer = livresDansPanier.get(numLivre);
+                        client.suppPanier(livreASupprimer);
+                        System.out.println("Livre supprimé du panier.");
+                    } catch (NumberFormatException e) {
+                        System.out.println("Entrée invalide.");
+                    }
+                    break;
+                case "4" : 
                 case "q":
                 case "retour":
                     quitter = true;
@@ -328,6 +329,10 @@ public class Client extends User {
             }
         }
     }
+
+    public static void menuCommande(ActionBD bd, Client client, Scanner scanner) throws SQLException 
+    {}
+        
     
     public static void choisirMagasin(ActionBD bd){
         List<String> menuListe = new ArrayList<>();

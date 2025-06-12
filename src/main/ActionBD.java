@@ -829,43 +829,6 @@ public class ActionBD{
         return c;
     }
 
-    /**
-     * Renvoie tout les magasins qui contiennent tout les livres de la listes
-     * @param livres
-     * @return
-     * @throws SQLException
-     */
-    public List<Magasin> getMagasinsAvecTousLesLivres(List<Livre> livres) throws SQLException {
-        if (livres == null || livres.isEmpty()) return new ArrayList<>();
-
-        String inClause = "";
-        for (int i = 0; i < livres.size(); i++) {
-            inClause += "?";
-            if (i < livres.size() - 1) inClause += ", ";
-        }
-
-        PreparedStatement ps = connexion.prepareStatement("SELECT * FROM MAGASIN NATURAL JOIN POSSEDER WHERE titre IN (" + inClause + ") GROUP BY idmag, nommag, villemag HAVING COUNT(DISTINCT titre) = ?");
-
-        int index = 1;
-        for (Livre livre : livres) {
-            ps.setString(index++, livre.getTitre());
-        }
-
-        ps.setInt(index, livres.size());
-
-        ResultSet rs = ps.executeQuery();
-        List<Magasin> listMag = new ArrayList<>();
-        while (rs.next()) {
-            listMag.add(new Magasin(
-                rs.getInt("idmag"),
-                rs.getString("nommag"),
-                rs.getString("villemag")
-            ));
-        }
-        rs.close();
-        ps.close();
-        return listMag;
-    }
 
     public  List<Livre> rechercheLivreAuteurApproximative(String auteurRecherche) throws SQLException
     {
