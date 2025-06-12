@@ -46,7 +46,8 @@ public class Vendeur extends User{
             Integer id = Integer.parseInt(scan.nextLine());
             Client c = bd.getClientParId(id);
             Commande commande = new Commande(bd.getMaxNumCom(), bd);
-            
+            commande.menu_rechercher(bd);
+            bd.PasserCommande(c, commande, mag);
         }
         }
             catch (SQLException e)
