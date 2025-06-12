@@ -22,12 +22,6 @@ public class Commande{
         this.panier=new HashMap<>();
     }
 
-    public void ajouterLivre(Livre livre){}
-    public void enleverLivre(Livre livre){}
-    public List<Livre> consulterPanier(){
-        return new ArrayList<>();
-    }
-
     public String getLivraison()
     {
         return this.livraison;
@@ -97,7 +91,7 @@ public class Commande{
             return res;
     }
     
-    public static void changerModeReception(){
+    public static void changerModeReception(ActionBD bd){
         List<String> maListe = new ArrayList<>();
         maListe.add("Magasin");
         maListe.add("Livraison");
@@ -109,7 +103,7 @@ public class Commande{
             String commande_brute=System.console().readLine();
             String commande = commande_brute.strip().toLowerCase();
             if (commande.equals("1")){
-                Client.choisirMagasin();
+                Client.choisirMagasin(bd);
 
             }
 
@@ -133,16 +127,16 @@ public class Commande{
 
     public static void livraison(){
         Scanner scanner = new Scanner(System.in);
-        System.out.println("Quel est le numéro de votre adresse ? :" );
+        System.out.println("Quel est le numéro de l'adresse ? :" );
         String num = scanner.nextLine();
         Scanner scanner2 = new Scanner(System.in);
         System.out.println("Quel est le nom de la rue ? :" );
         String rue = scanner.nextLine();
         Scanner scanner3 = new Scanner(System.in);
-        System.out.println("Quel est votre adresse postale :" );
+        System.out.println("Quel est l'adresse postale :" );
         String adp = scanner.nextLine();
         Scanner scanner4 = new Scanner(System.in);
-        System.out.println("Votre adresse est bien : " +num+" "+rue+" "+adp+" ? Y/N");
+        System.out.println("L'adresse est bien : " +num+" "+rue+" "+adp+" ? Y/N");
         String verif = scanner.nextLine();
         verifLivraison(verif);
 
