@@ -20,40 +20,41 @@ public class Vendeur extends User{
     public int getIdMag() {return this.mag.getIdmag();}
 
     public void ajouterLivre(ActionBD bd){ 
-        Scanner scan = new Scanner(System.in);
-        boolean commande_faite = false;
-        while (!commande_faite)
-        {
-            System.out.println("Nom du client : ");
-            String nom = scan.nextLine();
-            System.out.println("Prenom du client");
-            String prenom = scan.nextLine();
-            List<Client> listeC = bd.getClientNonPrenom(nom, prenom)
-            try {
-                if (listeC.isEmpty())
-                {
-                    System.out.println("Aucun client n'a tel nom/prenom.");
-                }
-                else
-                {
-                    for (Client c : bd.getClientNonPrenom(nom, prenom))
-                    {
-                        System.out.println(c);
-                    }
-                }
+        try {
+            Scanner scan = new Scanner(System.in);
+            boolean commande_faite = false;
+            while (!commande_faite)
+            {
+                System.out.println("Nom du client : ");
+                String nom = scan.nextLine();
+                System.out.println("Prenom du client");
+                String prenom = scan.nextLine();
+                List<Client> listeC = bd.getClientNonPrenom(nom, prenom);
                 
+                    if (listeC.isEmpty())
+                    {
+                        System.out.println("Aucun client n'a tel nom/prenom.");
+                    }
+                    else
+                    {
+                        for (Client c : bd.getClientNonPrenom(nom, prenom))
+                        {
+                            System.out.println(c);
+                        }
+                    }
+            System.out.println("Selectioner l'identifiant de l'utilisateur");
+            Integer id = Integer.parseInt(scan.nextLine());
+            Client c = bd.getClientParId(id);
             }
+        }
             catch (SQLException e)
             {
                 System.out.println("Erreure SQL");
             }
-            System.out.println("Selectioner l'identifiant de l'utilisateur");
-            Integer id = Integer.parseInt(scan.nextLine());
-            Client c = bd.getClientParId(id);
+            
             
 
         }
-    }
 
     public void updateStock() {}
 
