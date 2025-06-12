@@ -21,6 +21,69 @@ public class Vendeur extends User{
 
     public void ajouterLivre(ActionBD bd){ 
         try {
+            Long isbn = bd.getMaxISBN();
+            Scanner scan = new Scanner(System.in);
+            System.out.println("Titre du livre : ");
+            String titre = scan.nextLine();
+            
+            boolean bonNbPages = false;
+            Integer nbPages = null;
+            while (!bonNbPages)
+            {
+                System.out.println("Nombre de pages : ");
+                try {
+                    nbPages = Integer.parseInt(scan.nextLine());
+                    bonNbPages = true;
+                }
+                catch (NumberFormatException e)
+                {
+                    System.out.println("Veuillez entrer un nombre");
+                }
+            }
+            boolean bonneDate = false;
+            Integer datepubli = null;
+            while (!bonneDate)
+            {
+                System.out.println("Date de publication : ");
+                try {
+                    datepubli = Integer.parseInt(scan.nextLine());
+                    bonneDate = true;
+                }
+                catch (NumberFormatException e)
+                {
+                    System.out.println("Veuillez entrer un nombre");
+                }
+            }
+            boolean bonPrix = false;
+            Double prix = null;
+            while (!bonPrix)
+            {
+                System.out.println("Prix : ");
+                try {
+                    prix = Double.parseDouble(scan.nextLine());
+                    bonneDate = true;
+                }
+                catch (NumberFormatException e)
+                {
+                    System.out.println("Veuillez entrer un nombre");
+                }
+            }
+            scan.close();
+            Livre l = new Livre(isbn, titre, nbPages, datepubli, prix);
+            bd.AddLivre(l);
+        }
+        catch (SQLException e)
+        {
+            System.out.println("Erreur SQL");
+        }
+    }
+
+    public void updateStock() {}
+
+    public void disponibilites() {}
+
+    public void passerCommande(ActionBD bd) {
+        try {
             Scanner scan = new Scanner(System.in);
             boolean commande_faite = false;
             while (!commande_faite)
@@ -55,16 +118,7 @@ public class Vendeur extends User{
             {
                 System.out.println("Erreure SQL");
             }
-            
-            
-
-        }
-
-    public void updateStock() {}
-
-    public void disponibilites() {}
-
-    public void passerCommande() {}
+    }
 
     public void Transfer() {}
 
