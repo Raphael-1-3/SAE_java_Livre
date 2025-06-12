@@ -9,7 +9,6 @@ import java.util.List;
 public class ActionBD{
     //inserer attribut connexion
     private ConnexionMySQL connexion;
-    Statement st;
     public  ActionBD(ConnexionMySQL connexion )
     {
         this.connexion = connexion;
@@ -23,6 +22,13 @@ public class ActionBD{
         return this.connexion;
     }
 
+    /**
+     * Permet de passer une commande 
+     * @param client L'objet client destinataire la commande 
+     * @param commande L'objet commande contenant le panier
+     * @param mag L'objet Magasin depuis lequel la commande est passee
+     * @throws SQLException
+     */
     public void PasserCommande(Client client, Commande commande, Magasin mag) throws SQLException{
         PreparedStatement com = this.connexion.prepareStatement("insert into COMMANDE values (?, ?, ?, ?, ?, ?)");
         // insertion des informations de la commande dans la table CLIENT de la base de donnees
@@ -53,6 +59,11 @@ public class ActionBD{
         com.close();
     }
     
+    /**
+     * Recupere tous les livres presents dans la base de donnees
+     * @return La liste des Objets livres present dans la base
+     * @throws SQLException
+     */
     public List<Livre> GetListeLivre() throws SQLException{
         List<Livre> res = new ArrayList<>();
         ResultSet rs = this.connexion.createStatement().executeQuery("select * from LIVRE");
@@ -66,6 +77,11 @@ public class ActionBD{
         return res;
     }
 
+    /**
+     * Ajoute un livre a la base de donnes si il n'existe pas
+     * @param l L'objet du livre que l'on desire ajouter
+     * @throws SQLException
+     */
     public void AddLivre(Livre l) throws SQLException
     {
         PreparedStatement recupLiv = this.connexion.prepareStatement("select * from LIVRE where isbn = ?");
