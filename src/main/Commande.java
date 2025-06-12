@@ -5,6 +5,7 @@ import java.sql.Date;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Arrays;
 import java.util.Scanner;
 import java.util.Map;
@@ -178,6 +179,7 @@ public class Commande{
                         {
                             System.out.println("Veuillez entrer un nombre");
                         }
+                        scanIsbn.close();
                     }
                     boolean bonneQte = false;
                     while (!bonneQte)
@@ -197,7 +199,9 @@ public class Commande{
                             Livre l = bd.getLivreParId(isbn);
                         this.ajouterArticle(l, qteL);
                         }
+                        qte.close();
                     }
+                    
                     commande_faite = true;
                     break;
                 case "2":
@@ -232,7 +236,7 @@ public class Commande{
                     commande_faite = true;
                     break;
                 case "2":
-                    this.Panier();
+                    this.Panier(bd);
                     commande_faite = true;
                     break;
                 case "3":
@@ -250,17 +254,85 @@ public class Commande{
             }
 
             if (commande.equals("3")){
-                this.Panier();
+                this.Panier(bd);
                 commande_faite=true;
             }
 
         }  
     }
 
-    public void Panier(){
+    public void SupprimerLivre(ActionBD bd)
+    {
+        HashSet<Long> ISBNPres = new HashSet<>();
+        for (Livre l : this.getPanier().keySet())
+        {
+            System.out.println(l.getISBN() + " | " +l.getTitre() + " | Qte : " + this.getPanier().get(l));
+            ISBNPres.add(l.getISBN());
+        }
+        Scanner recupISBN = new Scanner(System.in);
+        System.out.println("Entrez l'identifiant du livre a supprimer");
+        Long isbn = null;
+        boolean bonIsbn = false;
+        while (!bonIsbn)
+        {
+            try
+            {
+                isbn = Long.parseLong(recupISBN.nextLine());
+                if (!ISBNPres.contains(isbn))
+                {
+                    System.out.println("Veuillez entrer un nombre dans le panier");
+                }
+                else
+                {
+                    bonIsbn = true;
+                }
+            }
+            catch (NumberFormatException e)
+            {
+                System.out.println("Veuillez entrer un nombre dans le panier");
+            }
+        }
+        recupISBN.close();
+        Livre l = null;
+        try{
+        l = bd.getLivreParId(isbn);
+        }
+        catch (SQLException e)
+        {
+            System.out.println("Erreur SQL");
+        }
+        Integer qte = null;
+        Scanner recupQte = new Scanner(System.in);
+        
+        boolean bonneQte = false;
+        while (!bonneQte)
+        {
+            try {
+                System.out.println("Entrez la quantitee a supprimer");
+                qte = Integer.parseInt(recupQte.nextLine());
+                if (qte > this.panier.get(l) || qte < 0)
+                {
+                    System.out.println("Veuillez entrer une quantitee correcte");
+                }
+                else
+                {
+                    bonneQte = true;
+                }
+            }
+            catch (NumberFormatException e)
+            {
+                System.out.println("Veuillez mettre une quantitee correcte");
+            }
+        }
+        recupQte.close();
+        
+    }
+
+    public void Panier(ActionBD bd){
         List<String> maListe = new ArrayList<>();
         maListe.add("Afficher articles");
         maListe.add("Afficher prix total");
+        maListe.add("Supprimer un Livre");
         maListe.add("Retour");
 
         boolean commande_faite = false;
@@ -283,7 +355,11 @@ public class Commande{
                     commande_faite=true;
                     break;
                 case "3":
-                commande_faite = true;
+                    this.SupprimerLivre(bd);
+                    commande_faite = true;
+                    break;
+                case "4":
+                    commande_faite = true;
                     break;
             }
         }  
