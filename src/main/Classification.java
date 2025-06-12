@@ -3,14 +3,14 @@ package main;
 public class Classification {
 
     private int iddewey;
-    private String nomedit;
+    private String nomclass;
 
-    public Classification(int iddewey,String nomedit){
+    public Classification(int iddewey,String nomclass){
         this.iddewey=iddewey;
-        this.nomedit=nomedit;
+        this.nomclass=nomclass;
     }
 
     public int getIddewey(){return this.iddewey;}
-    public String getNomEdit(){return this.nomedit;}
+    public String getNomClass(){return this.nomclass;}
     
 }

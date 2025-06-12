@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.Scanner;
 
 public class Client extends User {
-    private char modeReception;
     private int codePostal;
     private String villeCli;
     private String adresseCli;
@@ -16,7 +15,6 @@ public class Client extends User {
     // Ajout des paramètres manquants pour User : email, motDePasse, role
     public Client(int id, String email, String nom, String prenom, String motDePasse, String role, int codePostal, String villeCli, String adresseCli) {
         super(id, email, nom, motDePasse, role);
-        this.modeReception = 'M';
         this.codePostal = codePostal;
         this.villeCli = villeCli;
         this.adresseCli = adresseCli;
@@ -25,7 +23,6 @@ public class Client extends User {
 
     public Client(int id, String email, String nom, String prenom, String motDePasse, String role, int codePostal, String villeCli, String adresseCli, List<Commande> commandes) {
         super(id, email, nom, motDePasse, role);
-        this.modeReception = 'M';
         this.codePostal = codePostal;
         this.villeCli = villeCli;
         this.adresseCli = adresseCli;
@@ -55,8 +52,7 @@ public class Client extends User {
         if (!(o instanceof Client)) return false;
         if (!super.equals(o)) return false;
         Client client = (Client) o;
-        return this.modeReception == client.modeReception &&
-                this.codePostal == client.codePostal &&
+        return   this.codePostal == client.codePostal &&
                 this.villeCli.equals(client.villeCli) &&
                 this.adresseCli.equals(client.adresseCli);
     }
