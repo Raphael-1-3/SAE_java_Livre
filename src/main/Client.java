@@ -171,7 +171,7 @@ public class Client extends User {
                 break;
             case "3":
                 System.out.println("Vous etres maintenant dans le menu panier");
-                // TODO: afficher les paramètres
+                menuParam(bd, clientC, scanner);
                 break;
             case "4":
             case "q":
@@ -267,7 +267,6 @@ public class Client extends User {
                     afficherEtAjouterLivreAuPanier(scanner, client, livresTitre);
                     break;
                 case "3":
-                    // Voir ce qu'on vous recommande
                     try {
                         List<Livre> recommandations = bd.onVousRecommande(client);
                         if (rechercheDispoMag)
@@ -486,5 +485,65 @@ public class Client extends User {
             if (magasinsCommuns.isEmpty()) break; // optimisation
         }
         return magasinsCommuns;
+    }
+
+
+    public static void menuParam(ActionBD bd, Client client, Scanner scanner)
+    {
+        List<String> menuListe = new ArrayList<>();
+        menuListe.add("Changer le mot de passe");
+        menuListe.add("Changer l'adresse");
+        menuListe.add("Retour");
+
+        boolean quitter = false;
+        while (!quitter) {
+            System.out.println(AfficherMenu.Menu("Paramètres du compte", menuListe));
+            System.out.print("Que veux-tu faire ? : ");
+            String choix = scanner.nextLine().strip().toLowerCase();
+
+            switch (choix) {
+                case "1":
+                    System.out.print("Entrez votre nouveau mot de passe : ");
+                    String nouveauMdp = scanner.nextLine().strip();
+                    try {
+                        boolean ok = bd.changerMotDePasse(client, nouveauMdp);
+                        if (ok) {
+                            System.out.println("Mot de passe changé avec succès.");
+                            System.out.println("Votre nouveau motDePasse est " + client.getMdp());
+                        } else {
+                            System.out.println("Erreur lors du changement de mot de passe.");
+                        }
+                    } catch (SQLException e) {
+                        System.out.println("Erreur SQL : " + e.getMessage());
+                    }
+                    break;
+                case "2":
+                    System.out.print("Nouvelle adresse : ");
+                    String nouvelleAdresse = scanner.nextLine().strip();
+                    System.out.print("Nouveau code postal : ");
+                    String nouveauCP = scanner.nextLine().strip();
+                    System.out.print("Nouvelle ville : ");
+                    String nouvelleVille = scanner.nextLine().strip();
+                    try {
+                        boolean ok = bd.changerAdresse(client, nouvelleAdresse, nouveauCP, nouvelleVille);
+                        if (ok) {
+                            System.out.println("Adresse modifiée avec succès.");
+                            System.out.println("Voici vos nouvelles coordonnées : " + nouvelleAdresse + ", " + nouveauCP + " " + nouvelleVille);
+                        } else {
+                            System.out.println("Erreur lors de la modification de l'adresse.");
+                        }
+                    } catch (SQLException e) {
+                        System.out.println("Erreur SQL : " + e.getMessage());
+                    }
+                    break;
+                case "3":
+                case "q":
+                case "retour":
+                    quitter = true;
+                    break;
+                default:
+                    System.out.println("Commande non reconnue, veuillez entrer un numéro valide.");
+            }
+        }
     }
 }

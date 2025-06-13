@@ -829,7 +829,12 @@ public class ActionBD{
         return c;
     }
 
-
+    /**
+     * Permet de rechercher un livre a partir d un nom d auteur approximatife
+     * @param auteurRecherche
+     * @return
+     * @throws SQLException
+     */
     public  List<Livre> rechercheLivreAuteurApproximative(String auteurRecherche) throws SQLException
     {
         PreparedStatement ps = this.connexion.prepareStatement("SELECT isbn, titre, nbpages, datepubli, prix FROM LIVRE natural join ECRIRE natural join AUTEUR WHERE LOWER(nomauteur) LIKE ?");
@@ -911,4 +916,24 @@ public class ActionBD{
         Magasin m = new Magasin(idmag, nom, ville);
         return m;
     }
+
+    /**
+     * Permet a un client de changer de mot de passe (celui par defaut et pas trop secu)
+     * @param client
+     * @param nouveauMdp
+     * @throws SQLException
+     */
+    public boolean changerMotDePasse(Client client, String nouveauMdp) throws SQLException
+    {
+        PreparedStatement ps = this.connexion.prepareStatement("update USER motDePasse = ? where idu = ?");
+        ps.setString(1, nouveauMdp);
+        ps.setInt(2, client.getId());
+        try{ 
+            ps.executeUpdate();
+            ps.close();
+            return true;
+        } catch(SQLException e) {ps.close(); return false;}
+    }
+
+    public 
 }
