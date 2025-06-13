@@ -282,7 +282,7 @@ public class Client extends User {
                             recommandations = livresDispo;
                         }
                         afficherEtAjouterLivreAuPanier(scanner, client, recommandations);
-                        
+
                     } catch (PasDHistoriqueException e) {
                         System.out.println("Erreur lors de la récupération des recommandations : vous n'avez pas d'historique d'achat");
                     }
@@ -442,8 +442,21 @@ public class Client extends User {
                     Magasin magasinChoisi = magasinsDispo.get(numMag);
                     Commande comClient = new Commande(numMag, bd);
                     comClient.changerModeReception(bd);
-                    bd.PasserCommande(client, comClient, magasinChoisi);
-                    System.out.println("Commande passée dans le magasin : " + magasinChoisi);
+                    double total = 0.0;
+                    for (Livre livre : panier.keySet()) {
+                        total += livre.getPrix() * panier.get(livre);
+                    }
+                    System.out.printf("Le montant total de votre commande est : %.2f€%n", total);
+                    System.out.print("Voulez-vous payer cette somme ? (oui/non) : ");
+                    String reponsePaiement = scanner.nextLine().strip().toLowerCase();
+                    if (!(reponsePaiement.equals("oui") || reponsePaiement.equals("o"))) {
+                        System.out.println("Commande annulée.");
+                    }
+                    else{
+
+                        bd.PasserCommande(client, comClient, magasinChoisi);
+                        System.out.println("Commande passée dans le magasin : " + magasinChoisi);
+                    }
                     
                     client.getPanier().clear();
                     quitter = true;
