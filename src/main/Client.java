@@ -525,7 +525,11 @@ public class Client extends User {
                     System.out.print("Nouvelle ville : ");
                     String nouvelleVille = scanner.nextLine().strip();
                     try {
-                        boolean ok = bd.changerAdresse(client, nouvelleAdresse, nouveauCP, nouvelleVille);
+                        Integer nouveauCPInt = null;
+                        try { 
+                            nouveauCPInt = Integer.parseInt(nouveauCP);
+                        }catch(NumberFormatException e) {System.out.println("votre codo postal n'est pas un nombre");}
+                        boolean ok = bd.changerAdresse(client, nouvelleAdresse, nouveauCPInt, nouvelleVille);
                         if (ok) {
                             System.out.println("Adresse modifiée avec succès.");
                             System.out.println("Voici vos nouvelles coordonnées : " + nouvelleAdresse + ", " + nouveauCP + " " + nouvelleVille);

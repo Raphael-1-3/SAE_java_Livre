@@ -925,7 +925,7 @@ public class ActionBD{
      */
     public boolean changerMotDePasse(Client client, String nouveauMdp) throws SQLException
     {
-        PreparedStatement ps = this.connexion.prepareStatement("update USER motDePasse = ? where idu = ?");
+        PreparedStatement ps = this.connexion.prepareStatement("update USER set motDePasse = ? where idu = ?");
         ps.setString(1, nouveauMdp);
         ps.setInt(2, client.getId());
         try{ 
@@ -935,5 +935,20 @@ public class ActionBD{
         } catch(SQLException e) {ps.close(); return false;}
     }
 
-    public 
+    public boolean changerAdresse(Client client, String nouvelleAdresse, int nouveauCP, String nouvelleVille) throws SQLException
+    {
+        PreparedStatement ps = this.connexion.prepareStatement("update CLIENT set adressecli = ?, codepostal = ?, villecli = ? where idcli = ?");
+        ps.setString(1, nouvelleAdresse);
+        ps.setInt(2, nouveauCP);
+        ps.setString(3, nouvelleVille);
+        ps.setInt(4, client.getId());
+        try {
+            ps.executeUpdate();
+            ps.close();
+            return true;
+        } catch (SQLException e) {
+            ps.close();
+            return false;
+        }
+    }
 }
