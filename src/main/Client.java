@@ -224,6 +224,7 @@ public class Client extends User {
         List<String> menuSousRecherche = new ArrayList<>();
         menuSousRecherche.add("Par auteur");
         menuSousRecherche.add("Par nom de livre");
+        menuSousRecherche.add("Voir ce qu'on vous recommande");
         menuSousRecherche.add("Retour");
         boolean sousMenuQuitter = false;
         while (!sousMenuQuitter) {
@@ -266,6 +267,27 @@ public class Client extends User {
                     afficherEtAjouterLivreAuPanier(scanner, client, livresTitre);
                     break;
                 case "3":
+                    // Voir ce qu'on vous recommande
+                    try {
+                        List<Livre> recommandations = bd.onVousRecommande(client);
+                        if (rechercheDispoMag)
+                        {
+                            List<Livre> livresDispo = new ArrayList<>();
+                            for (Livre livre : recommandations) {
+                                List<Magasin> magasins = bd.getMagasinOuLivreDispo(livre);
+                                if (magasins != null && !magasins.isEmpty()) {
+                                    livresDispo.add(livre);
+                                }
+                            }
+                            recommandations = livresDispo;
+                        }
+                        afficherEtAjouterLivreAuPanier(scanner, client, recommandations);
+                        
+                    } catch (PasDHistoriqueException e) {
+                        System.out.println("Erreur lors de la récupération des recommandations : vous n'avez pas d'historique d'achat");
+                    }
+                    break;
+                case "4":
                 case "q":
                 case "retour":
                     sousMenuQuitter = true;
@@ -274,7 +296,6 @@ public class Client extends User {
                     System.out.println("Commande non reconnue, veuillez entrer un numéro valide.");
             }
         }
-        
     }
 
     private static void afficherEtAjouterLivreAuPanier(Scanner scanner, Client client, List<Livre> livres) {
