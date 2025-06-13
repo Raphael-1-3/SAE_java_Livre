@@ -163,7 +163,7 @@ public class Client extends User {
             switch (commande) {
             case "1":
                 System.out.println("emmene vers le catalogue");
-                rechercheLivre(bd, clientC, scanner);
+                choixDisponibilite(bd, clientC, scanner);
                 break;
             case "2":
                 System.out.println("emmene vers consulter Panier");
@@ -184,43 +184,97 @@ public class Client extends User {
             }
         }
     }
+    public static void choixDisponibilite(ActionBD bd, Client client, Scanner scanner) throws SQLException {
+        // Premier menu : choix du mode de recherche
+        List<String> menuModeRecherche = new ArrayList<>();
+        menuModeRecherche.add("Parmi les livres disponibles en magasin");
+        menuModeRecherche.add("Parmi tout les libres enregistré");
+        menuModeRecherche.add("Quitter");
 
-    public static void rechercheLivre(ActionBD bd, Client client, Scanner scanner) throws SQLException {
-        List<String> menuListe = new ArrayList<>();
-        menuListe.add("Auteur");
-        menuListe.add("Nom de livre");
-        menuListe.add("Quitter");
-
-        boolean commande_faite = false;
-        while (!commande_faite) {
-            System.out.println(AfficherMenu.Menu("Recherche de livre", menuListe));
+        boolean quitterRecherche = false;
+        while (!quitterRecherche) {
+            System.out.println(AfficherMenu.Menu("Recherche de livre", menuModeRecherche));
             System.out.print("Que veux-tu faire ? : ");
-            String commande_brute = scanner.nextLine();
-            String commande = commande_brute.strip().toLowerCase();
+            String choixMode = scanner.nextLine().strip().toLowerCase();
+            boolean rechercheDispoMag = false;
+            switch (choixMode) {
+                case "1":
+                    rechercheDispoMag = true;
+                    rechercheLivre(bd, client, scanner, rechercheDispoMag);
+                    break;
+                case "2":
+                    rechercheDispoMag = false;
+                    rechercheLivre(bd, client, scanner, rechercheDispoMag);
+                    break;
+                case "3":
+                case "q":
+                case "quitter":
+                    System.out.println("Vous quittez la recherche.");
+                    quitterRecherche = true;
+                    break;
+                default:
+                    System.out.println("Commande non reconnue, veuillez entrer un numéro valide.");
+            }
+        }
+    }
 
-            switch (commande) {
+
+    public static void rechercheLivre(ActionBD bd, Client client, Scanner scanner, boolean rechercheDispoMag) throws SQLException
+    {
+        List<String> menuSousRecherche = new ArrayList<>();
+        menuSousRecherche.add("Par auteur");
+        menuSousRecherche.add("Par nom de livre");
+        menuSousRecherche.add("Retour");
+        boolean sousMenuQuitter = false;
+        while (!sousMenuQuitter) {
+            System.out.println(AfficherMenu.Menu("Recherche par auteur ou nom", menuSousRecherche));
+            System.out.print("Votre choix : ");
+            String sousChoix = scanner.nextLine().strip().toLowerCase();
+            switch (sousChoix) {
                 case "1":
                     System.out.print("Entrez le nom de l'auteur : ");
                     String auteurRecherche = scanner.nextLine().strip();
                     List<Livre> livresAuteur = bd.rechercheLivreAuteurApproximative(auteurRecherche);
+                    if (rechercheDispoMag)
+                    {
+                        List<Livre> livresDispo = new ArrayList<>();
+                        for (Livre livre : livresAuteur) {
+                            List<Magasin> magasins = bd.getMagasinOuLivreDispo(livre);
+                            if (magasins != null && !magasins.isEmpty()) {
+                                livresDispo.add(livre);
+                            }
+                        }
+                        livresAuteur = livresDispo;
+                    }
                     afficherEtAjouterLivreAuPanier(scanner, client, livresAuteur);
                     break;
                 case "2":
                     System.out.print("Entrez le titre du livre : ");
                     String titreRecherche = scanner.nextLine().strip();
                     List<Livre> livresTitre = bd.cherhcherLivreApproximative(titreRecherche);
+                    if (rechercheDispoMag)
+                    {
+                        List<Livre> livresDispo = new ArrayList<>();
+                        for (Livre livre : livresTitre) {
+                            List<Magasin> magasins = bd.getMagasinOuLivreDispo(livre);
+                            if (magasins != null && !magasins.isEmpty()) {
+                                livresDispo.add(livre);
+                            }
+                        }
+                        livresTitre = livresDispo;
+                    }
                     afficherEtAjouterLivreAuPanier(scanner, client, livresTitre);
                     break;
                 case "3":
                 case "q":
-                case "quitter":
-                    System.out.println("Vous quittez la recherche.");
-                    commande_faite = true;
+                case "retour":
+                    sousMenuQuitter = true;
                     break;
                 default:
                     System.out.println("Commande non reconnue, veuillez entrer un numéro valide.");
             }
         }
+        
     }
 
     private static void afficherEtAjouterLivreAuPanier(Scanner scanner, Client client, List<Livre> livres) {
@@ -331,27 +385,72 @@ public class Client extends User {
     }
 
     public static void menuCommande(ActionBD bd, Client client, Scanner scanner) throws SQLException 
-    {}
-        
-    
-    public static void choisirMagasin(ActionBD bd){
-        List<String> menuListe = new ArrayList<>();
-        List<Magasin> tabMag = null; //bd.listeMagasin()
-        //parcour + ajout menu
-        menuListe.add("");
-        menuListe.add("Retour");
-        boolean commande_faite = false;
-        while(!commande_faite){
-            System.out.println(AfficherMenu.Menu("Choix Magasins",menuListe));
-            System.out.println("Dans quel magasin ? : ");
-            String commande_brute=System.console().readLine();
-            String commande = commande_brute.strip().toLowerCase();
-            if (commande.equals("5")){
-                commande_faite=true;
+    {
+        HashMap<Livre, Integer> panier = client.getPanier();
+        if (panier.isEmpty()) {
+            System.out.println("Votre panier est vide, impossible de commander.");
+        }
+        List<Livre> livresDansPanier = new ArrayList<>(panier.keySet());
+        List<Magasin> magasinsDispo = client.getMagasinsAvecTousCesLivres(livresDansPanier, bd);
 
+        if (magasinsDispo.isEmpty()) {
+            System.out.println("Aucun magasin ne possède tous les livres de votre panier.");
+        }
+
+        List<String> menuMagasins = new ArrayList<>();
+        for (Magasin mag : magasinsDispo) {
+            menuMagasins.add(mag.getNomMag());
+        }
+        menuMagasins.add("Retour");
+
+        boolean quitter = false;
+        while (!quitter) {
+            System.out.println(AfficherMenu.Menu("Magasins disponibles pour votre commande", menuMagasins));
+            System.out.print("Dans quel magasin souhaitez-vous commander ? (numéro ou 'retour') : ");
+            String choix = scanner.nextLine().strip().toLowerCase();
+
+            if (choix.equals("retour") || choix.equals(String.valueOf(menuMagasins.size()))) {
+                quitter = true;
+            } else {
+                try {
+                    int numMag = Integer.parseInt(choix) - 1;
+                    if (numMag < 0 || numMag >= magasinsDispo.size()) {
+                        System.out.println("Numéro invalide.");
+                        continue;
+                    }
+                    Magasin magasinChoisi = magasinsDispo.get(numMag);
+                    Commande comClient = new Commande(numMag, bd);
+                    comClient.changerModeReception(bd);
+                    bd.PasserCommande(client, comClient, magasinChoisi);
+                    System.out.println("Commande passée dans le magasin : " + magasinChoisi);
+                    
+                    client.getPanier().clear();
+                    quitter = true;
+                } catch (NumberFormatException e) {
+                    System.out.println("Entrée invalide.");
+                }
             }
         }
+
     }
 
-    public void avoirRecommandations() {}
+    /**
+    * Renvoie la liste des magasins où TOUS les livres de la liste sont disponibles
+    * @param livres Liste de livres recherchés
+    * @return Liste de magasins où tous les livres sont dispo
+    * @throws SQLException
+    */
+    public List<Magasin> getMagasinsAvecTousCesLivres(List<Livre> livres, ActionBD bd) throws SQLException {
+        if (livres == null || livres.isEmpty()) return new ArrayList<>();
+
+        // Initialiser avec les magasins du premier livre
+        List<Magasin> magasinsCommuns = new ArrayList<>(bd.getMagasinOuLivreDispo(livres.get(0)));
+
+        for (int i = 1; i < livres.size(); i++) {
+            List<Magasin> magasinsPourLivre = bd.getMagasinOuLivreDispo(livres.get(i));
+            magasinsCommuns.retainAll(magasinsPourLivre); // intersection
+            if (magasinsCommuns.isEmpty()) break; // optimisation
+        }
+        return magasinsCommuns;
+    }
 }

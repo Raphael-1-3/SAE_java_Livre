@@ -756,9 +756,9 @@ public class ActionBD{
     {
         List<Magasin> tabMag = new ArrayList<>();
         PreparedStatement ps = this.connexion.prepareStatement(
-            "select * from MAGASIN natural join POSSEDER natural join LIVRE where titre = ?"
+            "select * from MAGASIN natural join POSSEDER natural join LIVRE where isbn = ?"
         );
-        ps.setString(1, livre.getTitre());
+        ps.setLong(1, livre.getISBN());
         ResultSet rs = ps.executeQuery();
         while (rs.next()) {
             tabMag.add(new Magasin(

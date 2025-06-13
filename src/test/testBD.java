@@ -39,13 +39,6 @@ public class testBD
         this.connexion = connexion; 
         this.bd = new ActionBD(this.connexion);  
     }
-    @Test
-    public void testAddLivre()
-    {} //TODO
-
-    @Test
-    public void testUpdateStock()
-    {} //TODO
 
     @Test
     public void testgetLivreParTitre() throws SQLException
@@ -337,13 +330,108 @@ public class testBD
         ps.close();
     }
 
-// TODO: Tester PasserCommande
-// TODO: Tester GetListeLivre
-// TODO: Tester AddLivre
-// TODO: Tester UpdateStock
-// TODO: Tester VoirStockMag
-// TODO: Tester magAPartirNom
-// TODO: Tester connexionRole
-// TODO: Tester creerClient
+    @Test
+    public void testPasserCommande() throws SQLException {
+        // TODO: Implémenter un test pour PasserCommande
+    }
 
+    @Test
+    public void testGetListeLivre() throws SQLException {
+        // TODO: Implémenter un test pour GetListeLivre
+    }
+
+    @Test
+    public void testAddLivre() throws SQLException {
+        // TODO: Implémenter un test pour AddLivre
+    }
+
+    @Test
+    public void testUpdateStock() throws SQLException {
+        // TODO: Implémenter un test pour UpdateStock
+    }
+
+    @Test
+    public void testVoirStockMag() throws SQLException {
+        // TODO: Implémenter un test pour VoirStockMag
+    }
+
+    @Test
+    public void testTransfer() throws SQLException {
+        // TODO: Implémenter un test pour Transfer
+    }
+
+    @Test
+    public void testAddVendeur() throws SQLException {
+        // TODO: Implémenter un test pour AddVendeur
+    }
+
+    @Test
+    public void testAddLibrairie() throws SQLException {
+        // TODO: Implémenter un test pour AddLibrairie
+    }
+
+    @Test
+    public void testMagAPartirNom() throws SQLException {
+        // TODO: Implémenter un test pour magAPartirNom
+    }
+
+    @Test
+    public void testConnexionRole() throws SQLException {
+        // TODO: Implémenter un test pour connexionRole
+    }
+
+    @Test
+    public void testCreerClient() throws SQLException {
+        // TODO: Implémenter un test pour creerClient
+    }
+
+    @Test
+    public void testChercherLivreApproximative() throws SQLException {
+        // TODO: Implémenter un test pour cherhcherLivreApproximative
+    }
+
+    @Test
+    public void testGetListMagasin() throws SQLException {
+        // TODO: Implémenter un test pour getListMagasin
+    }
+
+    @Test
+    public void testGetMagasinOuLivreDispo() throws SQLException {
+        // TODO: Implémenter un test pour getMagasinOuLivreDispo
+    }
+
+    @Test
+    public void testGetClientNonPrenom() throws SQLException {
+        // TODO: Implémenter un test pour getClientNonPrenom
+    }
+
+    @Test
+    public void testGetClientParId() throws SQLException {
+        // TODO: Implémenter un test pour getClientParId
+    }
+
+    @Test
+    public void testRechercheLivreAuteurApproximative() throws SQLException {
+        // TODO: Implémenter un test pour rechercheLivreAuteurApproximative
+    }
+
+    @Test
+    public void testGetCurrentDate() throws SQLException {
+        // TODO: Implémenter un test pour getCurrentDate
+    }
+
+    @Test
+    public void testGetLivreParId() throws SQLException {
+        // TODO: Implémenter un test pour getLivreParId
+    }
+
+    @Test
+    public void testGetMaxISBN() throws SQLException {
+        // TODO: Implémenter un test pour getMaxISBN
+    }
+
+    @Test
+    public void testGetMagasinParId() throws SQLException {
+        // TODO: Implémenter un test pour getMagasinParId
+    }
 }
