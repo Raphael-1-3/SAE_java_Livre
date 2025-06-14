@@ -972,4 +972,133 @@ public class ActionBD{
         rs.close();
         return mag;
     }
+
+    /**
+     * Génère la facture détaillée d'un client pour un mois et une année donnés.
+     */
+    public String factureClient(Client client, int mois, int annee) throws SQLException {
+        StringBuilder res = new StringBuilder();
+        res.append("Facture de ").append(client.getPrenom()).append(" ").append(client.getNom()).append(" - ").append(client.getAdresseCli()).append(", ").append(client.getCodePostal()).append(" ").append(client.getVilleCli()).append("\n");
+        res.append("Période : ").append(mois).append("/").append(annee).append("\n");
+        res.append("--------------------------------------------------------------------------------\n");
+
+        PreparedStatement ps = this.connexion.prepareStatement(
+            "SELECT c.numcom, c.datecom, l.isbn, l.titre, dc.qte, l.prix, dc.total " +
+            "FROM COMMANDE c " +
+            "JOIN DETAILCOMMANDE dc ON c.numcom = dc.numcom " +
+            "JOIN LIVRE l ON dc.isbn = l.isbn " +
+            "WHERE c.idcli = ? AND MONTH(c.datecom) = ? AND YEAR(c.datecom) = ? " +
+            "ORDER BY c.numcom, l.titre"
+        );
+        ps.setInt(1, client.getId());
+        ps.setInt(2, mois);
+        ps.setInt(3, annee);
+        ResultSet rs = ps.executeQuery();
+
+        int lastNumCom = -1;
+        double totalCommande = 0;
+        double totalGlobal = 0;
+        while (rs.next()) {
+            int numcom = rs.getInt("numcom");
+            if (numcom != lastNumCom) {
+                if (lastNumCom != -1) {
+                    res.append("Total commande : ").append(String.format("%.2f", totalCommande)).append(" €\n");
+                    res.append("--------------------------------------------------------------------------------\n");
+                }
+                totalCommande = 0;
+                res.append("Commande n°").append(numcom).append(" du ").append(rs.getDate("datecom")).append("\n");
+                res.append("ISBN         Titre                               Qte   Prix   Total\n");
+            }
+            double totalArticle = rs.getDouble("total");
+            res.append(String.format("%-12s%-35s%-6d%-7.2f%-7.2f\n",
+                rs.getString("isbn"),
+                rs.getString("titre"),
+                rs.getInt("qte"),
+                rs.getDouble("prix"),
+                totalArticle
+            ));
+            totalCommande += totalArticle;
+            totalGlobal += totalArticle;
+            lastNumCom = numcom;
+        }
+        if (lastNumCom != -1) {
+            res.append("Total commande : ").append(String.format("%.2f", totalCommande)).append(" €\n");
+            res.append("--------------------------------------------------------------------------------\n");
+        }
+        res.append("Total à payer : ").append(String.format("%.2f", totalGlobal)).append(" €\n");
+        rs.close();
+        ps.close();
+        return res.toString();
+    }
+
+    /**
+     * Génère la facture globale d'un magasin pour un mois et une année donnés.
+     */
+    public String factureMagasin(Magasin mag, int mois, int annee) throws SQLException {
+        StringBuilder res = new StringBuilder();
+        res.append("Factures du magasin ").append(mag.getNomMag()).append(" (").append(mag.getVilleMag()).append(")\n");
+        res.append("Période : ").append(mois).append("/").append(annee).append("\n");
+        res.append("********************************************************************************\n");
+
+        PreparedStatement ps = this.connexion.prepareStatement(
+            "SELECT c.numcom, c.datecom, cl.nomcli, cl.prenomcli, cl.adressecli, cl.codepostal, l.isbn, l.titre, dc.qte, l.prix, dc.total " +
+            "FROM COMMANDE c " +
+            "JOIN CLIENT cl ON c.idcli = cl.idcli " +
+            "JOIN DETAILCOMMANDE dc ON c.numcom = dc.numcom " +
+            "JOIN LIVRE l ON dc.isbn = l.isbn " +
+            "WHERE c.idmag = ? AND MONTH(c.datecom) = ? AND YEAR(c.datecom) = ? " +
+            "ORDER BY c.numcom, l.titre"
+        );
+        ps.setInt(1, mag.getIdmag());
+        ps.setInt(2, mois);
+        ps.setInt(3, annee);
+        ResultSet rs = ps.executeQuery();
+
+        int lastNumCom = -1;
+        double totalCommande = 0;
+        double totalGlobal = 0;
+        int nbFactures = 0;
+        int nbLivres = 0;
+        String clientInfo = "";
+        while (rs.next()) {
+            int numcom = rs.getInt("numcom");
+            if (numcom != lastNumCom) {
+                if (lastNumCom != -1) {
+                    res.append("Total commande : ").append(String.format("%.2f", totalCommande)).append(" €\n");
+                    res.append("--------------------------------------------------------------------------------\n");
+                }
+                totalCommande = 0;
+                nbFactures++;
+                clientInfo = rs.getString("prenomcli") + " " + rs.getString("nomcli") + " - " + rs.getString("adressecli") + " " + rs.getString("codepostal");
+                res.append(clientInfo).append("\n");
+                res.append("Commande n°").append(numcom).append(" du ").append(rs.getDate("datecom")).append("\n");
+                res.append("ISBN         Titre                               Qte   Prix   Total\n");
+            }
+            double totalArticle = rs.getDouble("total");
+            res.append(String.format("%-12s%-35s%-6d%-7.2f%-7.2f\n",
+                rs.getString("isbn"),
+                rs.getString("titre"),
+                rs.getInt("qte"),
+                rs.getDouble("prix"),
+                totalArticle
+            ));
+            totalCommande += totalArticle;
+            totalGlobal += totalArticle;
+            nbLivres += rs.getInt("qte");
+            lastNumCom = numcom;
+        }
+        if (lastNumCom != -1) {
+            res.append("Total commande : ").append(String.format("%.2f", totalCommande)).append(" €\n");
+            res.append("--------------------------------------------------------------------------------\n");
+        }
+        res.append(nbFactures).append(" factures éditées\n");
+        res.append(nbLivres).append(" livres vendus\n");
+        res.append("Chiffre d'affaire global : ").append(String.format("%.2f", totalGlobal)).append(" €\n");
+        res.append("********************************************************************************\n");
+        rs.close();
+        ps.close();
+        return res.toString();
+    }
+
 }
+
