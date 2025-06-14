@@ -253,46 +253,53 @@ public class Client extends User {
         menuSousRecherche.add("Retour");
         boolean sousMenuQuitter = false;
         while (!sousMenuQuitter) {
-            System.out.println(AfficherMenu.Menu("Recherche par auteur ou nom", menuSousRecherche));
+            System.out.println(AfficherMenu.Menu("Recherche de livre", menuSousRecherche));
             System.out.print("Votre choix : ");
             String sousChoix = scanner.nextLine().strip().toLowerCase();
             switch (sousChoix) {
-                case "1":
-                    System.out.print("Entrez l'editeur : ");
+                case "1": // Par auteur
+                    System.out.print("Entrez le nom de l'auteur : ");
                     String nomAuteur = scanner.nextLine().strip();
                     List<Auteur> tabAuteur = bd.rechercheAuteurApproximative(nomAuteur);
-                    boolean choisirAuteur = false;
-                    Integer Auteurnb = null;
-                    while (!choisirAuteur) {
-                        System.out.println(AfficherMenu.Menu("Recherche par auteur ou nom", menuSousRecherche));
-                        System.out.print("Votre choix : ");
-                        String choixAuteur = scanner.nextLine().strip().toLowerCase();
-                        
-                        try{ Auteurnb = Integer.parseInt(choixAuteur); choisirAuteur = true;}
-                        catch(NumberFormatException e ) { System.out.println("vous n'avez pas rentrer un nombre"); choisirAuteur = true;}
+                    if (tabAuteur.isEmpty()) {
+                        System.out.println("Aucun auteur trouvé.");
+                        break;
                     }
-                    Auteur Auteur = tabAuteur.get(Auteurnb - 1);
-                    System.out.println("vous avez choisi editeur " + Auteur.getNomAuteur());
-                    List<Livre> LivreAuteur = bd.rechercheLivreAuteur(Auteur);
-                    if (rechercheDispoMag)
-                    {
+                    List<String> nomsAuteurs = new ArrayList<>();
+                    for (Auteur a : tabAuteur) nomsAuteurs.add(a.getNomAuteur());
+                    System.out.println(AfficherMenu.Menu("Auteurs trouvés", nomsAuteurs));
+                    System.out.print("Votre choix (numéro) : ");
+                    int Auteurnb = -1;
+                    try {
+                        Auteurnb = Integer.parseInt(scanner.nextLine().strip());
+                        if (Auteurnb < 1 || Auteurnb > tabAuteur.size()) {
+                            System.out.println("Numéro invalide.");
+                            break;
+                        }
+                    } catch (NumberFormatException e) {
+                        System.out.println("Vous n'avez pas entré un nombre.");
+                        break;
+                    }
+                    Auteur auteur = tabAuteur.get(Auteurnb - 1);
+                    System.out.println("Vous avez choisi l'auteur " + auteur.getNomAuteur());
+                    List<Livre> LivreAuteur = bd.rechercheLivreAuteur(auteur);
+                    if (rechercheDispoMag) {
                         List<Livre> livresDispo = new ArrayList<>();
                         for (Livre livre : LivreAuteur) {
-                                List<Magasin> magasins = bd.getMagasinOuLivreDispo(livre);
+                            List<Magasin> magasins = bd.getMagasinOuLivreDispo(livre);
                             if (magasins != null && !magasins.isEmpty()) {
-                                    livresDispo.add(livre);
+                                livresDispo.add(livre);
                             }
                         }
                         LivreAuteur = livresDispo;
                     }
                     afficherEtAjouterLivreAuPanier(scanner, client, LivreAuteur);
                     break;
-                case "2":
+                case "2": // Par nom de livre
                     System.out.print("Entrez le titre du livre : ");
                     String titreRecherche = scanner.nextLine().strip();
                     List<Livre> livresTitre = bd.cherhcherLivreApproximative(titreRecherche);
-                    if (rechercheDispoMag)
-                    {
+                    if (rechercheDispoMag) {
                         List<Livre> livresDispo = new ArrayList<>();
                         for (Livre livre : livresTitre) {
                             List<Magasin> magasins = bd.getMagasinOuLivreDispo(livre);
@@ -304,12 +311,10 @@ public class Client extends User {
                     }
                     afficherEtAjouterLivreAuPanier(scanner, client, livresTitre);
                     break;
-                case "3":
+                case "3": // Recommandations
                     try {
-                        System.out.print("Entrez le titre du livre : ");
                         List<Livre> recommandations = bd.onVousRecommande(client);
-                        if (rechercheDispoMag)
-                        {
+                        if (rechercheDispoMag) {
                             List<Livre> livresDispo = new ArrayList<>();
                             for (Livre livre : recommandations) {
                                 List<Magasin> magasins = bd.getMagasinOuLivreDispo(livre);
@@ -320,65 +325,80 @@ public class Client extends User {
                             recommandations = livresDispo;
                         }
                         afficherEtAjouterLivreAuPanier(scanner, client, recommandations);
-
                     } catch (PasDHistoriqueException e) {
                         System.out.println("Erreur lors de la récupération des recommandations : vous n'avez pas d'historique d'achat");
                     }
                     break;
-                case "4":
-                    System.out.print("Entrez l'editeur : ");
+                case "4": // Par éditeur
+                    System.out.print("Entrez le nom de l'éditeur : ");
                     String nomEditeur = scanner.nextLine().strip();
                     List<Editeur> tabEditeur = bd.cherhcherEditeurApproximative(nomEditeur);
-                    boolean choisirEditeur = false;
-                    Integer editeurnb = null;
-                    while (!choisirEditeur) {
-                        System.out.println(AfficherMenu.Menu("Recherche par auteur ou nom", menuSousRecherche));
-                        System.out.print("Votre choix : ");
-                        String choixEditeur = scanner.nextLine().strip().toLowerCase();
-                        
-                        try{ editeurnb = Integer.parseInt(choixEditeur); choisirEditeur = true;}
-                        catch(NumberFormatException e ) { System.out.println("vous n'avez pas rentrer un nombre"); choisirEditeur = true;}
+                    if (tabEditeur.isEmpty()) {
+                        System.out.println("Aucun éditeur trouvé.");
+                        break;
+                    }
+                    List<String> nomsEditeurs = new ArrayList<>();
+                    for (Editeur e : tabEditeur) nomsEditeurs.add(e.getNomEdit());
+                    System.out.println(AfficherMenu.Menu("Éditeurs trouvés", nomsEditeurs));
+                    System.out.print("Votre choix (numéro) : ");
+                    int editeurnb = -1;
+                    try {
+                        editeurnb = Integer.parseInt(scanner.nextLine().strip());
+                        if (editeurnb < 1 || editeurnb > tabEditeur.size()) {
+                            System.out.println("Numéro invalide.");
+                            break;
+                        }
+                    } catch (NumberFormatException e) {
+                        System.out.println("Vous n'avez pas entré un nombre.");
+                        break;
                     }
                     Editeur editeur = tabEditeur.get(editeurnb - 1);
-                    System.out.println("vous avez choisi editeur " + editeur.getNomEdit());
+                    System.out.println("Vous avez choisi l'éditeur " + editeur.getNomEdit());
                     List<Livre> LivreEditeur = bd.chercherLivreAPartiEditeur(editeur);
-                    if (rechercheDispoMag)
-                    {
+                    if (rechercheDispoMag) {
                         List<Livre> livresDispo = new ArrayList<>();
                         for (Livre livre : LivreEditeur) {
-                                List<Magasin> magasins = bd.getMagasinOuLivreDispo(livre);
+                            List<Magasin> magasins = bd.getMagasinOuLivreDispo(livre);
                             if (magasins != null && !magasins.isEmpty()) {
-                                    livresDispo.add(livre);
+                                livresDispo.add(livre);
                             }
                         }
                         LivreEditeur = livresDispo;
                     }
                     afficherEtAjouterLivreAuPanier(scanner, client, LivreEditeur);
                     break;
-                case "5":
-                    System.out.print("Entrez l'editeur : ");
+                case "5": // Par classification
+                    System.out.print("Entrez la classification : ");
                     String nomClassification = scanner.nextLine().strip();
                     List<Classification> tabClassification = bd.cherhcherClassificationApproximative(nomClassification);
-                    boolean choisirClassification = false;
-                    Integer Classificationnb = null;
-                    while (!choisirClassification) {
-                        System.out.println(AfficherMenu.Menu("Recherche par auteur ou nom", menuSousRecherche));
-                        System.out.print("Votre choix : ");
-                        String choixClassification = scanner.nextLine().strip().toLowerCase();
-                        
-                        try{ Classificationnb = Integer.parseInt(choixClassification); choisirClassification = true;}
-                        catch(NumberFormatException e ) { System.out.println("vous n'avez pas rentrer un nombre"); choisirClassification = true;}
+                    if (tabClassification.isEmpty()) {
+                        System.out.println("Aucune classification trouvée.");
+                        break;
                     }
-                    Classification Classification = tabClassification.get(Classificationnb - 1);
-                    System.out.println("vous avez choisi editeur " + Classification.getNomClass());
-                    List<Livre> LivreClassification = bd.chercherLivreAPartirClassification(Classification);
-                    if (rechercheDispoMag)
-                    {
+                    List<String> nomsClassifications = new ArrayList<>();
+                    for (Classification c : tabClassification) nomsClassifications.add(c.getNomClass());
+                    System.out.println(AfficherMenu.Menu("Classifications trouvées", nomsClassifications));
+                    System.out.print("Votre choix (numéro) : ");
+                    int Classificationnb = -1;
+                    try {
+                        Classificationnb = Integer.parseInt(scanner.nextLine().strip());
+                        if (Classificationnb < 1 || Classificationnb > tabClassification.size()) {
+                            System.out.println("Numéro invalide.");
+                            break;
+                        }
+                    } catch (NumberFormatException e) {
+                        System.out.println("Vous n'avez pas entré un nombre.");
+                        break;
+                    }
+                    Classification classification = tabClassification.get(Classificationnb - 1);
+                    System.out.println("Vous avez choisi la classification " + classification.getNomClass());
+                    List<Livre> LivreClassification = bd.chercherLivreAPartirClassification(classification);
+                    if (rechercheDispoMag) {
                         List<Livre> livresDispo = new ArrayList<>();
                         for (Livre livre : LivreClassification) {
-                                List<Magasin> magasins = bd.getMagasinOuLivreDispo(livre);
+                            List<Magasin> magasins = bd.getMagasinOuLivreDispo(livre);
                             if (magasins != null && !magasins.isEmpty()) {
-                                    livresDispo.add(livre);
+                                livresDispo.add(livre);
                             }
                         }
                         LivreClassification = livresDispo;

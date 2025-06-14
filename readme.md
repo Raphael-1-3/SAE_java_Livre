@@ -23,5 +23,5 @@
 - ajout des dependance nessecaire 
 - ajout des information dans jeucomplet 
 
-javac -d bin -cp "lib/*;src" src/main/*.java src/test/*.java
-java -cp "bin;lib/*" main.Executable
+javac -d bin -cp "lib/*;src" src/Affichage/*.java src/test/*.java src/app/*.java src/BD/*.java src/Exceptions/*.java src/*.java
+java -cp "bin;lib/*" Executable

@@ -845,7 +845,7 @@ public class ActionBD{
     public  List<Livre> rechercheLivreAuteur(Auteur auteurRecherche) throws SQLException
     {
         PreparedStatement ps = this.connexion.prepareStatement("SELECT isbn, titre, nbpages, datepubli, prix FROM LIVRE natural join ECRIRE natural join AUTEUR WHERE idauteur = ?");
-        ps.setInt(1,  auteurRecherche.getIdAuteur());
+        ps.setString(1,  auteurRecherche.getIdAuteur());
         ResultSet rs = ps.executeQuery();
         List<Livre> livres = new ArrayList<>();
         while (rs.next()) {
@@ -1108,8 +1108,8 @@ public class ActionBD{
      */
     public List<Classification> cherhcherClassificationApproximative(String nomClass) throws SQLException
     {
-        PreparedStatement ps = this.connexion.prepareStatement("select * from CLASSIFICATION where nomclass = ?");
-        ps.setString(1, nomClass);
+        PreparedStatement ps = this.connexion.prepareStatement("select * from CLASSIFICATION where lower(nomclass) like ?");
+        ps.setString(1,"%" +nomClass+"%");
         ResultSet rs = ps.executeQuery();
         List<Classification> tabclass = new ArrayList<>();
         while (rs.next())
@@ -1127,7 +1127,7 @@ public class ActionBD{
      */
     public List<Livre> chercherLivreAPartirClassification(Classification classi) throws SQLException
     {
-        PreparedStatement ps = this.connexion.prepareStatement("select isbn, titre, nbpages, datepubli, prix from LIVRE natural join THEMES natural join CLASSIFICATION where iddwey = ?");
+        PreparedStatement ps = this.connexion.prepareStatement("select isbn, titre, nbpages, datepubli, prix from LIVRE natural join THEMES natural join CLASSIFICATION where iddewey = ?");
         ps.setInt(1, classi.getIddewey());
         ResultSet rs = ps.executeQuery();
         List<Livre> tabLivre = new ArrayList<>();
@@ -1152,8 +1152,8 @@ public class ActionBD{
      */
     public List<Editeur> cherhcherEditeurApproximative(String nomEditeur) throws SQLException
     {
-        PreparedStatement ps = this.connexion.prepareStatement("select * from EDITEUR where nomedit = ?");
-        ps.setString(1, nomEditeur);
+        PreparedStatement ps = this.connexion.prepareStatement("select * from EDITEUR where lower(nomedit) like ?");
+        ps.setString(1, "%"+nomEditeur+"%");
         ResultSet rs = ps.executeQuery();
         List<Editeur> tabediteur = new ArrayList<>();
         while (rs.next())
@@ -1191,14 +1191,14 @@ public class ActionBD{
 
     public List<Auteur> rechercheAuteurApproximative(String nomauteur) throws SQLException
     {
-        PreparedStatement ps = this.connexion.prepareStatement("select * from AUTEUR where nomauteur = ?");
-        ps.setString(1, nomauteur);
+        PreparedStatement ps = this.connexion.prepareStatement("select * from AUTEUR where lower(nomauteur) like ?");
+        ps.setString(1, "%" +nomauteur+ "%");
         ResultSet rs = ps.executeQuery();
         List<Auteur> tabauteur = new ArrayList<>();
         while (rs.next())
         {
             tabauteur.add(new Auteur(
-                rs.getInt("idauteur"),
+                rs.getString("idauteur"),
                 rs.getString("nomauteur"),
                 rs.getInt("anneenais"),
                 rs.getInt("anneedeces")

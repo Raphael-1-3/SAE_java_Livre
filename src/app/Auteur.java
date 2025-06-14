@@ -1,21 +1,21 @@
 package app;
 public class Auteur{
 
-    private int idAut;
+    private String idAut;
     private String nomAuteur;
     private int anneeNaissance;
     private int anneeMort;
     private boolean estmort;
 
 
-    public Auteur(int idAut,String nom,int anneeN,int anneeM){
+    public Auteur(String idAut,String nom,int anneeN,int anneeM){
         this.idAut=idAut;
         this.nomAuteur=nom;
         this.anneeMort=anneeM;
         this.anneeNaissance=anneeN;
     }
 
-    public int getIdAuteur(){return this.idAut;}
+    public String getIdAuteur(){return this.idAut;}
     public String getNomAuteur(){return this.nomAuteur;}
     public int getAnneeNaissance(){return this.anneeNaissance;}
     public int getAnneeMort(){return this.anneeMort;}
@@ -26,7 +26,7 @@ public class Auteur{
         if (this == obj) return true;
         if (obj == null || getClass() != obj.getClass()) return false;
         Auteur auteur = (Auteur) obj;
-        return idAut == auteur.idAut &&
+        return idAut.equals(auteur.idAut) &&
                estmort == auteur.estmort &&
                nomAuteur.equals(auteur.nomAuteur) &&
                anneeNaissance == auteur.anneeNaissance &&
