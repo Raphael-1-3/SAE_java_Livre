@@ -260,7 +260,7 @@ public class Client extends User {
                 case "1":
                     System.out.print("Entrez l'editeur : ");
                     String nomAuteur = scanner.nextLine().strip();
-                    List<Auteur> tabAuteur = bd.cherhcherAuteurApproximative(nomAuteur);
+                    List<Auteur> tabAuteur = bd.rechercheAuteurApproximative(nomAuteur);
                     boolean choisirAuteur = false;
                     Integer Auteurnb = null;
                     while (!choisirAuteur) {
@@ -273,7 +273,7 @@ public class Client extends User {
                     }
                     Auteur Auteur = tabAuteur.get(Auteurnb - 1);
                     System.out.println("vous avez choisi editeur " + Auteur.getNomAuteur());
-                    List<Livre> LivreAuteur = bd.chercherLivreAPartirAuteur(Auteur);
+                    List<Livre> LivreAuteur = bd.rechercheLivreAuteur(Auteur);
                     if (rechercheDispoMag)
                     {
                         List<Livre> livresDispo = new ArrayList<>();

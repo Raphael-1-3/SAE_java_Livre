@@ -842,10 +842,10 @@ public class ActionBD{
      * @return
      * @throws SQLException
      */
-    public  List<Livre> rechercheLivreAuteurApproximative(String auteurRecherche) throws SQLException
+    public  List<Livre> rechercheLivreAuteur(Auteur auteurRecherche) throws SQLException
     {
-        PreparedStatement ps = this.connexion.prepareStatement("SELECT isbn, titre, nbpages, datepubli, prix FROM LIVRE natural join ECRIRE natural join AUTEUR WHERE LOWER(nomauteur) LIKE ?");
-        ps.setString(1, "%" + auteurRecherche.toLowerCase() + "%");
+        PreparedStatement ps = this.connexion.prepareStatement("SELECT isbn, titre, nbpages, datepubli, prix FROM LIVRE natural join ECRIRE natural join AUTEUR WHERE idauteur = ?");
+        ps.setInt(1,  auteurRecherche.getIdAuteur());
         ResultSet rs = ps.executeQuery();
         List<Livre> livres = new ArrayList<>();
         while (rs.next()) {
@@ -1186,6 +1186,25 @@ public class ActionBD{
             ));
         }
         return tabLivre;
+    }
+
+
+    public List<Auteur> rechercheAuteurApproximative(String nomauteur) throws SQLException
+    {
+        PreparedStatement ps = this.connexion.prepareStatement("select * from AUTEUR where nomauteur = ?");
+        ps.setString(1, nomauteur);
+        ResultSet rs = ps.executeQuery();
+        List<Auteur> tabauteur = new ArrayList<>();
+        while (rs.next())
+        {
+            tabauteur.add(new Auteur(
+                rs.getInt("idauteur"),
+                rs.getString("nomauteur"),
+                rs.getInt("anneenais"),
+                rs.getInt("anneedeces")
+            ));
+        }
+        return tabauteur;
     }
 }
 
