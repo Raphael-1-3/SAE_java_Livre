@@ -27,6 +27,7 @@ public class Client extends User {
         this.codePostal = codePostal;
         this.villeCli = villeCli;
         this.adresseCli = adresseCli;
+        this.prenom = prenom;
         this.commandes = new ArrayList<>();
         this.panier = new HashMap<>();
     }
@@ -105,8 +106,7 @@ public class Client extends User {
                 '}';
     }
 
-    public static boolean creerCompteClient(ActionBD bd) throws SQLException {
-        Scanner scanner = new Scanner(System.in);
+    public static boolean creerCompteClient(ActionBD bd, Scanner scanner) throws SQLException {
 
         System.out.print("Entrez votre nom : ");
         String nom = scanner.nextLine();
@@ -114,8 +114,23 @@ public class Client extends User {
         System.out.print("Entrez votre prénom : ");
         String prenom = scanner.nextLine();
 
-        System.out.print("Entrez votre code postal : ");
-        int codePostal = Integer.parseInt(scanner.nextLine());
+
+        Integer codePostal = null;
+        boolean codePostalbon = false;
+        while (!codePostalbon)
+        {
+            try{
+                System.out.print("Entrez votre code postal : ");
+                codePostal = Integer.parseInt(scanner.nextLine());
+                codePostalbon = true;
+            }
+            catch (NumberFormatException e)
+            {
+                System.out.println("Veuillez entrer un nombre !");
+            }
+            
+        }
+        
 
         System.out.print("Entrez votre ville : ");
         String villeCli = scanner.nextLine();
@@ -128,7 +143,7 @@ public class Client extends User {
 
         System.out.print("Entrez votre mot de passe : ");
         String mdp = scanner.nextLine();
-
+        System.out.println(prenom);
         boolean creationCompte = bd.creerClient(nom, prenom, codePostal, villeCli, adresseCli, email, mdp);
         if (!creationCompte) {
             System.out.println("Un probleme rencontré lors de la création de compte");
@@ -137,6 +152,7 @@ public class Client extends User {
             System.out.println("Compte créé avec succès !");
             return true;
         }
+        
     }
 
     // Les méthodes suivantes sont des exemples ou des stubs, à compléter selon les besoins

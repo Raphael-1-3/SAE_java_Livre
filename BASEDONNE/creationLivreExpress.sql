@@ -48,8 +48,8 @@ CREATE TABLE USER (
   PRIMARY KEY (idu),
   idu     INT NOT NULL,
   nom    VARCHAR(100),
-  email  VARCHAR(100) ,
-  motDePasse VARCHAR(25) UNIQUE,
+  email  VARCHAR(100) UNIQUE,
+  motDePasse VARCHAR(25),
   role VARCHAR(8)
 );
 

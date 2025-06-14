@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Scanner;
 
 import BD.*;
@@ -57,6 +58,11 @@ public class Executable{
                         System.out.println("vous n'avez pas rentre un entre correct");
                         continue;
                     }
+                    catch (NoSuchElementException e)
+                    {
+                        System.out.println("Veuillez entrer quelque chose !");
+                        continue;
+                    }
                     
                     if (choix == 1)
                     {
@@ -105,12 +111,12 @@ public class Executable{
                             default:
                                 System.out.println("Rôle inconnu.");
                                 break;
-                        }   
+                        }}   
                     
                     if (choix == 2)
                     {
                         System.out.println("Nous sommes ravis de vous accueillir en tant que nouveau client !");
-                        if (!Client.creerCompteClient(bd)) 
+                        if (!Client.creerCompteClient(bd, scanner)) 
                         {
                             System.out.println("Retour au menu principal.");
                             continue;
@@ -118,34 +124,35 @@ public class Executable{
                             System.out.println("Veuillez maintenant vous connecter.");
                         }
                     }
-                    if (choix == 3) authentifie = true;
-                    else  System.out.println("vous avez rentrer un truc incorrecte");
-                    
-                    
+                        if (choix == 3) {
+                            authentifie = true;
+                        } else if (choix != 1 && choix != 2) {
+                            System.out.println("vous avez rentrer un truc incorrecte");
+                        }
+                    } // end while
+                } // end if (connexion.isConnecte())
+            } catch (ClassNotFoundException e) {
+                System.out.println("Pilote JDBC non trouvé : " + e.getMessage());
+            } catch (SQLException e) {
+                System.out.println("Connexion échouée : " + e.getMessage());
+            }  
+            finally 
+            {
+                if (connexion != null && connexion.isConnecte()) 
+                { //partie pour fermer le connexion a la lors de la fin de l'éxécution de l'app
+                    try 
+                    {
+                        connexion.close();
+                    } 
+                    catch (SQLException e) 
+                    {
+                        System.out.println("Erreur lors de la fermeture : " + e.getMessage());
                     }
                 }
-            }
                 
-        } catch (ClassNotFoundException e) {
-            System.out.println("Pilote JDBC non trouvé : " + e.getMessage());
-        } catch (SQLException e) {
-            System.out.println("Connexion échouée : " + e.getMessage());
-        }  
-        finally 
-        {
-            if (connexion != null && connexion.isConnecte()) 
-            { //partie pour fermer le connexion a la lors de la fin de l'éxécution de l'app
-                try 
-                {
-                    connexion.close();
-                } 
-                catch (SQLException e) 
-                {
-                    System.out.println("Erreur lors de la fermeture : " + e.getMessage());
-                }
             }
             scanner.close();
         }
     }
 
-}
+
