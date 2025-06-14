@@ -7,6 +7,9 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Scanner;
 
+import main.BD.ActionBD;
+import main.Exceptions.PasAssezLivreException;
+
 public class Vendeur extends User{
     private String prenom;
     private Magasin mag;

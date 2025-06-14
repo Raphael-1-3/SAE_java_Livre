@@ -1,4 +1,4 @@
-package main;
+package main.Exceptions;
 
 public class PasDHistoriqueException extends Exception
 {}

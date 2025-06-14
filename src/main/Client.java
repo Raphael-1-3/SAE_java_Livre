@@ -6,6 +6,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Scanner;
 
+import main.BD.ActionBD;
+import main.Exceptions.PasDHistoriqueException;
+
 public class Client extends User {
     private int codePostal;
     private String villeCli;

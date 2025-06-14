@@ -12,6 +12,11 @@ import java.util.Map;
 
 import org.junit.Before;
 import main.*;
+import main.BD.ActionBD;
+import main.BD.ConnexionMySQL;
+import main.Exceptions.EmptySetException;
+import main.Exceptions.PasDHistoriqueException;
+import main.Exceptions.PasDeTelUtilisateurException;
 
 public class testBD
 {
