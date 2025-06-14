@@ -1,4 +1,4 @@
-package main.BD;
+package BD;
 import java.sql.*;
 
 public class ConnexionMySQL {

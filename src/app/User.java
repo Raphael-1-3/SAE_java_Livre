@@ -1,4 +1,5 @@
-package main;
+package app;
+
 
 public abstract class User {
     protected int idu;

@@ -1,4 +1,4 @@
-package main;
+package app;
 public class Auteur{
 
     private int idAut;

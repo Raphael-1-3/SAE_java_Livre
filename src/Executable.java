@@ -1,4 +1,3 @@
-package main;
 
 import java.sql.*;
 import java.sql.SQLException;
@@ -8,10 +7,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Scanner;
 
-import main.BD.ActionBD;
-import main.BD.ConnexionMySQL;
-import main.Exceptions.PasDeTelUtilisateurException;
-
+import BD.*;
+import Exceptions.*;
+import app.*;
 public class Executable{
     public static void main (String [] args)
     {
@@ -38,7 +36,7 @@ public class Executable{
             if (connexion.isConnecte()) 
             {
                 ActionBD bd = new ActionBD(connexion);
-                User user = null;
+                app.User user = null;
                 System.out.println("Connexion réussie !");
                 boolean authentifie = false;
                 while (!authentifie) 

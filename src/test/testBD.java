@@ -1,5 +1,13 @@
 package test;
 import org.junit.Test;
+
+import app.*;
+import BD.ActionBD;
+import BD.ConnexionMySQL;
+import Exceptions.EmptySetException;
+import Exceptions.PasDHistoriqueException;
+import Exceptions.PasDeTelUtilisateurException;
+
 import static org.junit.Assert.*;
 
 import java.sql.PreparedStatement;
@@ -12,11 +20,6 @@ import java.util.Map;
 
 import org.junit.Before;
 import main.*;
-import main.BD.ActionBD;
-import main.BD.ConnexionMySQL;
-import main.Exceptions.EmptySetException;
-import main.Exceptions.PasDHistoriqueException;
-import main.Exceptions.PasDeTelUtilisateurException;
 
 public class testBD
 {

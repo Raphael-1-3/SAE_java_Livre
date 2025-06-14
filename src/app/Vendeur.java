@@ -1,14 +1,18 @@
-package main;
+package app;
+
 
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Scanner;
 
-import main.BD.ActionBD;
-import main.Exceptions.PasAssezLivreException;
+import Affichage.AfficherMenu;
+import BD.ActionBD;
+import Exceptions.PasAssezLivreException;
+import app.*;
 
 public class Vendeur extends User{
     private String prenom;
@@ -24,7 +28,7 @@ public class Vendeur extends User{
     public Magasin getMagasin() {return this.mag;}
     public int getIdMag() {return this.mag.getIdmag();}
 
-    public void ajouterLivre(ActionBD bd){ 
+    public static void ajouterLivre(ActionBD bd){ 
         try {
             Long isbn = bd.getMaxISBN() + 1;
             Scanner scan = new Scanner(System.in);
@@ -83,7 +87,7 @@ public class Vendeur extends User{
         }
     }
 
-    public void updateStock(ActionBD bd) {
+    public static void updateStock(ActionBD bd, Vendeur v) {
         try{
             Scanner recherche = new Scanner(System.in);
             System.out.println("Quel est le nom du livre ? :" );
@@ -140,7 +144,7 @@ public class Vendeur extends User{
             }  
             recherche.close();
             Livre l = bd.getLivreParId(isbn);
-            bd.UpdateStock(l, mag, qte);
+            bd.UpdateStock(l, v.getMagasin(), qte);
 
         }
         catch (SQLException e)
@@ -149,9 +153,9 @@ public class Vendeur extends User{
         }
     }
 
-    public void disponibilites(ActionBD bd) {
+    public static void disponibilites(ActionBD bd, Vendeur v) {
         try {
-            HashMap<Livre, Integer> stock = bd.VoirStockMag(this.mag);
+            HashMap<Livre, Integer> stock = bd.VoirStockMag(v.getMagasin());
             for (Livre l : stock.keySet())
             {
                 System.out.println(l.getTitre() + " | qte : " + stock.get(l));
@@ -163,7 +167,7 @@ public class Vendeur extends User{
         }
     }
 
-    public void passerCommande(ActionBD bd) {
+    public static void passerCommande(ActionBD bd) {
         try {
             Scanner scan = new Scanner(System.in);
             boolean commande_faite = false;
@@ -189,10 +193,10 @@ public class Vendeur extends User{
             System.out.println("Selectioner l'identifiant de l'utilisateur");
             Integer id = Integer.parseInt(scan.nextLine());
             Client c = bd.getClientParId(id);
-            Commande commande = new Commande(bd.getMaxNumCom(), bd);
-            commande.menu_rechercher(bd);
-            bd.PasserCommande(c, commande, mag);
+            System.out.println("Passage en mode client pour effectuer la commande");
+            c.application(bd, c, new Scanner(System.in));
             scan.close();
+            commande_faite = true;
         }
         }
             catch (SQLException e)
@@ -201,7 +205,7 @@ public class Vendeur extends User{
             }
     }
 
-    public void Transfer(ActionBD bd) {
+    public static void Transfer(ActionBD bd, Vendeur v) {
         try
         {
             Scanner recherche = new Scanner(System.in);
@@ -287,7 +291,7 @@ public class Vendeur extends User{
                 }
             }
             Magasin m = bd.getMagasinParId(idmag);
-            bd.Transfer(isbn, m, this.mag, qte);
+            bd.Transfer(isbn, m, v.getMagasin(), qte);
             recherche.close();
 
         }
@@ -300,5 +304,46 @@ public class Vendeur extends User{
             System.out.println("Le magasin receveur n'a pas assez d'exemplaires du livre");
         }
     }
-
+    public static void application(ActionBD bd, User vendeur, Scanner scanner) throws SQLException
+    {
+        Vendeur v = (Vendeur) vendeur;
+        List<String> options = Arrays.asList("Ajouter un livre",
+                                                "Modifier le stock",
+                                                "Regarder les disponibilites",
+                                                "Passer une commande pour un Client",
+                                                "Tranferer un livre",
+                                                "Quitter");
+        boolean commande_faite = false;
+        while (!commande_faite)
+        {
+            System.out.println(AfficherMenu.Menu("Vendeur", options));
+            System.out.println("Que veut tu faire ? : ");
+            String commande_brute = scanner.nextLine();
+            String commande = commande_brute.strip().toLowerCase();
+            switch (commande) {
+                case "1":
+                    ajouterLivre(bd);
+                    break;
+                case "2":
+                    updateStock(bd, v);
+                    break;
+                case "3":
+                    disponibilites(bd, v);
+                    break;
+                case "4":
+                    passerCommande(bd);
+                    break;
+                case "5":
+                    Transfer(bd, v);
+                    break;
+                case "6":
+                    System.out.println("Vous avez choisi de quitter.");
+                    commande_faite = true;
+                    break;
+                default:
+                    System.out.println("Veuillez entrer un nombre entre 1 et " + options.size());
+                    break;
+            }
+        }
+    }
 }

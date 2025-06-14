@@ -1,4 +1,4 @@
-package main.Exceptions;
+package Exceptions;
 
 public class PasDeTelUtilisateurException extends Exception {
     

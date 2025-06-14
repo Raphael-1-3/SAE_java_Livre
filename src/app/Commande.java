@@ -1,4 +1,5 @@
-package main;
+package app;
+
 
 import java.util.List;
 import java.sql.Date;
@@ -9,7 +10,8 @@ import java.util.HashSet;
 import java.util.Arrays;
 import java.util.Scanner;
 
-import main.BD.ActionBD;
+import Affichage.AfficherMenu;
+import BD.ActionBD;
 
 import java.util.Map;
 

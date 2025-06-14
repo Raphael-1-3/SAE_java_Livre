@@ -1,4 +1,5 @@
-package main;
+package app;
+
 import java.sql.*;
 
 public class Livre {

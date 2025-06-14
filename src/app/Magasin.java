@@ -1,4 +1,5 @@
-package main;
+package app;
+
 import java.util.List;
 import java.util.Scanner;
 import java.util.ArrayList;

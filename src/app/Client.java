@@ -1,4 +1,5 @@
-package main;
+package app;
+
 
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -6,8 +7,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Scanner;
 
-import main.BD.ActionBD;
-import main.Exceptions.PasDHistoriqueException;
+import Affichage.*;
+import BD.*;
+import app.*;
+import Exceptions.*;
+import Exceptions.PasDHistoriqueException;
 
 public class Client extends User {
     private int codePostal;
@@ -173,7 +177,7 @@ public class Client extends User {
                 menuPanier(bd, clientC, scanner);
                 break;
             case "3":
-                System.out.println("Vous etres maintenant dans le menu panier");
+                System.out.println("Vous etres maintenant dans le menu parametre");
                 menuParam(bd, clientC, scanner);
                 break;
             case "4":
@@ -191,7 +195,7 @@ public class Client extends User {
         // Premier menu : choix du mode de recherche
         List<String> menuModeRecherche = new ArrayList<>();
         menuModeRecherche.add("Parmi les livres disponibles en magasin");
-        menuModeRecherche.add("Parmi tout les libres enregistré");
+        menuModeRecherche.add("Parmi tout les livres enregistrés");
         menuModeRecherche.add("Quitter");
 
         boolean quitterRecherche = false;
@@ -414,7 +418,7 @@ public class Client extends User {
             System.out.println("Votre panier est vide, impossible de commander.");
         }
         List<Livre> livresDansPanier = new ArrayList<>(panier.keySet());
-        List<Magasin> magasinsDispo = client.getMagasinsAvecTousCesLivres(livresDansPanier, bd);
+        List<Magasin> magasinsDispo = client.getMagasinsAvecTousSesLivres(livresDansPanier, bd);
 
         if (magasinsDispo.isEmpty()) {
             System.out.println("Aucun magasin ne possède tous les livres de votre panier.");
@@ -476,7 +480,7 @@ public class Client extends User {
     * @return Liste de magasins où tous les livres sont dispo
     * @throws SQLException
     */
-    public List<Magasin> getMagasinsAvecTousCesLivres(List<Livre> livres, ActionBD bd) throws SQLException {
+    public List<Magasin> getMagasinsAvecTousSesLivres(List<Livre> livres, ActionBD bd) throws SQLException {
         if (livres == null || livres.isEmpty()) return new ArrayList<>();
 
         // Initialiser avec les magasins du premier livre

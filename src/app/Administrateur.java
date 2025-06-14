@@ -1,5 +1,4 @@
-package main;
-
+package app;
 public class Administrateur extends Vendeur {
     public Administrateur(int id, String email, String nom, String motDePasse, String role, String prenom, Magasin mag) {
         super(id, email, nom, motDePasse, role, prenom, mag);
