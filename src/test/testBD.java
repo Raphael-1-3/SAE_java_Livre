@@ -442,4 +442,56 @@ public class testBD
     public void testGetMagasinParId() throws SQLException {
         // TODO: Implémenter un test pour getMagasinParId
     }
+
+    // TODO: Ajouter ces tests pour couvrir toutes les méthodes publiques de ActionBD
+
+    @Test
+    public void testGetHistoriqueAllClient() throws SQLException, PasDHistoriqueException {
+        // TODO: Implémenter un test pour getHistoriqueAllClient
+    }
+
+    @Test
+    public void testChangerMotDePasse() throws SQLException {
+        // TODO: Implémenter un test pour changerMotDePasse
+    }
+
+    @Test
+    public void testChangerAdresse() throws SQLException {
+        // TODO: Implémenter un test pour changerAdresse
+    }
+
+    @Test
+    public void testFactureClient() throws SQLException {
+        // TODO: Implémenter un test pour factureClient
+    }
+
+    @Test
+    public void testFactureMagasin() throws SQLException {
+        // TODO: Implémenter un test pour factureMagasin
+    }
+
+    @Test
+    public void testCherhcherClassificationApproximative() throws SQLException {
+        // TODO: Implémenter un test pour cherhcherClassificationApproximative
+    }
+
+    @Test
+    public void testChercherLivreAPartirClassification() throws SQLException {
+        // TODO: Implémenter un test pour chercherLivreAPartirClassification
+    }
+
+    @Test
+    public void testCherhcherEditeurApproximative() throws SQLException {
+        // TODO: Implémenter un test pour cherhcherEditeurApproximative
+    }
+
+    @Test
+    public void testChercherLivreAPartiEditeur() throws SQLException {
+        // TODO: Implémenter un test pour chercherLivreAPartiEditeur
+    }
+
+    @Test
+    public void testRechercheAuteurApproximative() throws SQLException {
+        // TODO: Implémenter un test pour rechercheAuteurApproximative
+    }
 }

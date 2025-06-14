@@ -1217,6 +1217,103 @@ public class ActionBD{
         }
         return tabauteur;
     }
+
+    // ----------- Fonction concernant le tableau de bord Admistrateur ---------------------------------------------
+
+    /**
+     * Renvoie les donnees necessaire pour construire un graphique pour le nombre de livre par magasion par ans
+     *  HashMap<annee,HashMap<Magasin, nombre de livre vendu sur l'annee>
+     * @return
+     * @throws SQLException
+     */
+    public HashMap<Integer, HashMap<Magasin, Integer>> NombreDeLivreVendueParMagasinParAns() throws SQLException
+    {
+        PreparedStatement ps = this.connexion.prepareStatement("select nommag, year(datecom) as annee, count(numcom) as nblivre\r\n" + //
+                        "from COMMANDE natural join MAGASIN\r\n" + //
+                        "group by nommag, year(datecom);");
+        
+        return new HashMap<Integer,HashMap<Magasin, Integer>>();
+    }
+
+    /**
+     * Renvoie les donnees necessaire pour construire un graphique du chiffre d affaire par ans
+     * HashMap<Classification, argent rapporte sur l'annee>
+     * @return
+     * @throws SQLException
+     */
+    public HashMap<Classification, Integer> chiffreAffaireParClassificationParAns(int annee) throws SQLException
+    {
+        return new HashMap<Classification, Integer>();
+    }
+
+    /**
+     * renvoie les donnees necessaire pour construire un graphique du chiffre d affaire des magasins par mois par ans 
+     * HashMap<mois, HashMap<Magasin, chiffre d affaire>>
+     * @return
+     * @throws SQLException
+     */
+    public HashMap<Integer, HashMap<Magasin, Integer>> CAMagasinParMoisParAnnee(int annee) throws SQLException
+    {
+        return new HashMap<Integer, HashMap<Magasin, Integer>>();
+    }
+
+    /**
+     * renvoie les donnees necessaire pour construire un graphique du chiffre d affaire des vente en ligne ou en magasion par ans
+     * HashMap<typelivraison, CA>
+     * @return
+     * @throws SQLException
+     */
+    public HashMap<String, Integer> CAVenteEnLigneEnMagasinParAnnee(int annee) throws SQLException
+    {
+        return new HashMap<String, Integer>();
+    }
+
+    /**
+     * renvoie les donnees necessaire pour construire un graphique du nombre d auteur par editeur
+     *  HashMap<Editeur, nombre auteur>
+     * @return
+     * @throws SQLException
+     */
+    public HashMap<Editeur, Integer> nombreAuteurParEditeur() throws SQLException
+    {
+        return new HashMap<Editeur, Integer>();
+    }
+
+    /**
+     * renvoie les donnees necessaire pour avoir l origine (ville) des clients d un auteur
+     * HashMap<Ville, nombre client>
+     * @return
+     * @throws SQLException
+     */
+    public HashMap<String, Integer> nombreClientParVilleQuiOntAcheterAuteur(Auteur auteur) throws SQLException
+    {
+        return new HashMap<String, Integer>();
+    }
+
+    /**
+     * renvoie les donnees necesaire pour construire un graphique de la valeur des stock des magasion
+     * HashMap<Magasin, Valeur du stock>
+     * @return
+     * @throws SQLException
+     */
+    public HashMap<Magasin, Integer> valeurStockMagasin() throws SQLException
+    {
+        return new HashMap<Magasin, Integer>();
+    }
+
+    /**
+     * revoie les donnees necessair pour construire un graphique ca client par ans
+     * HashMap<Client, CA>
+     * @param annee
+     * @return
+     * @throws SQLException
+     */
+    public HashMap<Client, Integer> CAParClientParAns(int annee) throws SQLException
+    {
+        return new HashMap<Client, Integer>();
+    }
+
+    // ----------- Fin Fonction concernant le tableau de bord Admistrateur ---------------------------------------------
 }
 
 
