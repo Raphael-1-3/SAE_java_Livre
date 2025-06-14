@@ -1,24 +1,24 @@
 package app;
 public class Auteur{
 
-    private int idAut;
+    private String idAut;
     private String nomAuteur;
-    private String anneeNaissance;
-    private String anneeMort;
+    private int anneeNaissance;
+    private int anneeMort;
     private boolean estmort;
 
 
-    public Auteur(int idAut,String nom,String anneeN,String anneeM){
+    public Auteur(String idAut,String nom,int anneeN,int anneeM){
         this.idAut=idAut;
         this.nomAuteur=nom;
         this.anneeMort=anneeM;
         this.anneeNaissance=anneeN;
     }
 
-    public int getIdAuteur(){return this.idAut;}
+    public String getIdAuteur(){return this.idAut;}
     public String getNomAuteur(){return this.nomAuteur;}
-    public String getAnneeNaissance(){return this.anneeNaissance;}
-    public String getAnneeMort(){return this.anneeMort;}
+    public int getAnneeNaissance(){return this.anneeNaissance;}
+    public int getAnneeMort(){return this.anneeMort;}
     public boolean getEstMort(){return this.estmort;}
 
     @Override
@@ -26,11 +26,11 @@ public class Auteur{
         if (this == obj) return true;
         if (obj == null || getClass() != obj.getClass()) return false;
         Auteur auteur = (Auteur) obj;
-        return idAut == auteur.idAut &&
+        return idAut.equals(auteur.idAut) &&
                estmort == auteur.estmort &&
                nomAuteur.equals(auteur.nomAuteur) &&
-               anneeNaissance.equals(auteur.anneeNaissance) &&
-               anneeMort.equals(auteur.anneeMort);
+               anneeNaissance == auteur.anneeNaissance &&
+               anneeMort == (auteur.anneeMort);
     }
 
     @Override
