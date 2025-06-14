@@ -1,4 +1,3 @@
-
 import java.sql.*;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -10,7 +9,6 @@ import java.util.Scanner;
 
 import BD.*;
 import Exceptions.*;
-import app.User;
 import app.*;
 public class Executable{
     public static void main (String [] args)
@@ -34,7 +32,7 @@ public class Executable{
 
         try {
             connexion = new ConnexionMySQL();
-            connexion.connecter("localhost", "LibrairieJava", "root", "raphe");
+            connexion.connecter(nomServeur, nomBase, nomLogin,  motDePasse); //"localhost", "LibrairieJava", "root", "raphe"
             if (connexion.isConnecte()) 
             {
                 ActionBD bd = new ActionBD(connexion);
@@ -42,7 +40,7 @@ public class Executable{
                 System.out.println("Connexion réussie !");
                 boolean authentifie = false;
 
-                                // ...dans le case "Admin": après "Bienvenue, administrateur !"...
+                // "test" du tableau de bord
                 
                 try {
                     // 1. Nombre de livres vendus par magasin par an
@@ -73,14 +71,56 @@ public class Executable{
                     }
                 
                     // 4. CA vente en ligne/en magasin par an (hors année 2024)
-                    HashMap<Integer, HashMap<String, Integer>> caVente = bd.CAVenteEnLigneEnMagasinParAnnee(2024);
-                    System.out.println("\n=== CA vente en ligne/en magasin par an (hors 2024) ===");
+                    HashMap<Integer, HashMap<String, Integer>> caVente = bd.CAVenteEnLigneEnMagasinParAnnee(2025);
+                    System.out.println("\n=== CA vente en ligne/en magasin par an (hors 2025) ===");
                     for (Integer annee : caVente.keySet()) {
                         System.out.println("Année : " + annee);
                         for (String type : caVente.get(annee).keySet()) {
                             System.out.println("  Type : " + type + " - CA : " + caVente.get(annee).get(type));
                         }
                     }
+                    
+                    // 5. Nombre d'auteurs par éditeur (top 10)
+                    HashMap<Editeur, Integer> auteursParEditeur = bd.nombreAuteurParEditeur();
+                    System.out.println("\n=== Nombre d'auteurs par éditeur (top 10) ===");
+                    for (Editeur ed : auteursParEditeur.keySet()) {
+                        System.out.println("Editeur : " + ed.getNomEdit() + " - Nombre d'auteurs : " + auteursParEditeur.get(ed));
+                    }
+                
+                    // 6. Nombre de clients par ville ayant acheté un auteur (exemple : "René Goscinny")
+                    Auteur auteurExemple = new Auteur("1", "René Goscinny", 0, 0);
+                    HashMap<String, Integer> clientsParVille = bd.nombreClientParVilleQuiOntAcheterAuteur(auteurExemple);
+                    System.out.println("\n=== Nombre de clients par ville pour l'auteur René Goscinny ===");
+                    for (String ville : clientsParVille.keySet()) {
+                        System.out.println("Ville : " + ville + " - Nombre de clients : " + clientsParVille.get(ville));
+                    }
+                
+                    // 7. Valeur du stock par magasin
+                    HashMap<Magasin, Integer> valeurStock = bd.valeurStockMagasin();
+                    System.out.println("\n=== Valeur du stock par magasin ===");
+                    for (Magasin mag : valeurStock.keySet()) {
+                        System.out.println("Magasin : " + mag.getNomMag() + " - Valeur du stock : " + valeurStock.get(mag));
+                    }
+                
+                    HashMap<Integer, HashMap<String, Double>> statsCA = bd.statsCAParClientParAnnee();
+                    System.out.println("\n=== Statistiques CA par client et par année ===");
+                    for (Integer annee : statsCA.keySet()) {
+                        HashMap<String, Double> stats = statsCA.get(annee);
+                        System.out.println("Année : " + annee);
+                        System.out.println("  CA max  : " + stats.get("max"));
+                        System.out.println("  CA min  : " + stats.get("min"));
+                        System.out.println("  CA moyen: " + stats.get("avg"));
+                    }
+                    // 9. Auteur le plus vendu par année (hors 2025)
+                    HashMap<Integer, HashMap<Auteur, Integer>> auteurPlusVendu = bd.auteurLePlusVenduParAnnee(2025);
+                    System.out.println("\n=== Auteur le plus vendu par année (hors 2025) ===");
+                    for (Integer annee : auteurPlusVendu.keySet()) {
+                        System.out.println("Année : " + annee);
+                        for (Auteur aut : auteurPlusVendu.get(annee).keySet()) {
+                            System.out.println("  Auteur : " + aut.getNomAuteur() + " - Livres vendus : " + auteurPlusVendu.get(annee).get(aut));
+                        }
+                    }
+                
                 } catch (SQLException e) {
                     System.out.println("Erreur lors de la récupération des statistiques : " + e.getMessage());
                 }

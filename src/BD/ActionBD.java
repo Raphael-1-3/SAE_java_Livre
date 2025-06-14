@@ -1397,7 +1397,7 @@ public class ActionBD{
                         "natural join LIVRE \r\n" + //
                         "natural join ECRIRE\r\n" + //
                         "natural join AUTEUR\r\n" + //
-                        "where nomauteur = \"René Goscinny\"\r\n" + //
+                        "where nomauteur = ?\n" + //
                         "group by villecli;");
         ps.setString(1, auteur.getNomAuteur());
         ResultSet rs = ps.executeQuery();
@@ -1429,11 +1429,7 @@ public class ActionBD{
         ResultSet rs = ps.executeQuery();
         while (rs.next()) 
         {
-            Magasin mag = new Magasin(
-                rs.getInt("idmag"),
-                rs.getString("nommag"),
-                rs.getString("villemag")
-            );
+            Magasin mag = magAPartirNom(rs.getString("magasin"));
             int valeurStock = rs.getInt("valeurStock");
             res.put(mag, valeurStock);
         }
@@ -1444,28 +1440,72 @@ public class ActionBD{
 
     /**
      * revoie les donnees necessair pour construire un graphique ca client par ans
-     * HashMap<Client, CA>
-     * @param annee
+     * HashMap<Integer, HashMap<|etat, Integer>>
+     *                          |max
+     *                          |min
+     *                          |moy
      * @return
      * @throws SQLException
      */
-    public HashMap<Client, Integer> CAParClientParAns(int annee) throws SQLException
-    {
-
-        HashMap<Client, Integer> res = new HashMap<>();
-        PreparedStatement ps = this.connexion.prepareStatement("select year(datecom) as annee, idcli, sum(prixvente*qte) as CA\r\n" + //
+    public HashMap<Integer, HashMap<String, Double>> statsCAParClientParAnnee() throws SQLException {
+        HashMap<Integer, HashMap<String, Double>> res = new HashMap<>();
+        PreparedStatement ps = this.connexion.prepareStatement("with CAPClient as (\r\n" + //
+                        "    select year(datecom) as annee, idcli, sum(prixvente*qte) as CA\r\n" + //
                         "    from COMMANDE\r\n" + //
                         "    natural join CLIENT \r\n" + //
                         "    natural join DETAILCOMMANDE\r\n" + //
-                        "    group by idcli, annee");
-        ps.setInt(1, annee);
+                        "    group by idcli, annee \r\n" + //
+                        ")\r\n" + //
+                        "select annee, min(CA), max(CA), avg(CA) from CAPClient group by annee;");
         ResultSet rs = ps.executeQuery();
         while (rs.next()) 
         {
-            int idcli = rs.getInt("idcli");
-            int ca = rs.getInt("CA");
-            Client client = getClientParId(idcli);
-            res.put(client, ca);
+            double max = rs.getDouble("max(CA)");
+            double min = rs.getDouble("min(CA)");
+            double moy = rs.getDouble("avg(CA)");
+            int annee = rs.getInt("annee");
+            if (!res.containsKey(annee)) res.put(annee, new HashMap<>());
+            res.get(annee).put("max", max);
+            res.get(annee).put("min", min);
+            res.get(annee).put("avg", moy);
+        }
+        rs.close();
+        ps.close();
+        return res;
+    }
+
+    /**
+     * Renvoie pour chaque année  l'auteur ayant vendu le plus de livres.
+     * HashMap<Année,  HashMap<Auteur, Nombre de livres vendus>>
+     * @param int anneeExlu
+     * @return
+     * @throws SQLException
+     */
+    public HashMap<Integer, HashMap<Auteur, Integer>> auteurLePlusVenduParAnnee(int anneeExclu) throws SQLException {
+        HashMap<Integer, HashMap<Auteur, Integer>> res = new HashMap<>();
+        PreparedStatement ps = this.connexion.prepareStatement("with venteParAuteur as (\r\n" + //
+                        "    select  idauteur,  year(datecom) as annee , sum(qte) as total\r\n" + //
+                        "    from AUTEUR\r\n" + //
+                        "    natural join ECRIRE\r\n" + //
+                        "    natural join LIVRE\r\n" + //
+                        "    natural join DETAILCOMMANDE\r\n" + //
+                        "    natural join COMMANDE\r\n" + //
+                        "    where year(datecom)!=?\r\n" + //
+                        "    group by idauteur, annee\r\n" + //
+                        "    order by total desc)\r\n" + //
+                        "SELECT annee, idauteur,nomauteur , max(total) from AUTEUR\r\n" + //
+                        "natural right join venteParAuteur\r\n" + //
+                        "group by annee;");
+        ps.setInt(1, anneeExclu);
+        ResultSet rs = ps.executeQuery();
+        while (rs.next()) {
+            int annee = rs.getInt("annee");
+            String idauteur = rs.getString("idauteur");
+            String nomauteur = rs.getString("nomauteur");
+            int total = rs.getInt("max(total)");
+            Auteur auteur = new Auteur(idauteur, nomauteur, 0, 0); 
+            if (!res.containsKey(annee)) res.put(annee, new HashMap<>());
+            res.get(annee).put(auteur, total);
         }
         rs.close();
         ps.close();

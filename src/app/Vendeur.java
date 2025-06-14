@@ -217,7 +217,7 @@ public class Vendeur extends User{
             Integer id = Integer.parseInt(scan.nextLine());
             Client c = bd.getClientParId(id);
             System.out.println("Passage en mode client pour effectuer la commande");
-            c.application(bd, c, new Scanner(System.in));
+            Client.application(bd, c, new Scanner(System.in));
             commande_faite = true;
         }
         }
