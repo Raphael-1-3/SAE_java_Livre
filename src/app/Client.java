@@ -248,6 +248,8 @@ public class Client extends User {
         menuSousRecherche.add("Par auteur");
         menuSousRecherche.add("Par nom de livre");
         menuSousRecherche.add("Voir ce qu'on vous recommande");
+        menuSousRecherche.add("Par editeur");
+        menuSousRecherche.add("Par classification");
         menuSousRecherche.add("Retour");
         boolean sousMenuQuitter = false;
         while (!sousMenuQuitter) {
@@ -291,6 +293,7 @@ public class Client extends User {
                     break;
                 case "3":
                     try {
+                        System.out.print("Entrez le titre du livre : ");
                         List<Livre> recommandations = bd.onVousRecommande(client);
                         if (rechercheDispoMag)
                         {
@@ -310,6 +313,42 @@ public class Client extends User {
                     }
                     break;
                 case "4":
+                    System.out.print("Entrez l'editeur : ");
+                    String nomEditeur = scanner.nextLine().strip();
+                    List<Editeur> tabEditeur = bd.cherhcherEditeurApproximative(nomEditeur);
+                    List<Livre> tabLivreE = bd.chercherLivreAPartirNomEditeur(nomEditeur);
+                    if (rechercheDispoMag)
+                    {
+                        List<Livre> livresDispo = new ArrayList<>();
+                        for (Livre livre : livresTitre) {
+                            List<Magasin> magasins = bd.getMagasinOuLivreDispo(livre);
+                            if (magasins != null && !magasins.isEmpty()) {
+                                livresDispo.add(livre);
+                            }
+                        }
+                        livresTitre = livresDispo;
+                    }
+                    afficherEtAjouterLivreAuPanier(scanner, client, livresTitre);
+                    break;
+                case "5":
+                System.out.print("Entrez le nom de la classification : ");
+                    String nomClass = scanner.nextLine().strip();
+                    List<Editeur> tabClass = bd.cherhcherClassificationApproximative(nomClass);
+                    List<Livre> tabLivreC = bd.chercherLivreAPartirNomClassification(nomClass);
+                    if (rechercheDispoMag)
+                    {
+                        List<Livre> livresDispo = new ArrayList<>();
+                        for (Livre livre : livresTitre) {
+                            List<Magasin> magasins = bd.getMagasinOuLivreDispo(livre);
+                            if (magasins != null && !magasins.isEmpty()) {
+                                livresDispo.add(livre);
+                            }
+                        }
+                        livresTitre = livresDispo;
+                    }
+                    afficherEtAjouterLivreAuPanier(scanner, client, livresTitre);
+                    break;
+                case "6":
                 case "q":
                 case "retour":
                     sousMenuQuitter = true;

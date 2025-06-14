@@ -19,7 +19,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.junit.Before;
-import main.*;
+import app.*;
 
 public class testBD
 {
