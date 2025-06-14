@@ -1228,11 +1228,23 @@ public class ActionBD{
      */
     public HashMap<Integer, HashMap<Magasin, Integer>> NombreDeLivreVendueParMagasinParAns() throws SQLException
     {
-        PreparedStatement ps = this.connexion.prepareStatement("select nommag, year(datecom) as annee, count(numcom) as nblivre\r\n" + //
+        ResultSet rs = this.connexion.createStatement().executeQuery("select idmag, year(datecom) as annee, count(numcom) as nblivre\r\n" + //
                         "from COMMANDE natural join MAGASIN\r\n" + //
-                        "group by nommag, year(datecom);");
+                        "group by year(datecom), nommag ;");
+        HashMap<Integer,HashMap<Magasin, Integer>> res = new HashMap<>();
+        while (rs.next())
+        {
+            int annee = rs.getInt("annee");
+            Magasin mag = getMagasinParId(rs.getInt("idmag"));
+            int nblivre = rs.getInt("nblivre");
+            if (!res.containsKey(annee))
+            {
+                res.put(annee, new HashMap<>());
+            }
+            res.get(annee).put(mag, nblivre);
+        }
         
-        return new HashMap<Integer,HashMap<Magasin, Integer>>();
+        return res;
     }
 
     /**
