@@ -1125,7 +1125,7 @@ public class ActionBD{
      * @return Une liste de livres correspondant à la classification.
      * @throws SQLException
      */
-    public List<Livre> chercherLivreAPartirNomClassification(Classification classi) throws SQLException
+    public List<Livre> chercherLivreAPartirClassification(Classification classi) throws SQLException
     {
         PreparedStatement ps = this.connexion.prepareStatement("select isbn, titre, nbpages, datepubli, prix from LIVRE natural join THEMES natural join CLASSIFICATION where iddwey = ?");
         ps.setInt(1, classi.getIddewey());
