@@ -554,15 +554,18 @@ public class ActionBD{
 
     public Magasin magAPartirNom(String nomMagasin) throws SQLException
     {
-        ResultSet rs = this.connexion.createStatement().executeQuery("select * from MAGASIN where nommag = "+nomMagasin);
+        PreparedStatement ps = this.connexion.prepareStatement("select * from MAGASIN where nommag = ?");
+        ps.setString(1, nomMagasin);
+        ResultSet rs = ps.executeQuery();
         Magasin mag = null;
         if (rs.next())
         { 
             mag = new Magasin(rs.getInt("idmag"), rs.getString("nommag"), 
-                                    rs.getString("villemag"));
+                        rs.getString("villemag"));
         }
         else System.out.println("ce magasin n existe pas");
         rs.close();
+        ps.close();
         return mag;
     }
 
@@ -1243,7 +1246,7 @@ public class ActionBD{
             }
             res.get(annee).put(mag, nblivre);
         }
-        
+        rs.close();
         return res;
     }
 
@@ -1261,7 +1264,7 @@ public class ActionBD{
                         "        natural join LIVRE \r\n" + //
                         "        natural join THEMES \r\n" + //
                         "        natural join CLASSIFICATION\r\n" + //
-                        "        where year(datecom) = 2024\r\n" + //
+                        "        where year(datecom) = ?\r\n" + //
                         "        group by floor(iddewey/100)");
         ps.setInt(1, annee);
         ResultSet rs = ps.executeQuery();
@@ -1277,6 +1280,8 @@ public class ActionBD{
                 res.put(classification, montant);
             }
         }
+        rs.close();
+        ps.close();
         return res;
     }
 
@@ -1298,7 +1303,7 @@ public class ActionBD{
         ps.setInt(1, annee);
         ResultSet rs = ps.executeQuery();
         HashMap<Integer, HashMap<Magasin, Integer>> res = new HashMap<>();
-        while(!rs.next())
+        while(rs.next())
         {
             int mois = rs.getInt("mois");
             Magasin mag = magAPartirNom(rs.getString("magasin"));
@@ -1309,18 +1314,41 @@ public class ActionBD{
             }
             res.get(mois).put(mag, ca);
         }
+        rs.close();
+        ps.close();
         return res;
     }
 
     /**
      * renvoie les donnees necessaire pour construire un graphique du chiffre d affaire des vente en ligne ou en magasion par ans
-     * HashMap<typelivraison, CA>
+     * HashMap<annee, HashMap<typelivraison, CA>
      * @return
      * @throws SQLException
      */
-    public HashMap<String, Integer> CAVenteEnLigneEnMagasinParAnnee(int annee) throws SQLException
+    public HashMap<Integer, HashMap<String, Integer>> CAVenteEnLigneEnMagasinParAnnee(int anneeAExclure) throws SQLException
     {
-        return new HashMap<String, Integer>();
+        PreparedStatement ps = this.connexion.prepareStatement("select year(datecom) as annee, enligne as typevente, sum(prixvente * qte) as CAL\r\n" + //
+                        "from COMMANDE \r\n" + //
+                        "natural join DETAILCOMMANDE \r\n" + //
+                        "natural join LIVRE\r\n" + //
+                        "where year(datecom) <> ?\r\n" + //
+                        "group by enligne, annee;");
+        ps.setInt(1, anneeAExclure);
+        HashMap<Integer, HashMap<String, Integer>> res = new HashMap<>();
+        ResultSet rs = ps.executeQuery();
+        while (rs.next())
+        {
+            int annee = rs.getInt("annee");
+            String typevente = rs.getString("typevente");
+            int ca = rs.getInt("CAL");
+            if(!res.containsKey(annee)) res.put(annee, new HashMap<>());
+            if (typevente.equals("O")) res.get(annee).put("En ligne", ca);
+            else res.get(annee).put("En magasin", ca);
+        }
+        rs.close();
+        ps.close();
+
+        return res;
     }
 
     /**
@@ -1331,7 +1359,26 @@ public class ActionBD{
      */
     public HashMap<Editeur, Integer> nombreAuteurParEditeur() throws SQLException
     {
-        return new HashMap<Editeur, Integer>();
+        HashMap<Editeur, Integer> res = new HashMap<>();
+        PreparedStatement ps = this.connexion.prepareStatement("select nomedit as Editeur, count(idauteur) as nbauteurs\r\n" + //
+                        "from EDITEUR \r\n" + //
+                        "natural join EDITER\r\n" + //
+                        "natural join LIVRE\r\n" + //
+                        "natural join ECRIRE\r\n" + //
+                        "natural join AUTEUR\r\n" + //
+                        "group by nomedit\r\n" + //
+                        "order by count(idauteur) desc \r\n" + //
+                        "limit 10;");
+        ResultSet rs = ps.executeQuery();
+        while (rs.next()) 
+        {
+            Editeur editeur = new Editeur(-1, rs.getString("Editeur"));
+            int nbAuteurs = rs.getInt("nbauteurs");
+            res.put(editeur, nbAuteurs);
+        }
+        rs.close();
+        ps.close();
+        return res;
     }
 
     /**
@@ -1342,7 +1389,27 @@ public class ActionBD{
      */
     public HashMap<String, Integer> nombreClientParVilleQuiOntAcheterAuteur(Auteur auteur) throws SQLException
     {
-        return new HashMap<String, Integer>();
+        HashMap<String, Integer> res = new HashMap<>();
+        PreparedStatement ps = this.connexion.prepareStatement("select villecli as ville, count(idcli) as qte\r\n" + //
+                        "from CLIENT \r\n" + //
+                        "natural join COMMANDE \r\n" + //
+                        "natural join DETAILCOMMANDE\r\n" + //
+                        "natural join LIVRE \r\n" + //
+                        "natural join ECRIRE\r\n" + //
+                        "natural join AUTEUR\r\n" + //
+                        "where nomauteur = \"René Goscinny\"\r\n" + //
+                        "group by villecli;");
+        ps.setString(1, auteur.getNomAuteur());
+        ResultSet rs = ps.executeQuery();
+        while (rs.next()) 
+        {
+            String ville = rs.getString("ville");
+            int qte = rs.getInt("qte");
+            res.put(ville, qte);
+        }
+        rs.close();
+        ps.close();
+        return res;
     }
 
     /**
@@ -1353,7 +1420,26 @@ public class ActionBD{
      */
     public HashMap<Magasin, Integer> valeurStockMagasin() throws SQLException
     {
-        return new HashMap<Magasin, Integer>();
+        HashMap<Magasin, Integer> res = new HashMap<>();
+        PreparedStatement ps = this.connexion.prepareStatement("select nommag as magasin, sum(qte*prix) as valeurStock\r\n" + //
+                        "from MAGASIN\r\n" + //
+                        "natural join POSSEDER\r\n" + //
+                        "natural join LIVRE\r\n" + //
+                        "group by nommag;");
+        ResultSet rs = ps.executeQuery();
+        while (rs.next()) 
+        {
+            Magasin mag = new Magasin(
+                rs.getInt("idmag"),
+                rs.getString("nommag"),
+                rs.getString("villemag")
+            );
+            int valeurStock = rs.getInt("valeurStock");
+            res.put(mag, valeurStock);
+        }
+        rs.close();
+        ps.close();
+        return res;
     }
 
     /**
@@ -1365,7 +1451,25 @@ public class ActionBD{
      */
     public HashMap<Client, Integer> CAParClientParAns(int annee) throws SQLException
     {
-        return new HashMap<Client, Integer>();
+
+        HashMap<Client, Integer> res = new HashMap<>();
+        PreparedStatement ps = this.connexion.prepareStatement("select year(datecom) as annee, idcli, sum(prixvente*qte) as CA\r\n" + //
+                        "    from COMMANDE\r\n" + //
+                        "    natural join CLIENT \r\n" + //
+                        "    natural join DETAILCOMMANDE\r\n" + //
+                        "    group by idcli, annee");
+        ps.setInt(1, annee);
+        ResultSet rs = ps.executeQuery();
+        while (rs.next()) 
+        {
+            int idcli = rs.getInt("idcli");
+            int ca = rs.getInt("CA");
+            Client client = getClientParId(idcli);
+            res.put(client, ca);
+        }
+        rs.close();
+        ps.close();
+        return res;
     }
 
     // ----------- Fin Fonction concernant le tableau de bord Admistrateur ---------------------------------------------

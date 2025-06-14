@@ -34,13 +34,58 @@ public class Executable{
 
         try {
             connexion = new ConnexionMySQL();
-            connexion.connecter(nomServeur, nomBase, nomLogin, motDePasse);
+            connexion.connecter("localhost", "LibrairieJava", "root", "raphe");
             if (connexion.isConnecte()) 
             {
                 ActionBD bd = new ActionBD(connexion);
                 User user = null;
                 System.out.println("Connexion réussie !");
                 boolean authentifie = false;
+
+                                // ...dans le case "Admin": après "Bienvenue, administrateur !"...
+                
+                try {
+                    // 1. Nombre de livres vendus par magasin par an
+                    HashMap<Integer, HashMap<Magasin, Integer>> statsLivres = bd.NombreDeLivreVendueParMagasinParAns();
+                    System.out.println("=== Nombre de livres vendus par magasin par an ===");
+                    for (Integer annee : statsLivres.keySet()) {
+                        System.out.println("Année : " + annee);
+                        for (Magasin mag : statsLivres.get(annee).keySet()) {
+                            System.out.println("  Magasin : " + mag.getNomMag() + " - Livres vendus : " + statsLivres.get(annee).get(mag));
+                        }
+                    }
+                
+                    // 2. Chiffre d'affaire par classification pour une année (exemple : 2024)
+                    HashMap<Classification, Integer> caClass = bd.chiffreAffaireParClassificationParAns(2024);
+                    System.out.println("\n=== Chiffre d'affaire par classification pour 2024 ===");
+                    for (Classification c : caClass.keySet()) {
+                        System.out.println("Classification : " + c.getNomClass() + " - CA : " + caClass.get(c));
+                    }
+                
+                    // 3. CA magasin par mois pour une année (exemple : 2024)
+                    HashMap<Integer, HashMap<Magasin, Integer>> caMagMois = bd.CAMagasinParMoisParAnnee(2024);
+                    System.out.println("\n=== Chiffre d'affaire des magasins par mois pour 2024 ===");
+                    for (Integer mois : caMagMois.keySet()) {
+                        System.out.println("Mois : " + mois);
+                        for (Magasin mag : caMagMois.get(mois).keySet()) {
+                            System.out.println("  Magasin : " + mag.getNomMag() + " - CA : " + caMagMois.get(mois).get(mag));
+                        }
+                    }
+                
+                    // 4. CA vente en ligne/en magasin par an (hors année 2024)
+                    HashMap<Integer, HashMap<String, Integer>> caVente = bd.CAVenteEnLigneEnMagasinParAnnee(2024);
+                    System.out.println("\n=== CA vente en ligne/en magasin par an (hors 2024) ===");
+                    for (Integer annee : caVente.keySet()) {
+                        System.out.println("Année : " + annee);
+                        for (String type : caVente.get(annee).keySet()) {
+                            System.out.println("  Type : " + type + " - CA : " + caVente.get(annee).get(type));
+                        }
+                    }
+                } catch (SQLException e) {
+                    System.out.println("Erreur lors de la récupération des statistiques : " + e.getMessage());
+                }
+                
+                
                 while (!authentifie) 
                 {
                     System.out.println("");
