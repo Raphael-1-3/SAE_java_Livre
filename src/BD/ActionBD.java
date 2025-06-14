@@ -1255,7 +1255,29 @@ public class ActionBD{
      */
     public HashMap<Classification, Integer> chiffreAffaireParClassificationParAns(int annee) throws SQLException
     {
-        return new HashMap<Classification, Integer>();
+        PreparedStatement ps = this.connexion.prepareStatement("select iddewey, nomclass, sum(prixvente*qte) as Montant \r\n" + //
+                        "        from COMMANDE\r\n" + //
+                        "        natural join DETAILCOMMANDE \r\n" + //
+                        "        natural join LIVRE \r\n" + //
+                        "        natural join THEMES \r\n" + //
+                        "        natural join CLASSIFICATION\r\n" + //
+                        "        where year(datecom) = 2024\r\n" + //
+                        "        group by floor(iddewey/100)");
+        ps.setInt(1, annee);
+        ResultSet rs = ps.executeQuery();
+        HashMap<Classification, Integer> res = new HashMap<>();
+        while (rs.next())
+        {
+            int iddewey = rs.getInt("iddewey");
+            String nomclassi = rs.getString("nomclass");
+            Classification classification = new Classification(iddewey, nomclassi);
+            int montant = rs.getInt("Montant");
+            if(!res.containsKey(classification))
+            {
+                res.put(classification, montant);
+            }
+        }
+        return res;
     }
 
     /**
