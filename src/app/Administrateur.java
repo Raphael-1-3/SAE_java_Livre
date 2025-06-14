@@ -4,6 +4,24 @@ public class Administrateur extends Vendeur {
         super(id, email, nom, motDePasse, role, prenom, mag);
     }
 
+    @Override
+    public int hashCode()
+    {
+        return super.hashCode();
+    }
+    
+    @Override
+    public boolean equals(Object o)
+    {
+        return super.equals(o);
+    }
+
+    @Override
+    public String toString()
+    {
+        return super.toString();
+    }
+
     public void creerVendeur() {}
 
     public void ajouterLibrairie() {}

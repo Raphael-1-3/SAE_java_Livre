@@ -27,6 +27,35 @@ public class Vendeur extends User{
     public Magasin getMagasin() {return this.mag;}
     public int getIdMag() {return this.mag.getIdmag();}
 
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (obj == null || getClass() != obj.getClass()) return false;
+        Vendeur other = (Vendeur) obj;
+        return super.equals(obj)
+            && prenom.equals(other.prenom)
+            && mag.equals(other.mag);
+    }
+
+    @Override
+    public int hashCode() {
+        int result = super.hashCode();
+        result = 31 * result + prenom.hashCode();
+        result = 31 * result + mag.hashCode();
+        return result;
+    }
+
+    @Override
+    public String toString() {
+        return "Vendeur{" +
+                "id=" + getId() +
+                ", email='" + getEmail() + '\'' +
+                ", nom='" + getNom() + '\'' +
+                ", prenom='" + prenom + '\'' +
+                ", magasin=" + mag +
+                '}';
+    }
+
     public static void ajouterLivre(ActionBD bd, Scanner scan){ 
         try {
             Long isbn = bd.getMaxISBN() + 1;

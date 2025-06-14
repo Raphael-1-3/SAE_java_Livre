@@ -617,15 +617,17 @@ INSERT INTO USER (idu, nom, email, motDePasse, role) VALUES
 	(497, 'Bouzid', 'Bouzid.Leonor.497@ex.fr', 'mdp497', 'CLIENT'),
 	(498, 'Lefebvre', 'Lefebvre.Nathan.498@ex.fr', 'mdp498', 'CLIENT'),
 	(499, 'Vincent', 'Vincent.Sophie.499@ex.fr', 'mdp499', 'CLIENT'),
-	(500, 'Garcia', 'Garcia.Elodie.500@ex.fr', 'mdp500', 'CLIENT');
-	(1000, 'Robin', 'robin.faucheux@etu.univ.orleans.fr', 'mdp', "ADMIN");
+	(500, 'Garcia', 'Garcia.Elodie.500@ex.fr', 'mdp500', 'CLIENT'),
+	(1000, 'Robin', 'robin.faucheux@etu.univ.orleans.fr', 'mdp', 'ADMIN'),
+	(1001, 'Vendeur', 'vendeur@v.fr', 'mdp', 'VENDEUR');
 
 -- insert de l admin
 
 INSERT INTO ADMIN (idad,prenomad) VALUES (501, 'Jango'),
 	(1000, 'Robin');
 
-
+INSERT INTO VENDEUR (prenomven, magasin, idve) VALUES 
+	('Vendeur', 1, 1001);
 -- les clients
 insert into CLIENT (idcli, nomcli, prenomcli, adressecli, codepostal, villecli) values
 	(1, 'Rodriguez', 'Fatima', '188 chemin de la Forêt', '45000', 'Orléans'),

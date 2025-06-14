@@ -636,7 +636,7 @@ public class ActionBD{
                     rsV.getString("motDePasse"),
                     role,
                     rsV.getString("prenomven"),
-                    magAPartirNom(rsV.getString("magasin"))
+                    magAPartirId(rsV.getInt("magasin"))
                 );
                 }
                 break;
@@ -788,7 +788,7 @@ public class ActionBD{
      */
     public List<Client> getClientNonPrenom(String nom, String prenom) throws SQLException
     {
-        PreparedStatement ps = this.connexion.prepareStatement("select * from CLIENT join USER on idu = idcli where LOWER(nomcli) LIKE %?% and LOWER(prenomcli) LIKE %?%");
+        PreparedStatement ps = this.connexion.prepareStatement("select * from CLIENT join USER on idu = idcli where LOWER(nomcli) LIKE ? and LOWER(prenomcli) LIKE ?");
         ps.setString(1, nom);
         ps.setString(2, prenom);
         ResultSet rs = ps.executeQuery();
@@ -957,5 +957,19 @@ public class ActionBD{
             ps.close();
             return false;
         }
+    }
+
+    public Magasin magAPartirId(Integer idmag) throws SQLException
+    {
+        ResultSet rs = this.connexion.createStatement().executeQuery("select * from MAGASIN where idmag = "+idmag);
+        Magasin mag = null;
+        if (rs.next())
+        { 
+            mag = new Magasin(rs.getInt("idmag"), rs.getString("nommag"), 
+                                    rs.getString("villemag"));
+        }
+        else System.out.println("ce magasin n existe pas");
+        rs.close();
+        return mag;
     }
 }
