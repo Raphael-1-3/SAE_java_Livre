@@ -1100,5 +1100,93 @@ public class ActionBD{
         return res.toString();
     }
 
+    /**
+     * Recherche les classifications dont le nom est approché du paramètre donné.
+     * @param nomClass Le nom (ou partie du nom) de la classification à rechercher.
+     * @return Une liste de chaînes représentant les classifications trouvées.
+     * @throws SQLException
+     */
+    public List<Classification> cherhcherClassificationApproximative(String nomClass) throws SQLException
+    {
+        PreparedStatement ps = this.connexion.prepareStatement("select * from CLASSIFICATION where nomclass = ?");
+        ps.setString(1, nomClass);
+        ResultSet rs = ps.executeQuery();
+        List<Classification> tabclass = new ArrayList<>();
+        while (rs.next())
+        {
+            tabclass.add(new Classification(rs.getInt("iddewey"), rs.getString("nomclass")));
+        }
+        return tabclass;
+    }
+
+    /**
+     * Recherche les livres associés à une classification donnée par son nom.
+     * @param nomClass Le nom de la classification.
+     * @return Une liste de livres correspondant à la classification.
+     * @throws SQLException
+     */
+    public List<Livre> chercherLivreAPartirNomClassification(Classification classi) throws SQLException
+    {
+        PreparedStatement ps = this.connexion.prepareStatement("select isbn, titre, nbpages, datepubli, prix from LIVRE natural join THEMES natural join CLASSIFICATION where iddwey = ?");
+        ps.setInt(1, classi.getIddewey());
+        ResultSet rs = ps.executeQuery();
+        List<Livre> tabLivre = new ArrayList<>();
+        while (rs.next())
+        {
+            tabLivre.add(new Livre(
+            rs.getLong("isbn"),
+            rs.getString("titre"),
+            rs.getInt("nbpages"),
+            rs.getInt("datepubli"),
+            rs.getDouble("prix")
+            ));
+        }
+        return tabLivre;
+    }
+
+    /**
+     * Recherche les éditeurs dont le nom est approché du paramètre donné.
+     * @param nomEditeur Le nom (ou partie du nom) de l'éditeur à rechercher.
+     * @return Une liste de chaînes représentant les éditeurs trouvés.
+     * @throws SQLException
+     */
+    public List<Editeur> cherhcherEditeurApproximative(String nomEditeur) throws SQLException
+    {
+        PreparedStatement ps = this.connexion.prepareStatement("select * from EDITEUR where nomedit = ?");
+        ps.setString(1, nomEditeur);
+        ResultSet rs = ps.executeQuery();
+        List<Editeur> tabediteur = new ArrayList<>();
+        while (rs.next())
+        {
+            tabediteur.add(new Editeur(rs.getInt("idedit"), rs.getString("nomedit")));
+        }
+        return tabediteur;
+    }
+
+    /**
+     * Recherche les livres associés à un éditeur donné par son nom.
+     * @param nomEditeur Le nom de l'éditeur.
+     * @return Une liste de livres correspondant à l'éditeur.
+     * @throws SQLException
+     */
+    public List<Livre> chercherLivreAPartiEditeur(Editeur Editeur) throws SQLException
+    {
+        PreparedStatement ps = this.connexion.prepareStatement("select isbn, titre, nbpages, datepubli, prix from LIVRE natural join EDITER natural join EDITEUR where idedit = ?");
+        ps.setInt(1, Editeur.getIdEditeur());
+        ResultSet rs = ps.executeQuery();
+        List<Livre> tabLivre = new ArrayList<>();
+        while (rs.next())
+        {
+            tabLivre.add(new Livre(
+            rs.getLong("isbn"),
+            rs.getString("titre"),
+            rs.getInt("nbpages"),
+            rs.getInt("datepubli"),
+            rs.getDouble("prix")
+            ));
+        }
+        return tabLivre;
+    }
 }
+
 
