@@ -202,17 +202,17 @@ public class Vendeur extends User{
                 String prenom = scan.nextLine();
                 List<Client> listeC = bd.getClientNonPrenom(nom, prenom);
                 
-                    if (listeC.isEmpty())
+                if (listeC.isEmpty())
+                {
+                    System.out.println("Aucun client n'a tel nom/prenom.");
+                }
+                else
+                {
+                    for (Client c : bd.getClientNonPrenom(nom, prenom))
                     {
-                        System.out.println("Aucun client n'a tel nom/prenom.");
+                        System.out.println(c);
                     }
-                    else
-                    {
-                        for (Client c : bd.getClientNonPrenom(nom, prenom))
-                        {
-                            System.out.println(c);
-                        }
-                    }
+                }
             System.out.println("Selectioner l'identifiant de l'utilisateur");
             Integer id = Integer.parseInt(scan.nextLine());
             Client c = bd.getClientParId(id);
@@ -324,6 +324,175 @@ public class Vendeur extends User{
             System.out.println("Le magasin receveur n'a pas assez d'exemplaires du livre");
         }
     }
+
+    public static void FacturesMag(ActionBD bd, Vendeur v, Scanner scan)
+    {
+        try {
+            Integer mois = null;
+            Integer annee = null;
+            boolean bonMois = false;
+            while (!bonMois)
+            {
+                try
+                {
+                    System.out.println("Veuillez entrer un le mois des factures");
+                    mois = Integer.parseInt(scan.nextLine());
+                    if (mois <=0 || mois > 12)
+                    {
+                        System.out.println("Veuillez entrer un mois entre 1 et 12");
+                    }
+                    else
+                    {
+                        bonMois = true;
+                    }
+                }
+                catch (NumberFormatException e)
+                {
+                    System.out.println("Veuillez entrer un nombre etnre 1 et 12");
+                }
+            }
+
+            boolean bonneAn = false;
+            while (!bonneAn)
+            {
+                try
+                {
+                    System.out.println("Veuillez entrer l'annee des factures");
+                    annee = Integer.parseInt(scan.nextLine());
+                    if (annee < 476)
+                    {
+                        System.out.println("Veuillez entrer une annee apres l'empire romain");
+                    }
+                    else
+                    {
+                        bonneAn = true;
+                    }
+                }
+                catch (NumberFormatException e)
+                {
+                    System.out.println("Veuillez entrer un nombre");
+                }
+            }
+
+            System.out.println(bd.factureMagasin(v.getMagasin(), mois, annee));
+    
+        }
+        catch (SQLException e)
+        {
+            System.out.println("Erreur SQL");
+        }
+    }
+    public static void FacturesCli(ActionBD bd, Vendeur v, Scanner scan)
+    {
+        try {
+            Integer mois = null;
+            Integer annee = null;
+            boolean bonMois = false;
+            while (!bonMois)
+            {
+                try
+                {
+                    System.out.println("Veuillez entrer un le mois des factures");
+                    mois = Integer.parseInt(scan.nextLine());
+                    if (mois <=0 || mois > 12)
+                    {
+                        System.out.println("Veuillez entrer un mois entre 1 et 12");
+                    }
+                    else
+                    {
+                        bonMois = true;
+                    }
+                }
+                catch (NumberFormatException e)
+                {
+                    System.out.println("Veuillez entrer un nombre etnre 1 et 12");
+                }
+            }
+
+            boolean bonneAn = false;
+            while (!bonneAn)
+            {
+                try
+                {
+                    System.out.println("Veuillez entrer l'annee des factures");
+                    annee = Integer.parseInt(scan.nextLine());
+                    if (annee < 476)
+                    {
+                        System.out.println("Veuillez entrer une annee apres l'empire romain");
+                    }
+                    else
+                    {
+                        bonneAn = true;
+                    }
+                }
+                catch (NumberFormatException e)
+                {
+                    System.out.println("Veuillez entrer un nombre");
+                }
+            }
+
+            System.out.println("Nom du client : ");
+            String nom = scan.nextLine();
+            System.out.println("Prenom du client");
+            String prenom = scan.nextLine();
+            List<Client> listeC = bd.getClientNonPrenom(nom, prenom);
+            
+            if (listeC.isEmpty())
+            {
+                System.out.println("Aucun client n'a tel nom/prenom.");
+            }
+            else
+            {
+                for (Client c : bd.getClientNonPrenom(nom, prenom))
+                {
+                    System.out.println(c);
+                }
+            }
+            System.out.println("Selectioner l'identifiant de l'utilisateur");
+            Integer id = Integer.parseInt(scan.nextLine());
+            Client c = bd.getClientParId(id);
+
+            System.out.println(bd.factureClient(c, mois, annee));
+    
+        }
+        catch (SQLException e)
+        {
+            System.out.println("Erreur SQL");
+        }
+    }
+
+    public static void Factures(ActionBD bd, Vendeur v, Scanner scan)
+    {
+        List<String> options = Arrays.asList("Obtenir les factures d'un magasin",
+                                            "Obtenir les factures d'un client",
+                                            "Quitter");
+        boolean commande_faite = false;
+        while (!commande_faite)
+        {
+            System.out.println(AfficherMenu.Menu("Vendeur", options));
+            System.out.println("Que veut tu faire ? : ");
+            String commande_brute = scan.nextLine();
+            String commande = commande_brute.strip().toLowerCase();
+            switch (commande) {
+                case "1":
+                    FacturesMag(bd, v, scan);
+                    commande_faite = true;
+                    break;
+                case "2":
+                    FacturesCli(bd, v, scan);
+                    commande_faite = true;
+                    break;
+                case "3":
+                    commande_faite = true;
+                    break;
+                default:
+                    System.out.println("Veuillez entrer un nombre parmis les choixs precedents");
+                    break;
+            }
+        }
+
+    }
+
     public static void application(ActionBD bd, User vendeur, Scanner scanner) throws SQLException
     {
         Vendeur v = (Vendeur) vendeur;
@@ -332,6 +501,7 @@ public class Vendeur extends User{
                                                 "Regarder les disponibilites",
                                                 "Passer une commande pour un Client",
                                                 "Tranferer un livre",
+                                                "Obtenir les factures",
                                                 "Quitter");
         boolean commande_faite = false;
         while (!commande_faite)
@@ -357,6 +527,9 @@ public class Vendeur extends User{
                     Transfer(bd, v, scanner);
                     break;
                 case "6":
+                    Factures(bd, v, scanner);
+                    break;
+                case "7":
                     System.out.println("Vous avez choisi de quitter.");
                     commande_faite = true;
                     break;
