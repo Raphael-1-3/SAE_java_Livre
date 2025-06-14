@@ -28,362 +28,7 @@ public class ActionBD{
         return this.connexion;
     }
 
-    /**
-     * Permet de passer une commande 
-     * @param client L'objet client destinataire la commande 
-     * @param commande L'objet commande contenant le panier
-     * @param mag L'objet Magasin depuis lequel la commande est passee
-     * @throws SQLException
-     */
-    public void PasserCommande(Client client, Commande commande, Magasin mag) throws SQLException{
-        PreparedStatement com = this.connexion.prepareStatement("insert into COMMANDE values (?, ?, ?, ?, ?, ?)");
-        // insertion des informations de la commande dans la table CLIENT de la base de donnees
-        int numcom = this.getMaxNumCom() + 1;
-        com.setInt(1, numcom);
-        com.setDate(2, commande.getDate());
-        com.setString(3, commande.getEnLigne());
-        com.setString(4, commande.getLivraison());
-        com.setInt(5, client.getId());
-        com.setInt(6, mag.getIdmag());
-        com.executeUpdate();
-        
-        //Insertion des informations pour la table DETAILCOMMANDE
-
-        Map<Livre, Integer> panier = commande.getPanier();
-        int numligne = 1;
-        for (Livre l : panier.keySet())
-        {
-            PreparedStatement detailCom = this.connexion.prepareStatement("insert into DETAILCOMMANDE VALUES (?, ?, ?, ?, ?)");    
-            detailCom.setInt(1, numcom);
-            detailCom.setInt(2, numligne);
-            detailCom.setLong(3, l.getISBN());
-            detailCom.setInt(4, panier.get(l));
-            detailCom.setDouble(5, l.getPrix() * panier.get(l)); 
-            numligne ++;
-            detailCom.executeUpdate();
-        }
-        com.close();
-    }
-    
-    /**
-     * Recupere tous les livres presents dans la base de donnees
-     * @return La liste des Objets livres present dans la base
-     * @throws SQLException
-     */
-    public List<Livre> GetListeLivre() throws SQLException{
-        List<Livre> res = new ArrayList<>();
-        ResultSet rs = this.connexion.createStatement().executeQuery("select * from LIVRE");
-
-        while (rs.next())
-        {
-            Livre l = new Livre(rs.getInt("isbn"), rs.getString("titre"), rs.getInt("nbpages"), rs.getInt("datepubli"), rs.getDouble("prix"));
-            res.add(l);
-        }
-        rs.close();
-        return res;
-    }
-
-    /**
-     * Ajoute un livre a la base de donnes si il n'existe pas
-     * @param l L'objet du livre que l'on desire ajouter
-     * @throws SQLException
-     */
-    public void AddLivre(Livre l) throws SQLException
-    {
-        PreparedStatement recupLiv = this.connexion.prepareStatement("select * from LIVRE where isbn = ?");
-        recupLiv.setLong(1, l.getISBN());
-        ResultSet rs = recupLiv.executeQuery();
-        if (!rs.next())
-        {
-            PreparedStatement ps = this.connexion.prepareStatement("insert into LIVRE values (?, ?, ?, ?, ?)");
-            ps.setLong(1, l.getISBN());
-            ps.setString(2, l.getTitre());
-            ps.setInt(3, l.getNbpages());
-            ps.setInt(4, l.getDatepubli());
-            ps.setDouble(5, l.getPrix());
-
-            ps.executeUpdate();
-            ps.close();
-        }
-        rs.close();
-        recupLiv.close();
-    }
-
-    /**
-     * Permet de mettre a jour le stock d'un magasin
-     * @param l Le livre dont on modifie le stock 
-     * @param mag L'objet magasin a modifier
-     * @param nv Le nouveau stock du livre
-     * @throws SQLException
-     */
-    public void UpdateStock(Livre l, Magasin mag, int nv) throws SQLException
-    {
-        PreparedStatement nbLivre = this.connexion.prepareStatement("select * from POSSEDER where idmag = ? and isbn = ?");
-        nbLivre.setInt(1, mag.getIdmag());
-        nbLivre.setLong(2, l.getISBN());
-        ResultSet rs = nbLivre.executeQuery();
-        if (rs.next())
-        {
-            PreparedStatement ps = this.connexion.prepareStatement("update POSSEDER set qte = ? where idmag = ? and isbn = ?");
-            ps.setInt(1, nv);
-            ps.setInt(2, mag.getIdmag());
-            ps.setLong(3, l.getISBN());
-            ps.executeUpdate();
-            ps.close();
-        }
-        else
-        {
-            PreparedStatement ps = this.connexion.prepareStatement("insert into POSSEDER (idmag, isbn, qte) values (?, ?, ?)");
-            ps.setInt(1, mag.getIdmag());
-            ps.setLong(2, l.getISBN());
-            ps.setInt(3, mag.getIdmag());
-            ps.executeUpdate();
-            ps.close();
-        }
-        nbLivre.close();
-        rs.close();
-    }
-    
-    /**
-     * Permet de consulter le stock entier d'un magasin
-     * @param mag L'objet magasin dont on veut consulter le stock
-     * @return Le stock du magasin
-     * @throws SQLException
-     */
-    public HashMap<Livre, Integer> VoirStockMag(Magasin mag) throws SQLException
-    {
-        PreparedStatement ps = this.connexion.prepareStatement("select isbn, titre, nbpages, datepubli, prix, qte from POSSEDER natural join MAGASIN natural join LIVRE where idmag = ?");
-        ps.setInt(1, mag.getIdmag());
-        ResultSet rs = ps.executeQuery();
-        HashMap<Livre, Integer> map = new HashMap<>();
-        while (rs.next())
-        {
-            Livre l = new Livre(rs.getLong("isbn"), rs.getString("titre"), rs.getInt("nbpages"), rs.getInt("datepubli"), rs.getDouble("prix"));
-            map.put(l, rs.getInt("qte"));
-        }
-        rs.close();
-        ps.close();
-
-        return map;
-    }
-
-    /**
-     * Permet d'effectuer un transfer d'un livre depuis un magasin a un autre
-     * @param isbn L'identifiant du livre a tranferer
-     * @param depart L'objet magasin de depart du livre
-     * @param arrivee L'objet magasin d'arrivee du livre
-     * @param qte La quantitee de livres a transferer
-     * @throws SQLException
-     * @throws PasAssezLivreException
-     */
-    public void Transfer (long isbn, Magasin depart, Magasin arrivee, int qte) throws SQLException, PasAssezLivreException{
-        PreparedStatement nbLivreDep = this.connexion.prepareStatement("select qte from POSSEDER where idmag = ? and isbn = ?");
-        nbLivreDep.setInt(1, depart.getIdmag());
-        nbLivreDep.setLong(2, isbn);
-        ResultSet nbLivre = nbLivreDep.executeQuery();
-        if (!nbLivre.next())
-        {
-            throw new PasAssezLivreException();
-        }
-        int qteDep = nbLivre.getInt("qte");
-        if (qteDep < qte)
-        {
-            throw new PasAssezLivreException();
-        }
-        else
-        {
-            nbLivreDep.close();
-            nbLivre.close();
-            qteDep -= qte;
-            PreparedStatement RetirerLivreDep = this.connexion.prepareStatement("update POSSEDER set qte = ? where idmag = ? and isbn = ?");
-            RetirerLivreDep.setInt(1, qteDep);
-            RetirerLivreDep.setInt(2, depart.getIdmag());
-            RetirerLivreDep.setLong(3, isbn);
-            RetirerLivreDep.executeUpdate();
-            RetirerLivreDep.close();
-
-            PreparedStatement recupQteArrivee = this.connexion.prepareStatement("select qte from POSSEDER where isbn = ? and idmag = ?");
-            recupQteArrivee.setLong(1, isbn);
-            recupQteArrivee.setInt(2, arrivee.getIdmag());
-            ResultSet rs = recupQteArrivee.executeQuery();
-            rs.next();
-            int qteArriv = rs.getInt("qte");
-            recupQteArrivee.close();
-            rs.close();
-            
-            PreparedStatement ajouterArrivee = this.connexion.prepareStatement("update POSSEDER set qte = ? where idmag = ? and isbn = ?");
-            ajouterArrivee.setInt(1, qteArriv);
-            ajouterArrivee.setInt(2, arrivee.getIdmag());
-            ajouterArrivee.setLong(3, isbn);
-            ajouterArrivee.executeUpdate();
-            ajouterArrivee.close();
-        }
-
-    }
-
-    /**
-     * Ajoute un vendeur a la BD
-     * @param v l'objet Vendeur a ajouter
-     * @throws SQLException
-     */
-    public void AddVendeur(Vendeur v) throws SQLException{
-        this.createUser(v.getId(), v.getNom(), v.getEmail(), v.getMdp(), v.getRole());
-        PreparedStatement ps = this.connexion.prepareStatement("insert into VENDEUR (prenomven, magasin, idve) values (?, ?, ?)");
-        ps.setString(1, v.getPrenom());
-        ps.setInt(2, v.getIdMag());
-        ps.setInt(3, v.getId());
-        ps.executeUpdate();
-        ps.close();
-    }
-    
-    /**
-     * Ajoute un magasin a la base de donnees
-     * @param m L'objet Magasin a ajouter
-     * @throws SQLException
-     */
-    public void AddLibrairie(Magasin m) throws SQLException{
-        PreparedStatement ps = this.connexion.prepareStatement("insert into MAGASIN (idmag, nommag, villemag) values (?, ?, ?)");
-        ps.setInt(1, m.getIdmag());
-        ps.setString(2, m.getNomMag());
-        ps.setString(3, m.getVilleMag());
-        ps.executeUpdate();
-        ps.close();
-    }
-    public static void InfosTableauBord(){}
-
-    /**
-     * renvoie le numéro de commande le plus élever
-     * @return
-     * @throws SQLException
-     */
-    public int getMaxNumCom() throws SQLException
-    {
-        ResultSet rs = this.connexion.createStatement().executeQuery("select max(numcom) from COMMANDE");
-        rs.next();
-        int maxNumCommande = rs.getInt("max(numcom)");
-        rs.close();
-
-        return maxNumCommande;
-    }
-
-    /**
-     * Recupere l'identifiant d'utilisateur maximal de la base de donnees.
-     *
-     * @return l'identifiant le plus grand de la BD.
-     * @throws SQLException.
-     */
-    public  int getIdUserMax() throws SQLException
-    {
-        ResultSet rs = this.connexion.createStatement().executeQuery("select max(idu) from USER");
-        rs.next();
-        int idmax = rs.getInt("max(idu)");
-        return idmax;
-    }
-
-    /**
-     * Permet de creer un object Livre a partir d'un titre de livre présent dans la base (Raphaël)
-     * @param titreLivre
-     * @return
-     * @throws SQLException
-     */
-    public Livre getLivreParTitre(String titreLivre) throws SQLException, EmptySetException
-    {
-        PreparedStatement ps = this.connexion.prepareStatement(
-            "SELECT isbn, titre, nbpages, datepubli, prix FROM LIVRE WHERE titre = ?"
-        );
-        ps.setString(1, titreLivre);
-        ResultSet rs = ps.executeQuery();
-        Livre livre = null;
-        if (rs.next()) {
-            livre = new Livre(
-                rs.getLong("isbn"),
-                rs.getString("titre"),
-                rs.getInt("nbpages"),
-                rs.getInt("datepubli"),
-                rs.getDouble("prix")
-            );
-        } else {
-            throw new EmptySetException(); 
-        }
-        rs.close();
-        ps.close();
-        return livre;
-    }
-
-    /**
-     * Renvoie un HashMap avec pour clé les iddewey et en valeur leur description a partir d'une liste de livre (Raphaël)
-     * @param tabLivre
-     * @return
-     */
-    public  HashMap<Integer, String> getClassificationAPartirHistorique(List<Livre> tabLivre)
-    {
-        HashMap<Integer, String> res = new HashMap<>();
-        HashMap<Integer, String> tmp = new HashMap<>();
-
-        for (Livre lvr : tabLivre)
-        {
-            try
-            {
-                tmp = getClassification(lvr);
-                res.putAll(tmp);
-            }
-            catch(EmptySetException ese) 
-            {
-                System.err.println("Aucun résultat trouvé (empty set).");
-            }
-            catch(SQLException sql) 
-            {
-                System.err.println(sql.getErrorCode());
-            }
-        }
-        return res;
-    }
-
-    /**
-     * Permet d'obenir un dictionnaire contenant toute les class d'un livre (Raphaël)
-     * @param livre
-     * @return HashMap
-     * @throws SQLException
-     */
-    public HashMap<Integer, String> getClassification(Livre livre) throws SQLException, EmptySetException
-    {
-        PreparedStatement ps = this.connexion.prepareStatement("select iddewey, nomclass from CLASSIFICATION natural join THEMES natural join LIVRE where isbn =?");
-        ps.setLong(1, livre.getISBN());
-        ResultSet rs = ps.executeQuery();
-        HashMap<Integer, String> classLivre = new HashMap<>();
-        if (rs.next())
-        {
-            classLivre.put(Integer.parseInt(rs.getString("iddewey")), rs.getString("nomclass"));
-        }
-        else throw new EmptySetException();
-        ps.close();
-        rs.close();
-        return classLivre;
-    }
-
-    /**
-     * Permet de créer une Liste de livre a partir d'un iddewey (une classification)
-     * @param iddewey
-     * @return Liste de livre
-     * @throws SQLException
-     * @throws EmptySetException
-     */
-    public List<Livre> getLivreParIddewey(int iddewey) throws SQLException, EmptySetException
-    {
-        PreparedStatement ps = this.connexion.prepareStatement(
-            "select titre, iddewey FROM CLASSIFICATION NATURAL JOIN THEMES NATURAL JOIN LIVRE WHERE iddewey = ?");
-        ps.setInt(1, iddewey);
-        ResultSet rs = ps.executeQuery();
-        List<Livre> res = new ArrayList<>();
-        while (rs.next())
-        {
-            res.add(getLivreParTitre(rs.getString("titre")));
-        }
-        if (res.isEmpty()) throw new EmptySetException();
-        ps.close();
-        rs.close();
-        return res;
-    }
+    // ----------------- Methode en lien avec Client -----------------------------------
 
     /**
      * Renvoie une liste de recommendation pour un client en fonction de ses achats passé
@@ -552,25 +197,49 @@ public class ActionBD{
         return tabClient;
     }
 
-    public Magasin magAPartirNom(String nomMagasin) throws SQLException
-    {
-        PreparedStatement ps = this.connexion.prepareStatement("select * from MAGASIN where nommag = ?");
-        ps.setString(1, nomMagasin);
-        ResultSet rs = ps.executeQuery();
-        Magasin mag = null;
-        if (rs.next())
-        { 
-            mag = new Magasin(rs.getInt("idmag"), rs.getString("nommag"), 
-                        rs.getString("villemag"));
+    /**
+     * Permet de passer une commande 
+     * @param client L'objet client destinataire la commande 
+     * @param commande L'objet commande contenant le panier
+     * @param mag L'objet Magasin depuis lequel la commande est passee
+     * @throws SQLException
+     */
+    public void PasserCommande(Client client, Commande commande, Magasin mag) throws SQLException{
+        PreparedStatement com = this.connexion.prepareStatement("insert into COMMANDE values (?, ?, ?, ?, ?, ?)");
+        // insertion des informations de la commande dans la table CLIENT de la base de donnees
+        int numcom = this.getMaxNumCom() + 1;
+        com.setInt(1, numcom);
+        com.setDate(2, commande.getDate());
+        com.setString(3, commande.getEnLigne());
+        com.setString(4, commande.getLivraison());
+        com.setInt(5, client.getId());
+        com.setInt(6, mag.getIdmag());
+        com.executeUpdate();
+        
+        //Insertion des informations pour la table DETAILCOMMANDE
+
+        Map<Livre, Integer> panier = commande.getPanier();
+        int numligne = 1;
+        for (Livre l : panier.keySet())
+        {
+            PreparedStatement detailCom = this.connexion.prepareStatement("insert into DETAILCOMMANDE VALUES (?, ?, ?, ?, ?)");    
+            detailCom.setInt(1, numcom);
+            detailCom.setInt(2, numligne);
+            detailCom.setLong(3, l.getISBN());
+            detailCom.setInt(4, panier.get(l));
+            detailCom.setDouble(5, l.getPrix() * panier.get(l)); 
+            numligne ++;
+            detailCom.executeUpdate();
         }
-        else System.out.println("ce magasin n existe pas");
-        rs.close();
-        ps.close();
-        return mag;
+        com.close();
     }
 
+    // --------------------------------------------------------------------------------------------------------
+
+    // ----------------------- Methode utile pour la connexion la l'application -----------------------------------------------
+
     /**
-     * permet a partir d une adresse mail est d un mot de passe le statut/role d un user
+     * permet a partir d une adresse mail et d un mot de passe de determiner le statut/role d un user
      * @return
      */
     public User connexionRole(String email, String mdp) throws SQLException, PasDeTelUtilisateurException
@@ -709,6 +378,165 @@ public class ActionBD{
     }
 
     /**
+     * Ajoute un vendeur a la BD
+     * @param v l'objet Vendeur a ajouter
+     * @throws SQLException
+     */
+    public void AddVendeur(Vendeur v) throws SQLException{
+        this.createUser(v.getId(), v.getNom(), v.getEmail(), v.getMdp(), v.getRole());
+        PreparedStatement ps = this.connexion.prepareStatement("insert into VENDEUR (prenomven, magasin, idve) values (?, ?, ?)");
+        ps.setString(1, v.getPrenom());
+        ps.setInt(2, v.getIdMag());
+        ps.setInt(3, v.getId());
+        ps.executeUpdate();
+        ps.close();
+    }
+
+    /**
+     * Permet a un client de changer de mot de passe (celui par defaut et pas trop secu)
+     * @param client
+     * @param nouveauMdp
+     * @throws SQLException
+     */
+    public boolean changerMotDePasse(Client client, String nouveauMdp) throws SQLException
+    {
+        PreparedStatement ps = this.connexion.prepareStatement("update USER set motDePasse = ? where idu = ?");
+        ps.setString(1, nouveauMdp);
+        ps.setInt(2, client.getId());
+        try{ 
+            ps.executeUpdate();
+            ps.close();
+            return true;
+        } catch(SQLException e) {ps.close(); return false;}
+    }
+
+    public boolean changerAdresse(Client client, String nouvelleAdresse, int nouveauCP, String nouvelleVille) throws SQLException
+    {
+        PreparedStatement ps = this.connexion.prepareStatement("update CLIENT set adressecli = ?, codepostal = ?, villecli = ? where idcli = ?");
+        ps.setString(1, nouvelleAdresse);
+        ps.setInt(2, nouveauCP);
+        ps.setString(3, nouvelleVille);
+        ps.setInt(4, client.getId());
+        try {
+            ps.executeUpdate();
+            ps.close();
+            return true;
+        } catch (SQLException e) {
+            ps.close();
+            return false;
+        }
+    }
+
+    // --------------------------- Methode pour les recherche de livres ---------------------------------------------
+
+    /**
+     * Recherche les classifications dont le nom est approché du paramètre donné.
+     * @param nomClass Le nom (ou partie du nom) de la classification à rechercher.
+     * @return Une liste de chaînes représentant les classifications trouvées.
+     * @throws SQLException
+     */
+    public List<Classification> cherhcherClassificationApproximative(String nomClass) throws SQLException
+    {
+        PreparedStatement ps = this.connexion.prepareStatement("select * from CLASSIFICATION where lower(nomclass) like ?");
+        ps.setString(1,"%" +nomClass+"%");
+        ResultSet rs = ps.executeQuery();
+        List<Classification> tabclass = new ArrayList<>();
+        while (rs.next())
+        {
+            tabclass.add(new Classification(rs.getInt("iddewey"), rs.getString("nomclass")));
+        }
+        return tabclass;
+    }
+
+    /**
+     * Recherche les livres associés à une classification donnée par son nom.
+     * @param nomClass Le nom de la classification.
+     * @return Une liste de livres correspondant à la classification.
+     * @throws SQLException
+     */
+    public List<Livre> chercherLivreAPartirClassification(Classification classi) throws SQLException
+    {
+        PreparedStatement ps = this.connexion.prepareStatement("select isbn, titre, nbpages, datepubli, prix from LIVRE natural join THEMES natural join CLASSIFICATION where iddewey = ?");
+        ps.setInt(1, classi.getIddewey());
+        ResultSet rs = ps.executeQuery();
+        List<Livre> tabLivre = new ArrayList<>();
+        while (rs.next())
+        {
+            tabLivre.add(new Livre(
+            rs.getLong("isbn"),
+            rs.getString("titre"),
+            rs.getInt("nbpages"),
+            rs.getInt("datepubli"),
+            rs.getDouble("prix")
+            ));
+        }
+        return tabLivre;
+    }
+
+    /**
+     * Recherche les éditeurs dont le nom est approché du paramètre donné.
+     * @param nomEditeur Le nom (ou partie du nom) de l'éditeur à rechercher.
+     * @return Une liste de chaînes représentant les éditeurs trouvés.
+     * @throws SQLException
+     */
+    public List<Editeur> cherhcherEditeurApproximative(String nomEditeur) throws SQLException
+    {
+        PreparedStatement ps = this.connexion.prepareStatement("select * from EDITEUR where lower(nomedit) like ?");
+        ps.setString(1, "%"+nomEditeur+"%");
+        ResultSet rs = ps.executeQuery();
+        List<Editeur> tabediteur = new ArrayList<>();
+        while (rs.next())
+        {
+            tabediteur.add(new Editeur(rs.getInt("idedit"), rs.getString("nomedit")));
+        }
+        return tabediteur;
+    }
+
+    /**
+     * Recherche les livres associés à un éditeur donné par son nom.
+     * @param nomEditeur Le nom de l'éditeur.
+     * @return Une liste de livres correspondant à l'éditeur.
+     * @throws SQLException
+     */
+    public List<Livre> chercherLivreAPartiEditeur(Editeur Editeur) throws SQLException
+    {
+        PreparedStatement ps = this.connexion.prepareStatement("select isbn, titre, nbpages, datepubli, prix from LIVRE natural join EDITER natural join EDITEUR where idedit = ?");
+        ps.setInt(1, Editeur.getIdEditeur());
+        ResultSet rs = ps.executeQuery();
+        List<Livre> tabLivre = new ArrayList<>();
+        while (rs.next())
+        {
+            tabLivre.add(new Livre(
+            rs.getLong("isbn"),
+            rs.getString("titre"),
+            rs.getInt("nbpages"),
+            rs.getInt("datepubli"),
+            rs.getDouble("prix")
+            ));
+        }
+        return tabLivre;
+    }
+
+
+    public List<Auteur> rechercheAuteurApproximative(String nomauteur) throws SQLException
+    {
+        PreparedStatement ps = this.connexion.prepareStatement("select * from AUTEUR where lower(nomauteur) like ?");
+        ps.setString(1, "%" +nomauteur+ "%");
+        ResultSet rs = ps.executeQuery();
+        List<Auteur> tabauteur = new ArrayList<>();
+        while (rs.next())
+        {
+            tabauteur.add(new Auteur(
+                rs.getString("idauteur"),
+                rs.getString("nomauteur"),
+                rs.getInt("anneenais"),
+                rs.getInt("anneedeces")
+            ));
+        }
+        return tabauteur;
+    }
+
+    /**
      * Permet de renvoyer une liste de livre a partir d un nom approximatife 
      * @param nomApproximativeLivre
      * @return
@@ -734,6 +562,366 @@ public class ActionBD{
         ps.close();
         return livres;
     }
+
+    /**
+     * Permet de rechercher un livre a partir d un nom d auteur approximatife
+     * @param auteurRecherche
+     * @return
+     * @throws SQLException
+     */
+    public  List<Livre> rechercheLivreAuteur(Auteur auteurRecherche) throws SQLException
+    {
+        PreparedStatement ps = this.connexion.prepareStatement("SELECT isbn, titre, nbpages, datepubli, prix FROM LIVRE natural join ECRIRE natural join AUTEUR WHERE idauteur = ?");
+        ps.setString(1,  auteurRecherche.getIdAuteur());
+        ResultSet rs = ps.executeQuery();
+        List<Livre> livres = new ArrayList<>();
+        while (rs.next()) {
+            Livre l = new Livre(
+            rs.getLong("isbn"),
+            rs.getString("titre"),
+            rs.getInt("nbpages"),
+            rs.getInt("datepubli"),
+            rs.getDouble("prix")
+            );
+            livres.add(l);
+        }
+        rs.close();
+        ps.close();
+        return livres;
+    }
+
+    // ---------------------------- non classe pour l instant -------------------------------
+
+
+    /**
+     * Recupere tous les livres presents dans la base de donnees
+     * @return La liste des Objets livres present dans la base
+     * @throws SQLException
+     */
+    public List<Livre> GetListeLivre() throws SQLException{
+        List<Livre> res = new ArrayList<>();
+        ResultSet rs = this.connexion.createStatement().executeQuery("select * from LIVRE");
+
+        while (rs.next())
+        {
+            Livre l = new Livre(rs.getInt("isbn"), rs.getString("titre"), rs.getInt("nbpages"), rs.getInt("datepubli"), rs.getDouble("prix"));
+            res.add(l);
+        }
+        rs.close();
+        return res;
+    }
+
+    /**
+     * Ajoute un livre a la base de donnes si il n'existe pas
+     * @param l L'objet du livre que l'on desire ajouter
+     * @throws SQLException
+     */
+    public void AddLivre(Livre l) throws SQLException
+    {
+        PreparedStatement recupLiv = this.connexion.prepareStatement("select * from LIVRE where isbn = ?");
+        recupLiv.setLong(1, l.getISBN());
+        ResultSet rs = recupLiv.executeQuery();
+        if (!rs.next())
+        {
+            PreparedStatement ps = this.connexion.prepareStatement("insert into LIVRE values (?, ?, ?, ?, ?)");
+            ps.setLong(1, l.getISBN());
+            ps.setString(2, l.getTitre());
+            ps.setInt(3, l.getNbpages());
+            ps.setInt(4, l.getDatepubli());
+            ps.setDouble(5, l.getPrix());
+
+            ps.executeUpdate();
+            ps.close();
+        }
+        rs.close();
+        recupLiv.close();
+    }
+
+    /**
+     * Permet de mettre a jour le stock d'un magasin
+     * @param l Le livre dont on modifie le stock 
+     * @param mag L'objet magasin a modifier
+     * @param nv Le nouveau stock du livre
+     * @throws SQLException
+     */
+    public void UpdateStock(Livre l, Magasin mag, int nv) throws SQLException
+    {
+        PreparedStatement nbLivre = this.connexion.prepareStatement("select * from POSSEDER where idmag = ? and isbn = ?");
+        nbLivre.setInt(1, mag.getIdmag());
+        nbLivre.setLong(2, l.getISBN());
+        ResultSet rs = nbLivre.executeQuery();
+        if (rs.next())
+        {
+            PreparedStatement ps = this.connexion.prepareStatement("update POSSEDER set qte = ? where idmag = ? and isbn = ?");
+            ps.setInt(1, nv);
+            ps.setInt(2, mag.getIdmag());
+            ps.setLong(3, l.getISBN());
+            ps.executeUpdate();
+            ps.close();
+        }
+        else
+        {
+            PreparedStatement ps = this.connexion.prepareStatement("insert into POSSEDER (idmag, isbn, qte) values (?, ?, ?)");
+            ps.setInt(1, mag.getIdmag());
+            ps.setLong(2, l.getISBN());
+            ps.setInt(3, mag.getIdmag());
+            ps.executeUpdate();
+            ps.close();
+        }
+        nbLivre.close();
+        rs.close();
+    }
+    
+    /**
+     * Permet de consulter le stock entier d'un magasin
+     * @param mag L'objet magasin dont on veut consulter le stock
+     * @return Le stock du magasin
+     * @throws SQLException
+     */
+    public HashMap<Livre, Integer> VoirStockMag(Magasin mag) throws SQLException
+    {
+        PreparedStatement ps = this.connexion.prepareStatement("select isbn, titre, nbpages, datepubli, prix, qte from POSSEDER natural join MAGASIN natural join LIVRE where idmag = ?");
+        ps.setInt(1, mag.getIdmag());
+        ResultSet rs = ps.executeQuery();
+        HashMap<Livre, Integer> map = new HashMap<>();
+        while (rs.next())
+        {
+            Livre l = new Livre(rs.getLong("isbn"), rs.getString("titre"), rs.getInt("nbpages"), rs.getInt("datepubli"), rs.getDouble("prix"));
+            map.put(l, rs.getInt("qte"));
+        }
+        rs.close();
+        ps.close();
+
+        return map;
+    }
+
+    /**
+     * Permet d'effectuer un transfer d'un livre depuis un magasin a un autre
+     * @param isbn L'identifiant du livre a tranferer
+     * @param depart L'objet magasin de depart du livre
+     * @param arrivee L'objet magasin d'arrivee du livre
+     * @param qte La quantitee de livres a transferer
+     * @throws SQLException
+     * @throws PasAssezLivreException
+     */
+    public void Transfer (long isbn, Magasin depart, Magasin arrivee, int qte) throws SQLException, PasAssezLivreException{
+        PreparedStatement nbLivreDep = this.connexion.prepareStatement("select qte from POSSEDER where idmag = ? and isbn = ?");
+        nbLivreDep.setInt(1, depart.getIdmag());
+        nbLivreDep.setLong(2, isbn);
+        ResultSet nbLivre = nbLivreDep.executeQuery();
+        if (!nbLivre.next())
+        {
+            throw new PasAssezLivreException();
+        }
+        int qteDep = nbLivre.getInt("qte");
+        if (qteDep < qte)
+        {
+            throw new PasAssezLivreException();
+        }
+        else
+        {
+            nbLivreDep.close();
+            nbLivre.close();
+            qteDep -= qte;
+            PreparedStatement RetirerLivreDep = this.connexion.prepareStatement("update POSSEDER set qte = ? where idmag = ? and isbn = ?");
+            RetirerLivreDep.setInt(1, qteDep);
+            RetirerLivreDep.setInt(2, depart.getIdmag());
+            RetirerLivreDep.setLong(3, isbn);
+            RetirerLivreDep.executeUpdate();
+            RetirerLivreDep.close();
+
+            PreparedStatement recupQteArrivee = this.connexion.prepareStatement("select qte from POSSEDER where isbn = ? and idmag = ?");
+            recupQteArrivee.setLong(1, isbn);
+            recupQteArrivee.setInt(2, arrivee.getIdmag());
+            ResultSet rs = recupQteArrivee.executeQuery();
+            rs.next();
+            int qteArriv = rs.getInt("qte");
+            recupQteArrivee.close();
+            rs.close();
+            
+            PreparedStatement ajouterArrivee = this.connexion.prepareStatement("update POSSEDER set qte = ? where idmag = ? and isbn = ?");
+            ajouterArrivee.setInt(1, qteArriv);
+            ajouterArrivee.setInt(2, arrivee.getIdmag());
+            ajouterArrivee.setLong(3, isbn);
+            ajouterArrivee.executeUpdate();
+            ajouterArrivee.close();
+        }
+
+    }
+
+    
+    
+    /**
+     * Ajoute un magasin a la base de donnees
+     * @param m L'objet Magasin a ajouter
+     * @throws SQLException
+     */
+    public void AddLibrairie(Magasin m) throws SQLException{
+        PreparedStatement ps = this.connexion.prepareStatement("insert into MAGASIN (idmag, nommag, villemag) values (?, ?, ?)");
+        ps.setInt(1, m.getIdmag());
+        ps.setString(2, m.getNomMag());
+        ps.setString(3, m.getVilleMag());
+        ps.executeUpdate();
+        ps.close();
+    }
+    public static void InfosTableauBord(){}
+
+    /**
+     * renvoie le numéro de commande le plus élever
+     * @return
+     * @throws SQLException
+     */
+    public int getMaxNumCom() throws SQLException
+    {
+        ResultSet rs = this.connexion.createStatement().executeQuery("select max(numcom) from COMMANDE");
+        rs.next();
+        int maxNumCommande = rs.getInt("max(numcom)");
+        rs.close();
+
+        return maxNumCommande;
+    }
+
+    /**
+     * Recupere l'identifiant d'utilisateur maximal de la base de donnees.
+     *
+     * @return l'identifiant le plus grand de la BD.
+     * @throws SQLException.
+     */
+    public  int getIdUserMax() throws SQLException
+    {
+        ResultSet rs = this.connexion.createStatement().executeQuery("select max(idu) from USER");
+        rs.next();
+        int idmax = rs.getInt("max(idu)");
+        return idmax;
+    }
+
+    /**
+     * Permet de creer un object Livre a partir d'un titre de livre présent dans la base (Raphaël)
+     * @param titreLivre
+     * @return
+     * @throws SQLException
+     */
+    public Livre getLivreParTitre(String titreLivre) throws SQLException, EmptySetException
+    {
+        PreparedStatement ps = this.connexion.prepareStatement(
+            "SELECT isbn, titre, nbpages, datepubli, prix FROM LIVRE WHERE titre = ?"
+        );
+        ps.setString(1, titreLivre);
+        ResultSet rs = ps.executeQuery();
+        Livre livre = null;
+        if (rs.next()) {
+            livre = new Livre(
+                rs.getLong("isbn"),
+                rs.getString("titre"),
+                rs.getInt("nbpages"),
+                rs.getInt("datepubli"),
+                rs.getDouble("prix")
+            );
+        } else {
+            throw new EmptySetException(); 
+        }
+        rs.close();
+        ps.close();
+        return livre;
+    }
+
+    /**
+     * Renvoie un HashMap avec pour clé les iddewey et en valeur leur description a partir d'une liste de livre (Raphaël)
+     * @param tabLivre
+     * @return
+     */
+    public  HashMap<Integer, String> getClassificationAPartirHistorique(List<Livre> tabLivre)
+    {
+        HashMap<Integer, String> res = new HashMap<>();
+        HashMap<Integer, String> tmp = new HashMap<>();
+
+        for (Livre lvr : tabLivre)
+        {
+            try
+            {
+                tmp = getClassification(lvr);
+                res.putAll(tmp);
+            }
+            catch(EmptySetException ese) 
+            {
+                System.err.println("Aucun résultat trouvé (empty set).");
+            }
+            catch(SQLException sql) 
+            {
+                System.err.println(sql.getErrorCode());
+            }
+        }
+        return res;
+    }
+
+    /**
+     * Permet d'obenir un dictionnaire contenant toute les class d'un livre (Raphaël)
+     * @param livre
+     * @return HashMap
+     * @throws SQLException
+     */
+    public HashMap<Integer, String> getClassification(Livre livre) throws SQLException, EmptySetException
+    {
+        PreparedStatement ps = this.connexion.prepareStatement("select iddewey, nomclass from CLASSIFICATION natural join THEMES natural join LIVRE where isbn =?");
+        ps.setLong(1, livre.getISBN());
+        ResultSet rs = ps.executeQuery();
+        HashMap<Integer, String> classLivre = new HashMap<>();
+        if (rs.next())
+        {
+            classLivre.put(Integer.parseInt(rs.getString("iddewey")), rs.getString("nomclass"));
+        }
+        else throw new EmptySetException();
+        ps.close();
+        rs.close();
+        return classLivre;
+    }
+
+    /**
+     * Permet de créer une Liste de livre a partir d'un iddewey (une classification)
+     * @param iddewey
+     * @return Liste de livre
+     * @throws SQLException
+     * @throws EmptySetException
+     */
+    public List<Livre> getLivreParIddewey(int iddewey) throws SQLException, EmptySetException
+    {
+        PreparedStatement ps = this.connexion.prepareStatement(
+            "select titre, iddewey FROM CLASSIFICATION NATURAL JOIN THEMES NATURAL JOIN LIVRE WHERE iddewey = ?");
+        ps.setInt(1, iddewey);
+        ResultSet rs = ps.executeQuery();
+        List<Livre> res = new ArrayList<>();
+        while (rs.next())
+        {
+            res.add(getLivreParTitre(rs.getString("titre")));
+        }
+        if (res.isEmpty()) throw new EmptySetException();
+        ps.close();
+        rs.close();
+        return res;
+    }
+
+    
+
+    public Magasin magAPartirNom(String nomMagasin) throws SQLException
+    {
+        PreparedStatement ps = this.connexion.prepareStatement("select * from MAGASIN where nommag = ?");
+        ps.setString(1, nomMagasin);
+        ResultSet rs = ps.executeQuery();
+        Magasin mag = null;
+        if (rs.next())
+        { 
+            mag = new Magasin(rs.getInt("idmag"), rs.getString("nommag"), 
+                        rs.getString("villemag"));
+        }
+        else System.out.println("ce magasin n existe pas");
+        rs.close();
+        ps.close();
+        return mag;
+    }
+
+    
+
+    
 
     /**
      * Permet d obtenir la liste de tout les magasin
@@ -839,32 +1027,7 @@ public class ActionBD{
         return c;
     }
 
-    /**
-     * Permet de rechercher un livre a partir d un nom d auteur approximatife
-     * @param auteurRecherche
-     * @return
-     * @throws SQLException
-     */
-    public  List<Livre> rechercheLivreAuteur(Auteur auteurRecherche) throws SQLException
-    {
-        PreparedStatement ps = this.connexion.prepareStatement("SELECT isbn, titre, nbpages, datepubli, prix FROM LIVRE natural join ECRIRE natural join AUTEUR WHERE idauteur = ?");
-        ps.setString(1,  auteurRecherche.getIdAuteur());
-        ResultSet rs = ps.executeQuery();
-        List<Livre> livres = new ArrayList<>();
-        while (rs.next()) {
-            Livre l = new Livre(
-            rs.getLong("isbn"),
-            rs.getString("titre"),
-            rs.getInt("nbpages"),
-            rs.getInt("datepubli"),
-            rs.getDouble("prix")
-            );
-            livres.add(l);
-        }
-        rs.close();
-        ps.close();
-        return livres;
-    }
+    
 
 
     /**
@@ -927,40 +1090,7 @@ public class ActionBD{
         return m;
     }
 
-    /**
-     * Permet a un client de changer de mot de passe (celui par defaut et pas trop secu)
-     * @param client
-     * @param nouveauMdp
-     * @throws SQLException
-     */
-    public boolean changerMotDePasse(Client client, String nouveauMdp) throws SQLException
-    {
-        PreparedStatement ps = this.connexion.prepareStatement("update USER set motDePasse = ? where idu = ?");
-        ps.setString(1, nouveauMdp);
-        ps.setInt(2, client.getId());
-        try{ 
-            ps.executeUpdate();
-            ps.close();
-            return true;
-        } catch(SQLException e) {ps.close(); return false;}
-    }
-
-    public boolean changerAdresse(Client client, String nouvelleAdresse, int nouveauCP, String nouvelleVille) throws SQLException
-    {
-        PreparedStatement ps = this.connexion.prepareStatement("update CLIENT set adressecli = ?, codepostal = ?, villecli = ? where idcli = ?");
-        ps.setString(1, nouvelleAdresse);
-        ps.setInt(2, nouveauCP);
-        ps.setString(3, nouvelleVille);
-        ps.setInt(4, client.getId());
-        try {
-            ps.executeUpdate();
-            ps.close();
-            return true;
-        } catch (SQLException e) {
-            ps.close();
-            return false;
-        }
-    }
+    
 
     public Magasin magAPartirId(Integer idmag) throws SQLException
     {
@@ -1114,112 +1244,7 @@ public class ActionBD{
         return res;
     }
 
-    /**
-     * Recherche les classifications dont le nom est approché du paramètre donné.
-     * @param nomClass Le nom (ou partie du nom) de la classification à rechercher.
-     * @return Une liste de chaînes représentant les classifications trouvées.
-     * @throws SQLException
-     */
-    public List<Classification> cherhcherClassificationApproximative(String nomClass) throws SQLException
-    {
-        PreparedStatement ps = this.connexion.prepareStatement("select * from CLASSIFICATION where lower(nomclass) like ?");
-        ps.setString(1,"%" +nomClass+"%");
-        ResultSet rs = ps.executeQuery();
-        List<Classification> tabclass = new ArrayList<>();
-        while (rs.next())
-        {
-            tabclass.add(new Classification(rs.getInt("iddewey"), rs.getString("nomclass")));
-        }
-        return tabclass;
-    }
-
-    /**
-     * Recherche les livres associés à une classification donnée par son nom.
-     * @param nomClass Le nom de la classification.
-     * @return Une liste de livres correspondant à la classification.
-     * @throws SQLException
-     */
-    public List<Livre> chercherLivreAPartirClassification(Classification classi) throws SQLException
-    {
-        PreparedStatement ps = this.connexion.prepareStatement("select isbn, titre, nbpages, datepubli, prix from LIVRE natural join THEMES natural join CLASSIFICATION where iddewey = ?");
-        ps.setInt(1, classi.getIddewey());
-        ResultSet rs = ps.executeQuery();
-        List<Livre> tabLivre = new ArrayList<>();
-        while (rs.next())
-        {
-            tabLivre.add(new Livre(
-            rs.getLong("isbn"),
-            rs.getString("titre"),
-            rs.getInt("nbpages"),
-            rs.getInt("datepubli"),
-            rs.getDouble("prix")
-            ));
-        }
-        return tabLivre;
-    }
-
-    /**
-     * Recherche les éditeurs dont le nom est approché du paramètre donné.
-     * @param nomEditeur Le nom (ou partie du nom) de l'éditeur à rechercher.
-     * @return Une liste de chaînes représentant les éditeurs trouvés.
-     * @throws SQLException
-     */
-    public List<Editeur> cherhcherEditeurApproximative(String nomEditeur) throws SQLException
-    {
-        PreparedStatement ps = this.connexion.prepareStatement("select * from EDITEUR where lower(nomedit) like ?");
-        ps.setString(1, "%"+nomEditeur+"%");
-        ResultSet rs = ps.executeQuery();
-        List<Editeur> tabediteur = new ArrayList<>();
-        while (rs.next())
-        {
-            tabediteur.add(new Editeur(rs.getInt("idedit"), rs.getString("nomedit")));
-        }
-        return tabediteur;
-    }
-
-    /**
-     * Recherche les livres associés à un éditeur donné par son nom.
-     * @param nomEditeur Le nom de l'éditeur.
-     * @return Une liste de livres correspondant à l'éditeur.
-     * @throws SQLException
-     */
-    public List<Livre> chercherLivreAPartiEditeur(Editeur Editeur) throws SQLException
-    {
-        PreparedStatement ps = this.connexion.prepareStatement("select isbn, titre, nbpages, datepubli, prix from LIVRE natural join EDITER natural join EDITEUR where idedit = ?");
-        ps.setInt(1, Editeur.getIdEditeur());
-        ResultSet rs = ps.executeQuery();
-        List<Livre> tabLivre = new ArrayList<>();
-        while (rs.next())
-        {
-            tabLivre.add(new Livre(
-            rs.getLong("isbn"),
-            rs.getString("titre"),
-            rs.getInt("nbpages"),
-            rs.getInt("datepubli"),
-            rs.getDouble("prix")
-            ));
-        }
-        return tabLivre;
-    }
-
-
-    public List<Auteur> rechercheAuteurApproximative(String nomauteur) throws SQLException
-    {
-        PreparedStatement ps = this.connexion.prepareStatement("select * from AUTEUR where lower(nomauteur) like ?");
-        ps.setString(1, "%" +nomauteur+ "%");
-        ResultSet rs = ps.executeQuery();
-        List<Auteur> tabauteur = new ArrayList<>();
-        while (rs.next())
-        {
-            tabauteur.add(new Auteur(
-                rs.getString("idauteur"),
-                rs.getString("nomauteur"),
-                rs.getInt("anneenais"),
-                rs.getInt("anneedeces")
-            ));
-        }
-        return tabauteur;
-    }
+    
 
     // ----------- Fonction concernant le tableau de bord Admistrateur ---------------------------------------------
 
