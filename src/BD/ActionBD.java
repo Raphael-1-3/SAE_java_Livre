@@ -1288,7 +1288,28 @@ public class ActionBD{
      */
     public HashMap<Integer, HashMap<Magasin, Integer>> CAMagasinParMoisParAnnee(int annee) throws SQLException
     {
-        return new HashMap<Integer, HashMap<Magasin, Integer>>();
+        PreparedStatement ps = this.connexion.prepareStatement("select nommag as magasin, month(datecom) as mois,sum(prixvente * qte) as CA\r\n" + //
+                        "    from MAGASIN \r\n" + //
+                        "    natural join COMMANDE\r\n" + //
+                        "    natural join DETAILCOMMANDE\r\n" + //
+                        "    natural join LIVRE\r\n" + //
+                        "    where year(datecom)=?\r\n" + //
+                        "    group by nommag ,mois");
+        ps.setInt(1, annee);
+        ResultSet rs = ps.executeQuery();
+        HashMap<Integer, HashMap<Magasin, Integer>> res = new HashMap<>();
+        while(!rs.next())
+        {
+            int mois = rs.getInt("mois");
+            Magasin mag = magAPartirNom(rs.getString("magasin"));
+            int ca = rs.getInt("CA");
+            if (!res.containsKey(mois))
+            {
+                res.put(mois, new HashMap<>());
+            }
+            res.get(mois).put(mag, ca);
+        }
+        return res;
     }
 
     /**
