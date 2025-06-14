@@ -12,7 +12,6 @@ import java.util.Scanner;
 import Affichage.AfficherMenu;
 import BD.ActionBD;
 import Exceptions.PasAssezLivreException;
-import app.*;
 
 public class Vendeur extends User{
     private String prenom;
@@ -28,10 +27,9 @@ public class Vendeur extends User{
     public Magasin getMagasin() {return this.mag;}
     public int getIdMag() {return this.mag.getIdmag();}
 
-    public static void ajouterLivre(ActionBD bd){ 
+    public static void ajouterLivre(ActionBD bd, Scanner scan){ 
         try {
             Long isbn = bd.getMaxISBN() + 1;
-            Scanner scan = new Scanner(System.in);
             System.out.println("Titre du livre : ");
             String titre = scan.nextLine();
             
@@ -70,14 +68,13 @@ public class Vendeur extends User{
                 System.out.println("Prix : ");
                 try {
                     prix = Double.parseDouble(scan.nextLine());
-                    bonneDate = true;
+                    bonPrix = true;
                 }
                 catch (NumberFormatException e)
                 {
                     System.out.println("Veuillez entrer un nombre");
                 }
             }
-            scan.close();
             Livre l = new Livre(isbn, titre, nbPages, datepubli, prix);
             bd.AddLivre(l);
         }
@@ -87,11 +84,10 @@ public class Vendeur extends User{
         }
     }
 
-    public static void updateStock(ActionBD bd, Vendeur v) {
+    public static void updateStock(ActionBD bd, Vendeur v, Scanner scan) {
         try{
-            Scanner recherche = new Scanner(System.in);
             System.out.println("Quel est le nom du livre ? :" );
-            String nomLivre = recherche.nextLine();
+            String nomLivre = scan.nextLine();
             HashSet<Long> setIsbn = new HashSet<>();
             List<Livre> liste = bd.cherhcherLivreApproximative(nomLivre);
             for (Livre l : liste)
@@ -106,7 +102,7 @@ public class Vendeur extends User{
             {
                 try {
                     System.out.println("Entrez l'isbn du livre a modifier :");
-                    isbn = Long.parseLong(recherche.nextLine());
+                    isbn = Long.parseLong(scan.nextLine());
                     if (setIsbn.contains(isbn))
                     {
                         bonIsbn = true;
@@ -127,7 +123,7 @@ public class Vendeur extends User{
             {
                 try{
                     System.out.println("Entrez la nouvelle quantite du livre :");
-                    qte = Integer.parseInt(recherche.nextLine());
+                    qte = Integer.parseInt(scan.nextLine());
                     if (qte < 0)
                     {
                         System.out.println("Veuillez entrer une quantite positive");
@@ -142,7 +138,6 @@ public class Vendeur extends User{
                     System.out.println("Veuillez entrer un numbre valide ");
                 }
             }  
-            recherche.close();
             Livre l = bd.getLivreParId(isbn);
             bd.UpdateStock(l, v.getMagasin(), qte);
 
@@ -167,9 +162,8 @@ public class Vendeur extends User{
         }
     }
 
-    public static void passerCommande(ActionBD bd) {
+    public static void passerCommande(ActionBD bd, Scanner scan) {
         try {
-            Scanner scan = new Scanner(System.in);
             boolean commande_faite = false;
             while (!commande_faite)
             {
@@ -195,7 +189,6 @@ public class Vendeur extends User{
             Client c = bd.getClientParId(id);
             System.out.println("Passage en mode client pour effectuer la commande");
             c.application(bd, c, new Scanner(System.in));
-            scan.close();
             commande_faite = true;
         }
         }
@@ -205,12 +198,11 @@ public class Vendeur extends User{
             }
     }
 
-    public static void Transfer(ActionBD bd, Vendeur v) {
+    public static void Transfer(ActionBD bd, Vendeur v, Scanner scan) {
         try
         {
-            Scanner recherche = new Scanner(System.in);
             System.out.println("Quel est le nom du livre ? :" );
-            String nomLivre = recherche.nextLine();
+            String nomLivre = scan.nextLine();
             HashSet<Long> setIsbn = new HashSet<>();
             List<Livre> liste = bd.cherhcherLivreApproximative(nomLivre);
             for (Livre l : liste)
@@ -224,7 +216,7 @@ public class Vendeur extends User{
             {
                 try {
                     System.out.println("Entrez l'isbn du livre a modifier :");
-                    isbn = Long.parseLong(recherche.nextLine());
+                    isbn = Long.parseLong(scan.nextLine());
                     if (setIsbn.contains(isbn))
                     {
                         bonIsbn = true;
@@ -254,7 +246,7 @@ public class Vendeur extends User{
             {
                 try{
                     System.out.println("Identifiant du magasin de depart :");
-                    idmag = Integer.parseInt(recherche.nextLine());
+                    idmag = Integer.parseInt(scan.nextLine());
                     if (!setIdMag.contains(idmag))
                     {
                         System.out.println("Le magasin n'est pas dans la liste");
@@ -275,7 +267,7 @@ public class Vendeur extends User{
             {
                 try{
                     System.out.println("Quantitee a transferer :");
-                    qte = Integer.parseInt(recherche.nextLine());
+                    qte = Integer.parseInt(scan.nextLine());
                     if (qte < 0)
                     {
                         System.out.println("Veuillez entrer une quantite positive");
@@ -292,7 +284,6 @@ public class Vendeur extends User{
             }
             Magasin m = bd.getMagasinParId(idmag);
             bd.Transfer(isbn, m, v.getMagasin(), qte);
-            recherche.close();
 
         }
         catch (SQLException e)
@@ -322,19 +313,19 @@ public class Vendeur extends User{
             String commande = commande_brute.strip().toLowerCase();
             switch (commande) {
                 case "1":
-                    ajouterLivre(bd);
+                    ajouterLivre(bd, scanner);
                     break;
                 case "2":
-                    updateStock(bd, v);
+                    updateStock(bd, v, scanner);
                     break;
                 case "3":
                     disponibilites(bd, v);
                     break;
                 case "4":
-                    passerCommande(bd);
+                    passerCommande(bd, scanner);
                     break;
                 case "5":
-                    Transfer(bd, v);
+                    Transfer(bd, v, scanner);
                     break;
                 case "6":
                     System.out.println("Vous avez choisi de quitter.");

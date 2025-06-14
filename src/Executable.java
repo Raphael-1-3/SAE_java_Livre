@@ -10,6 +10,7 @@ import java.util.Scanner;
 
 import BD.*;
 import Exceptions.*;
+import app.User;
 import app.*;
 public class Executable{
     public static void main (String [] args)
@@ -37,7 +38,7 @@ public class Executable{
             if (connexion.isConnecte()) 
             {
                 ActionBD bd = new ActionBD(connexion);
-                app.User user = null;
+                User user = null;
                 System.out.println("Connexion réussie !");
                 boolean authentifie = false;
                 while (!authentifie) 
@@ -102,6 +103,7 @@ public class Executable{
                                 break;
                             case "Vendeur":
                                 System.out.println("Bienvenue, vendeur !");
+                                Vendeur.application(bd, user, scanner);
                                 // Actions vendeur
                                 break;
                             case "Admin":

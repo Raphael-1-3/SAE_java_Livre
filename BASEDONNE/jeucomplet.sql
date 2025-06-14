@@ -618,10 +618,12 @@ INSERT INTO USER (idu, nom, email, motDePasse, role) VALUES
 	(498, 'Lefebvre', 'Lefebvre.Nathan.45000@ex.fr', 'mdp498', "CLIENT"),
 	(499, 'Vincent', 'Vincent.Sophie.69001@ex.fr', 'mdp499', "CLIENT"),
 	(500, 'Garcia', 'Garcia.Elodie.33000@ex.fr', 'mdp500', "CLIENT");
+	(1000, 'Robin', 'robin.faucheux@etu.univ.orleans.fr', 'mdp', "ADMIN");
 
 -- insert de l admin
 
-INSERT INTO ADMIN (idad,prenomad) VALUES (501, 'Jango');
+INSERT INTO ADMIN (idad,prenomad) VALUES (501, 'Jango'),
+	(1000, 'Robin');
 
 
 -- les clients
@@ -18949,7 +18951,6 @@ insert into DETAILCOMMANDE(numcom, numlig, isbn, qte, prixvente) values
 	(282,1,9782010122705,2, 9.0),
 	(282,2,9782226136855,1,4.8),
 	(282,3,9782010091223,1, 28.0),
-	(283,1,9782021510805,1,10.41),
 	(284,1,9782226033277,1, 39.0),
 	(285,1,9782010098321,3, 9.0),
 	(286,1,9782070696628,1,9.7),
