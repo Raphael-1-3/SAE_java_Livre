@@ -383,11 +383,12 @@ public class ActionBD{
      * @throws SQLException
      */
     public void AddVendeur(Vendeur v) throws SQLException{
-        this.createUser(v.getId(), v.getNom(), v.getEmail(), v.getMdp(), v.getRole());
+        int id = getIdUserMax() + 1;
+        this.createUser(id, v.getNom(), v.getEmail(), v.getMdp(), v.getRole());
         PreparedStatement ps = this.connexion.prepareStatement("insert into VENDEUR (prenomven, magasin, idve) values (?, ?, ?)");
         ps.setString(1, v.getPrenom());
         ps.setInt(2, v.getIdMag());
-        ps.setInt(3, v.getId());
+        ps.setInt(3, id);
         ps.executeUpdate();
         ps.close();
     }
