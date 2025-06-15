@@ -1,3 +1,11 @@
 {
-    "java.search.scope": "all"
+    "java.search.scope": "all",
+    "java.project.sourcePaths": [
+        "src"
+    ],
+    "java.project.referencedLibraries": [
+        "c:\\Users\\rapha\\Documents\\BUT_Info_1\\GitHub\\SAE_Java_livre\\lib\\junit-4.13.2.jar",
+        "c:\\Users\\rapha\\Documents\\BUT_Info_1\\GitHub\\SAE_Java_livre\\lib\\hamcrest-2.2.jar",
+        "c:\\Users\\rapha\\Documents\\BUT_Info_1\\GitHub\\SAE_Java_livre\\lib\\mariadb-java-client-2.5.3.jar"
+    ]
 }

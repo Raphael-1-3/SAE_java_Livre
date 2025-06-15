@@ -7,6 +7,16 @@
 - Robin FAUCHEUX branche : devRobin
 - Joris VACHEY branche : devJojo
 
+## Lancement de l'application
+
+### Installer la base de donnee
+
+- Dans un premier placait vous dans le dossier BASEDONNE
+- Ensuite executer le fichier creationLivreExpress avec ``source creationLivreExpress.sql``
+- Puis le fichier de jeucomplet avec ``source jeucomplet.sql``
+
+## Apres cela vous pouvez normalement lancer l 'application dans l executable avec run java
+
 ## Compilation  sur linux: 
 
 - Compiler le projet : ```javac -d -cp "lib/*:src" src/main/*.java src/test/*.java```
