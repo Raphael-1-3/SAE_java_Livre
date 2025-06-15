@@ -4,8 +4,8 @@
         "src"
     ],
     "java.project.referencedLibraries": [
-        "c:\\Users\\rapha\\Documents\\BUT_Info_1\\GitHub\\SAE_Java_livre\\lib\\junit-4.13.2.jar",
-        "c:\\Users\\rapha\\Documents\\BUT_Info_1\\GitHub\\SAE_Java_livre\\lib\\hamcrest-2.2.jar",
-        "c:\\Users\\rapha\\Documents\\BUT_Info_1\\GitHub\\SAE_Java_livre\\lib\\mariadb-java-client-2.5.3.jar"
-    ]
+        "lib/*.jar"
+    ],
+    "editor.formatOnSave": true,
+    "java.project.outputPath": "bin"
 }
