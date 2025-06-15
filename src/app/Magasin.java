@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 public class Magasin {
-    private int idMag;
+    private Integer idMag;
     private String nomMag;
     private String villeMag;
     
@@ -18,7 +18,7 @@ public class Magasin {
         this.villeMag = ville;
     }
 
-    public int getIdmag(){return this.idMag;}
+    public Integer getIdmag(){return this.idMag;}
     public String getNomMag(){return this.nomMag;}
     public String getVilleMag(){return this.villeMag;}
     

@@ -33,83 +33,85 @@ public class Administrateur extends Vendeur {
         return super.toString();
     }
 
-    
-public void application(ActionBD bd, Scanner scanner, User u) throws SQLException {
-    List<String> options = Arrays.asList(   "Creer un vendeur",
-                                            "Ajouter une librairie",
-                                            "Panneau de Bord",
-                                            "Ajouter un livre",
-                                            "Modifier le stock",
-                                            "Regarder les disponibilites",
-                                            "Passer une commande pour un Client",
-                                            "Tranferer un livre",
-                                            "Obtenir les factures",
-                                            "Quitter");
-    Administrateur a = (Administrateur) u;
-    boolean commande_faite = false;
-    while (!commande_faite) {
-        System.out.println(AfficherMenu.Menu("Application Administrateur", options));
-        System.out.print("Que veux-tu faire ? : ");
-        String commande_brute = scanner.nextLine();
-        String commande = commande_brute.strip().toLowerCase();
+    public static void application(ActionBD bd, User u, Scanner scanner) throws SQLException {
+        List<String> options = Arrays.asList(   "Creer un vendeur",
+                                                "Ajouter une librairie",
+                                                "Panneau de Bord",
+                                                "Ajouter un livre",
+                                                "Modifier le stock",
+                                                "Regarder les disponibilites",
+                                                "Passer une commande pour un Client",
+                                                "Tranferer un livre",
+                                                "Obtenir les factures",
+                                                "Quitter");
+        Administrateur a = (Administrateur) u;
+        boolean commande_faite = false;
+        while (!commande_faite) {
+            System.out.println(AfficherMenu.Menu("Application Administrateur", options));
+            System.out.print("Que veux-tu faire ? : ");
+            String commande_brute = scanner.nextLine();
+            String commande = commande_brute.strip().toLowerCase();
 
-        switch (commande) {
-            case "1":
-                System.out.println("Création d'un vendeur...");
-                this.creerVendeur();
-                commande_faite = true;
-                break;
-            case "2":
-                System.out.println("Ajouter une librairie.");
-                this.ajouterLibrairie(bd, scanner);
-                commande_faite = true;
-                break;
-            case "3":
-                System.out.println("Obtenir le panneau de bord");
-                this.panneauBord(bd);
-                commande_faite = true;
-                break;
-            case "4":
-                System.out.println("Obtenir le panneau de bord");
-                super.ajouterLivre(bd, scanner);
-                break;
-            case "5":
-                System.out.println("Obtenir le panneau de bord");
-                super.updateStock(bd, null, scanner);
-                break;
-            case "6":
-                System.out.println("Obtenir le panneau de bord");
-                super.disponibilites(bd, null);
-                break;
-            case "7":
-                System.out.println("Obtenir le panneau de bord");
-                super.passerCommande(bd, scanner);
-                break;
-            case "8":
-                System.out.println("Obtenir le panneau de bord");
-                super.Transfer(bd, null, scanner);
-                break;
-            case "9":
-                System.out.println("Obtenir le panneau de bord");
-                super.Factures(bd,a,scanner);
-                break;
-            case "10":
-            case "q":
-            case "quitter":
-                System.out.println("Fermeture de l'application administrateur.");
-                commande_faite = true;
-                break;
-            default:
-                System.out.println("Commande non reconnue, veuillez entrer un numéro valide.");
+            switch (commande) {
+                case "1":
+                    System.out.println("Création d'un vendeur...");
+                    creerVendeur();
+                    break;
+                case "2":
+                    System.out.println("Ajouter une librairie.");
+                    ajouterLibrairie(bd, scanner);
+                    break;
+                case "3":
+                    System.out.println("Obtenir le panneau de bord");
+                    panneauBord(bd);
+                    break;
+                case "4":
+                    System.out.println("Obtenir le panneau de bord");
+                    ajouterLivre(bd, scanner);
+                    break;
+                case "5":
+                    System.out.println("Obtenir le panneau de bord");
+                    updateStock(bd, null, scanner);
+                    break;
+                case "6":
+                    System.out.println("Obtenir le panneau de bord");
+                    disponibilites(bd, null);
+                    break;
+                case "7":
+                    System.out.println("Obtenir le panneau de bord");
+                    passerCommande(bd, scanner);
+                    break;
+                case "8":
+                    System.out.println("Obtenir le panneau de bord");
+                    Transfer(bd, null, scanner);
+                    break;
+                case "9":
+                    System.out.println("Obtenir le panneau de bord");
+                    Factures(bd,a,scanner);
+                    break;
+                case "10":
+                    System.out.println("Fermeture de l'application administrateur.");
+                    commande_faite = true;
+                    break;
+                case "q":
+                    System.out.println("Fermeture de l'application administrateur.");
+                    commande_faite = true;
+                    break;
+                case "quitter":
+                    System.out.println("Fermeture de l'application administrateur.");
+                    commande_faite = true;
+                    break;
+                default:
+                    System.out.println("Commande non reconnue, veuillez entrer un numéro valide.");
+            }
         }
     }
-}
 
-    public void creerVendeur() {
+    public static void creerVendeur() {
         
     }
 
-    public void ajouterLibrairie(ActionBD bd, Scanner scan) {
+    public static void ajouterLibrairie(ActionBD bd, Scanner scan) {
         try{
             System.out.println("Nom de la Librairie ");
             String nom = scan.nextLine();
@@ -126,7 +128,7 @@ public void application(ActionBD bd, Scanner scanner, User u) throws SQLExceptio
         }
     }
 
-    public void panneauBord(ActionBD bd) {
+    public static void panneauBord(ActionBD bd) {
         try {
                     // 1. Nombre de livres vendus par magasin par an
                     HashMap<Integer, HashMap<Magasin, Integer>> statsLivres = bd.NombreDeLivreVendueParMagasinParAns();
