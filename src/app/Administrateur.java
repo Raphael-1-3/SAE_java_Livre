@@ -2,6 +2,7 @@ package app;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Scanner;
 
@@ -33,15 +34,20 @@ public class Administrateur extends Vendeur {
 
     
 public void application(ActionBD bd, Scanner scanner) throws SQLException {
-    List<String> menuListe = new ArrayList<>();
-    menuListe.add("Creer Vendeur");
-    menuListe.add("Choisir Magasin");
-    menuListe.add("Faire Facture");
-    menuListe.add("Quitter");
+    List<String> options = Arrays.asList(   "Creer un vendeur",
+                                            "Ajouter une librairie",
+                                            "Panneau de Bord",
+                                            "Ajouter un livre",
+                                            "Modifier le stock",
+                                            "Regarder les disponibilites",
+                                            "Passer une commande pour un Client",
+                                            "Tranferer un livre",
+                                            "Obtenir les factures",
+                                            "Quitter");
 
     boolean commande_faite = false;
     while (!commande_faite) {
-        System.out.println(AfficherMenu.Menu("Application Administrateur", menuListe));
+        System.out.println(AfficherMenu.Menu("Application Administrateur", options));
         System.out.print("Que veux-tu faire ? : ");
         String commande_brute = scanner.nextLine();
         String commande = commande_brute.strip().toLowerCase();
@@ -52,12 +58,12 @@ public void application(ActionBD bd, Scanner scanner) throws SQLException {
                 this.creerVendeur();
                 break;
             case "2":
-                System.out.println("Choix du magasin...");
-                this.choisirMagasin();
+                System.out.println("Ajouter une librairie.");
+                this.ajouterLibrairie();
                 break;
             case "3":
-                System.out.println("Création d'une facture...");
-                this.faireFacture();
+                System.out.println("Obtenir le panneau de bord");
+                this.panneauBord();
                 break;
             case "4":
             case "q":
@@ -76,13 +82,6 @@ public void application(ActionBD bd, Scanner scanner) throws SQLException {
 
     public void ajouterLibrairie() {}
 
-    public void gererStock() {}
-
     public void panneauBord() {}
-    
-    public void faireFacture() {}
 
-    public void choisirMagasin() {}
-
-    public void StatsVente() {}
 }

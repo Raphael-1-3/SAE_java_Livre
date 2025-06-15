@@ -231,7 +231,6 @@ public class Client extends User {
         }
     }
 
-
     public static void rechercheLivre(ActionBD bd, Client client, Scanner scanner, boolean rechercheDispoMag) throws SQLException
     {
         List<String> menuSousRecherche = new ArrayList<>();
