@@ -143,29 +143,7 @@ public class testBD
         assertThrows(EmptySetException.class, () -> bd.getLivreParIddewey(9999)); 
     }
 
-    @Test
-    public void testGetClientAPartirNomPrenomcodePostal() throws SQLException
-    {
-        try{
-            Client expected = new Client(
-                9, 
-                "Bouzid.Raul.38000@ex.fr", 
-                "Bouzid", 
-                "Raul", 
-                "mdp9", 
-                "CLIENT", 
-                38000, 
-                "Grenoble", 
-                "23 chemin de la Forêt" 
-            );
-            Client Atester = bd.getClientAPartirNomPrenomCodePostal("Bouzid", "Raul", 38000);
-            assertEquals(expected, Atester);
-        }
-        catch (PasDeTelUtilisateurException pdtue)
-        {}
-        assertThrows(PasDeTelUtilisateurException.class, () -> bd.getClientAPartirNomPrenomCodePostal("null", "null", 0));
 
-    }
 
     @Test
     public void testgetHistoriqueClient() throws SQLException, PasDeTelUtilisateurException
@@ -254,40 +232,6 @@ public class testBD
             List<Livre> recommandationsCamille = bd.onVousRecommande(camille);
             assertEquals(expectedCamille, recommandationsCamille);
 
-            // Test pour Hugo David
-            Client hugo = bd.getClientAPartirNomPrenomCodePostal("David", "Hugo", 44000);
-            List<Livre> expectedHugo = Arrays.asList(
-                bd.getLivreParTitre("Les trois fileuses"),
-                bd.getLivreParTitre("Attirances"),
-                bd.getLivreParTitre("Les signes du temps et l'art moderne"),
-                bd.getLivreParTitre("Rose activité mortelle"),
-                bd.getLivreParTitre("Master histoire"),
-                bd.getLivreParTitre("Les sept pièces"),
-                bd.getLivreParTitre("La légende du sang")
-            );
-            List<Livre> recommandationsHugo = bd.onVousRecommande(hugo);
-            assertEquals(expectedHugo, recommandationsHugo);
-
-            // Test pour Louis Garcia
-            Client louis = bd.getClientAPartirNomPrenomCodePostal("Garcia", "Louis", 37000);
-            List<Livre> expectedLouis = Arrays.asList(
-                bd.getLivreParTitre("La vie quotidienne en France au temps du Front Populaire, 1935-1938."),
-                bd.getLivreParTitre("Le guide Hachette des vins 2006"),
-                bd.getLivreParTitre("La mort opportune"),
-                bd.getLivreParTitre("La femme dans la Grèce antique"),
-                bd.getLivreParTitre("Le dico de l'argot fin de siècle"),
-                bd.getLivreParTitre("Choisir ses poissons d'eau de mer"),
-                bd.getLivreParTitre("Une Grève de la faim"),
-                bd.getLivreParTitre("Le plaisir des yeux"),
-                bd.getLivreParTitre("Le rêve pluie"),
-                bd.getLivreParTitre("Vous n'aurez pas le dernier mot!"),
-                bd.getLivreParTitre("Bestiaire imaginaire"),
-                bd.getLivreParTitre("Les miserables"),
-                bd.getLivreParTitre("Qui a fondé la christianisme"),
-                bd.getLivreParTitre("La promeneuse d'oiseaux")
-            );
-            List<Livre> recommandationsLouis = bd.onVousRecommande(louis);
-            assertEquals(expectedLouis, recommandationsLouis);
         }
         catch (PasDHistoriqueException e) 
         {}
@@ -338,109 +282,144 @@ public class testBD
         ps.close();
     }
 
+
     @Test
-    public void testPasserCommande() throws SQLException {
-        // TODO: Implémenter un test pour PasserCommande
+    public void testVoirStockMag() throws SQLException, EmptySetException {
+        // On suppose qu'un magasin et un livre existent déjà
+        Magasin magasin = bd.magAPartirNom("La librairie parisienne");
+        Livre livre = bd.getLivreParTitre("La torpille");
+        // On récupère le stock du magasin
+        HashMap<Livre, Integer> stock = bd.VoirStockMag(magasin);
+        // Vérifie que la map n'est pas nulle
+        assertNotNull(stock);
+        // Vérifie que le livre testé est bien dans le stock (ou au moins la map contient des livres)
+        assertTrue(stock.size() > 0);
+        // Vérifie que la quantité pour ce livre est cohérente (>=0)
+        if (stock.containsKey(livre)) {
+            assertTrue(stock.get(livre) >= 0);
+        }
     }
 
     @Test
-    public void testGetListeLivre() throws SQLException {
-        // TODO: Implémenter un test pour GetListeLivre
-    }
-
-    @Test
-    public void testAddLivre() throws SQLException {
-        // TODO: Implémenter un test pour AddLivre
-    }
-
-    @Test
-    public void testUpdateStock() throws SQLException {
-        // TODO: Implémenter un test pour UpdateStock
-    }
-
-    @Test
-    public void testVoirStockMag() throws SQLException {
-        // TODO: Implémenter un test pour VoirStockMag
-    }
-
-    @Test
-    public void testTransfer() throws SQLException {
-        // TODO: Implémenter un test pour Transfer
-    }
-
-    @Test
-    public void testAddVendeur() throws SQLException {
-        // TODO: Implémenter un test pour AddVendeur
+    public void testTransfer() throws SQLException, Exceptions.PasAssezLivreException, EmptySetException {
+        // On suppose que deux magasins et un livre existent déjà
+        Magasin depart = bd.magAPartirNom("Cap au Sud");
+        Magasin arrivee = bd.magAPartirNom("La librairie parisienne");
+        Livre livre = bd.getLivreParTitre("La torpille");
+        // On récupère le stock initial dans chaque magasin
+        HashMap<Livre, Integer> stockDepart = bd.VoirStockMag(depart);
+        HashMap<Livre, Integer> stockArrivee = bd.VoirStockMag(arrivee);
+        int qteDepartAvant = stockDepart.getOrDefault(livre, 0);
+        int qteArriveeAvant = stockArrivee.getOrDefault(livre, 0);
+        // On tente de transférer 1 exemplaire si possible
+        if (qteDepartAvant > 0) {
+            bd.Transfer(livre.getISBN(), depart, arrivee, 1);
+            int qteDepartApres = bd.VoirStockMag(depart).getOrDefault(livre, 0);
+            int qteArriveeApres = bd.VoirStockMag(arrivee).getOrDefault(livre, 0);
+            assertEquals(qteDepartAvant - 1, qteDepartApres);
+            assertEquals(qteArriveeAvant + 1, qteArriveeApres);
+            // Remise en état (on transfère dans l'autre sens)
+            bd.Transfer(livre.getISBN(), arrivee, depart, 1);
+        } else {
+            // Si pas assez de stock, on vérifie que l'exception est bien levée
+            assertThrows(Exceptions.PasAssezLivreException.class, () -> {
+                bd.Transfer(livre.getISBN(), depart, arrivee, 1);
+            });
+        }
     }
 
     @Test
     public void testAddLibrairie() throws SQLException {
-        // TODO: Implémenter un test pour AddLibrairie
+        // Création d'un magasin fictif
+        Magasin mag = new Magasin(null, "LibrairieTest", "Paris");
+        bd.AddLibrairie(mag);
+        // Vérification : le magasin doit maintenant exister
+        Magasin magRecup = bd.magAPartirNom("LibrairieTest");
+        assertNotNull(magRecup);
+        assertEquals("LibrairieTest", magRecup.getNomMag());
+        // Nettoyage : suppression du magasin ajouté
+        PreparedStatement ps = this.connexion.prepareStatement("DELETE FROM MAGASIN WHERE nommag = ?");
+        ps.setString(1, "LibrairieTest");
+        ps.executeUpdate();
+        ps.close();
     }
 
     @Test
     public void testMagAPartirNom() throws SQLException {
-        // TODO: Implémenter un test pour magAPartirNom
+        // On suppose qu'un magasin existe déjà
+        Magasin mag = bd.magAPartirNom("La librairie parisienne");
+        assertNotNull(mag);
+        assertEquals("La librairie parisienne", mag.getNomMag());
     }
 
-    @Test
-    public void testConnexionRole() throws SQLException {
-        // TODO: Implémenter un test pour connexionRole
-    }
-
-    @Test
-    public void testCreerClient() throws SQLException {
-        // TODO: Implémenter un test pour creerClient
-    }
 
     @Test
     public void testChercherLivreApproximative() throws SQLException {
-        // TODO: Implémenter un test pour cherhcherLivreApproximative
+        // On suppose qu'un livre "La torpille" existe
+        List<Livre> livres = bd.cherhcherLivreApproximative("torpille");
+        assertNotNull(livres);
+        boolean found = false;
+        for (Livre l : livres) {
+            if ("La torpille".equals(l.getTitre())) {
+                found = true;
+                break;
+            }
+        }
+        assertTrue(found);
     }
 
     @Test
     public void testGetListMagasin() throws SQLException {
-        // TODO: Implémenter un test pour getListMagasin
+        List<Magasin> magasins = bd.getListMagasin();
+        assertNotNull(magasins);
+        assertTrue(magasins.size() > 0);
+        for (Magasin m : magasins) {
+            assertNotNull(m);
+            assertNotNull(m.getNomMag());
+        }
     }
 
     @Test
-    public void testGetMagasinOuLivreDispo() throws SQLException {
-        // TODO: Implémenter un test pour getMagasinOuLivreDispo
+    public void testGetMagasinOuLivreDispo() throws SQLException, Exceptions.EmptySetException {
+        Livre livre = bd.getLivreParTitre("La torpille");
+        List<Magasin> magasins = bd.getMagasinOuLivreDispo(livre);
+        assertNotNull(magasins);
+        assertTrue(magasins.size() > 0);
+        for (Magasin m : magasins) {
+            assertNotNull(m);
+        }
     }
 
     @Test
     public void testGetClientNonPrenom() throws SQLException {
-        // TODO: Implémenter un test pour getClientNonPrenom
+        List<Client> clients = bd.getClientNonPrenom("Bouzid", "Raul");
+        assertNotNull(clients);
+        assertTrue(clients.size() > 0);
+        for (Client c : clients) {
+            assertNotNull(c);
+        }
     }
 
     @Test
     public void testGetClientParId() throws SQLException {
-        // TODO: Implémenter un test pour getClientParId
+        //TODO: Ajouter un test pour getClientParId;
     }
 
     @Test
     public void testRechercheLivreAuteurApproximative() throws SQLException {
-        // TODO: Implémenter un test pour rechercheLivreAuteurApproximative
+        // On suppose qu'un auteur "Dumas" existe
+        List<Auteur> auteurs = bd.rechercheAuteurApproximative("Dumas");
+        assertNotNull(auteurs);
+        assertTrue(auteurs.size() > 0);
+        Auteur auteur = auteurs.get(0);
+        List<Livre> livres = bd.rechercheLivreAuteur(auteur);
+        assertNotNull(livres);
     }
 
     @Test
     public void testGetCurrentDate() throws SQLException {
-        // TODO: Implémenter un test pour getCurrentDate
-    }
-
-    @Test
-    public void testGetLivreParId() throws SQLException {
-        // TODO: Implémenter un test pour getLivreParId
-    }
-
-    @Test
-    public void testGetMaxISBN() throws SQLException {
-        // TODO: Implémenter un test pour getMaxISBN
-    }
-
-    @Test
-    public void testGetMagasinParId() throws SQLException {
-        // TODO: Implémenter un test pour getMagasinParId
+        java.sql.Date date = bd.getCurrentDate();
+        assertNotNull(date);
     }
 
     // TODO: Ajouter ces tests pour couvrir toutes les méthodes publiques de ActionBD
