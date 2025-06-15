@@ -70,6 +70,30 @@ public void application(ActionBD bd, Scanner scanner, User u) throws SQLExceptio
                 commande_faite = true;
                 break;
             case "4":
+                System.out.println("Obtenir le panneau de bord");
+                super.ajouterLivre(bd, scanner);
+                break;
+            case "5":
+                System.out.println("Obtenir le panneau de bord");
+                super.updateStock(bd, null, scanner);
+                break;
+            case "6":
+                System.out.println("Obtenir le panneau de bord");
+                super.disponibilites(bd, null);
+                break;
+            case "7":
+                System.out.println("Obtenir le panneau de bord");
+                super.passerCommande(bd, scanner);
+                break;
+            case "8":
+                System.out.println("Obtenir le panneau de bord");
+                super.Transfer(bd, null, scanner);
+                break;
+            case "9":
+                System.out.println("Obtenir le panneau de bord");
+                super.FacturesMag(bd,scanner);
+                break;
+            case "10":
             case "q":
             case "quitter":
                 System.out.println("Fermeture de l'application administrateur.");
