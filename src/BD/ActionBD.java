@@ -1027,6 +1027,12 @@ public class ActionBD{
         return c;
     }
 
+    public List<Magasin> getallMagasins()
+    {}
+
+    public List<Livre> getLivreMagasinList()
+    {}
+
     
 
 

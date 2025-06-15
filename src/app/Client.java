@@ -212,6 +212,7 @@ public class Client extends User {
         List<String> menuModeRecherche = new ArrayList<>();
         menuModeRecherche.add("Parmi les livres disponibles en magasin");
         menuModeRecherche.add("Parmi tout les livres enregistrés");
+        menuModeRecherche.add("Choisir un magasin");
         menuModeRecherche.add("Quitter");
 
         boolean quitterRecherche = false;
@@ -230,6 +231,10 @@ public class Client extends User {
                     rechercheLivre(bd, client, scanner, rechercheDispoMag);
                     break;
                 case "3":
+                    // Choisir un magasin
+                    
+                    break;
+                case "4":
                 case "q":
                 case "quitter":
                     System.out.println("Vous quittez la recherche.");
@@ -670,4 +675,52 @@ public class Client extends User {
         }
     }
 
+    public void choisirMagasin(ActionBD bd, Scanner scanner, Client client)
+    {
+        List<Magasin> magasins = bd.getAllMagasins();
+        if (magasins == null || magasins.isEmpty()) {
+            System.out.println("Aucun magasin disponible.");
+            return;
+        }
+        List<String> nomsMagasins = new ArrayList<>();
+        for (Magasin mag : magasins) {
+            nomsMagasins.add(mag.getNomMag());
+        }
+        nomsMagasins.add("Retour");
+        boolean quitter = false;
+        while (!quitter) {
+            System.out.println(AfficherMenu.Menu("Liste des magasins", nomsMagasins));
+            System.out.print("Entrez le numéro du magasin choisi ou 'retour' : ");
+            String choixMag = scanner.nextLine().strip().toLowerCase();
+            if (choixMag.equals("retour") || choixMag.equals(String.valueOf(nomsMagasins.size()))) {
+            quitter = true;
+            } else 
+            {
+                try {
+                    int numMag = Integer.parseInt(choixMag) - 1;
+                    if (numMag < 0 || numMag >= magasins.size()) {
+                    System.out.println("Numéro invalide.");
+                    continue;
+                    }
+                    Magasin magasinChoisi = magasins.get(numMag);
+                    System.out.println("Vous avez choisi le magasin : " + magasinChoisi.getNomMag());
+                    // Ajoutez ici la logique pour utiliser le magasin choisi si besoin
+                    quitter = true;
+                } 
+                catch (NumberFormatException e) {
+                System.out.println("Entrée invalide.");
+                }
+            }
+        }
+    }
+
+    /**
+     * A partir d une liste de livre et d un magasin, renvoie une liste en contenant que les livre disponible dans ce magasin
+     * @param tabL
+     * @param mag
+     * @return
+     */
+    public List<Livre> trieLivreEnMgasin(List<Livre> tabL, Magasin mag)
+    {}
 }
+
