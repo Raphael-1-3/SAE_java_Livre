@@ -107,7 +107,7 @@ public class Administrateur extends Vendeur {
         }
     }
 
-    public void creerVendeur(ActionBD bd, Scanner scan) {
+    public static void creerVendeur(ActionBD bd, Scanner scan) {
         try{
             System.out.println("Nom Vendeur ");
             String nom=scan.nextLine();
