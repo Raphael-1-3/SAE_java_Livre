@@ -44,6 +44,7 @@ public class Administrateur extends Vendeur {
                                                 "Passer une commande pour un Client",
                                                 "Tranferer un livre",
                                                 "Obtenir les factures",
+                                                "Choisir Un magasin",
                                                 "Quitter");
         Administrateur a = (Administrateur) u;
         boolean commande_faite = false;
@@ -83,6 +84,9 @@ public class Administrateur extends Vendeur {
                     Factures(bd,a,scanner);
                     break;
                 case "10":
+                    choisirMagasin(bd, a, scanner);
+                    break;
+                case "11":
                     System.out.println("Fermeture de l'application administrateur.");
                     commande_faite = true;
                     break;
