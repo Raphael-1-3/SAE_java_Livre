@@ -84,7 +84,7 @@ public class Administrateur extends Vendeur {
                     {
                         choisirMagasin(bd, a, scanner);
                     }
-                    updateStock(bd, null, scanner);
+                    updateStock(bd, a, scanner);
                     break;
                 case "6":
                     if (a.getMagasin() == null)
