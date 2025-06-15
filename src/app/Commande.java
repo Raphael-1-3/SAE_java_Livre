@@ -90,6 +90,7 @@ public class Commande{
             this.panier.put(livre, qte);
         }
     }
+    
     public void enleverArticle(Livre livre){
         this.panier.remove(livre);
     }
