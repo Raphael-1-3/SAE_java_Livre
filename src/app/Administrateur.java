@@ -91,7 +91,7 @@ public void application(ActionBD bd, Scanner scanner, User u) throws SQLExceptio
                 break;
             case "9":
                 System.out.println("Obtenir le panneau de bord");
-                super.FacturesMag(bd,scanner);
+                super.Factures(bd,a,scanner);
                 break;
             case "10":
             case "q":
