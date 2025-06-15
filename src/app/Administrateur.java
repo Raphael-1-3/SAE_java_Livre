@@ -56,7 +56,7 @@ public void application(ActionBD bd, Scanner scanner, User u) throws SQLExceptio
         switch (commande) {
             case "1":
                 System.out.println("Création d'un vendeur...");
-                this.creerVendeur();
+                this.creerVendeur(bd, scanner);
                 commande_faite = true;
                 break;
             case "2":
@@ -105,8 +105,27 @@ public void application(ActionBD bd, Scanner scanner, User u) throws SQLExceptio
     }
 }
 
-    public void creerVendeur() {
-        
+    public void creerVendeur(ActionBD bd, Scanner scan) {
+        try{
+            System.out.println("Nom Vendeur ");
+            String nom=scan.nextLine();
+            System.out.println("Prenom Vendeur ");
+            String prenom=scan.nextLine();
+            System.out.println("l'idve ");
+            int idve=Integer.parseInt(scan.nextLine());
+            System.out.println("l'id du magasin");
+            int idmag=Integer.parseInt(scan.nextLine());
+            System.out.println("l'email");
+            String email=scan.nextLine();
+            System.out.println("le mot de passe");
+            String mdp=scan.nextLine();
+            String role="VENDEUR";
+            Vendeur v= new Vendeur(idve, email, nom, mdp, role, prenom, bd.magAPartirId(idmag));
+            bd.AddVendeur(v);
+        }
+        catch(SQLException e){
+            System.out.println("Erreur SQL");
+        }
     }
 
     public void ajouterLibrairie(ActionBD bd, Scanner scan) {
