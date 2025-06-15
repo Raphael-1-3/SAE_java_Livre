@@ -15,8 +15,8 @@
 
 ## Compilation sur windows 
 
-- Compiler le projet : ```javac -d bin -cp "lib/*;src" src/main/*.java src/test/*.java```
-- Lancer les tests : ```java -cp "bin;lib/*" org.junit.runner.JUnitCore test.AllTests`
+- Compiler le projet : ```javac -d bin -cp "lib/" src/*.java src/app/*.java src/Affichage/*.java src/BD/*.java src/Exceptions/*.java src/test/*.java```
+- Lancer les tests : ```java -cp "bin;lib/*" Executable`
 
 ## Modification apporte a la bd
 - ajout d'un attribut motDePasse (par defaut 1234)
