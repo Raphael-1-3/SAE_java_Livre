@@ -2,7 +2,10 @@
 
 ## Participant :
 
-- Raphaël BROUSSEAU nom de branch dev raphe 
+- Raphaël BROUSSEAU branche : devRaphe
+- Corentin LACOUME branche : devCorentin
+- Robin FAUCHEUX branche : devRobin
+- Joris VACHEY branche : devJojo
 
 ## Compilation  sur linux: 
 
@@ -25,3 +28,7 @@
 
 javac -d bin -cp "lib/*;src" src/Affichage/*.java src/test/*.java src/app/*.java src/BD/*.java src/Exceptions/*.java src/*.java
 java -cp "bin;lib/*" Executable
+
+## Creation de la base de Donnee 
+- executer creationLivreExpress.sql pour creer les tables
+- executer jeucomplet.sql pour avoir obtenir le jeu de donnees
