@@ -56,31 +56,62 @@ public class Administrateur extends Vendeur {
 
             switch (commande) {
                 case "1":
+                    if (a.getMagasin() == null)
+                    {
+                        choisirMagasin(bd, a, scanner);
+                    }
                     creerVendeur(bd, scanner);
                     break;
                 case "2":
                     ajouterLibrairie(bd, scanner);
                     break;
                 case "3":
+                    if (a.getMagasin() == null)
+                    {
+                        choisirMagasin(bd, a, scanner);
+                    }
                     panneauBord(bd);
                     break;
                 case "4":
+                    if (a.getMagasin() == null)
+                    {
+                        choisirMagasin(bd, a, scanner);
+                    }
                     ajouterLivre(bd, scanner);
                     break;
                 case "5":
+                    if (a.getMagasin() == null)
+                    {
+                        choisirMagasin(bd, a, scanner);
+                    }
                     updateStock(bd, null, scanner);
                     break;
                 case "6":
+                    if (a.getMagasin() == null)
+                    {
+                        choisirMagasin(bd, a, scanner);
+                    }
                     disponibilites(bd, null);
                     break;
                 case "7":
+                    if (a.getMagasin() == null)
+                    {
+                        choisirMagasin(bd, a, scanner);
+                    }
                     passerCommande(bd, scanner);
                     break;
                 case "8":
+                    if (a.getMagasin() == null)
+                    {
+                        choisirMagasin(bd, a, scanner);
+                    }
                     Transfer(bd, null, scanner);
                     break;
                 case "9":
-                    choisirMagasin(bd, a, scanner);
+                    if (a.getMagasin() == null)
+                    {
+                        choisirMagasin(bd, a, scanner);
+                    }
                     Factures(bd,a,scanner);
                     break;
                 case "10":
