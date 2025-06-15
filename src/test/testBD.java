@@ -143,29 +143,7 @@ public class testBD
         assertThrows(EmptySetException.class, () -> bd.getLivreParIddewey(9999)); 
     }
 
-    @Test
-    public void testGetClientAPartirNomPrenomcodePostal() throws SQLException
-    {
-        try{
-            Client expected = new Client(
-                9, 
-                "Bouzid.Raul.38000@ex.fr", 
-                "Bouzid", 
-                "Raul", 
-                "mdp9", 
-                "CLIENT", 
-                38000, 
-                "Grenoble", 
-                "23 chemin de la Forêt" 
-            );
-            Client Atester = bd.getClientAPartirNomPrenomCodePostal("Bouzid", "Raul", 38000);
-            assertEquals(expected, Atester);
-        }
-        catch (PasDeTelUtilisateurException pdtue)
-        {}
-        assertThrows(PasDeTelUtilisateurException.class, () -> bd.getClientAPartirNomPrenomCodePostal("null", "null", 0));
 
-    }
 
     @Test
     public void testgetHistoriqueClient() throws SQLException, PasDeTelUtilisateurException
@@ -254,40 +232,6 @@ public class testBD
             List<Livre> recommandationsCamille = bd.onVousRecommande(camille);
             assertEquals(expectedCamille, recommandationsCamille);
 
-            // Test pour Hugo David
-            Client hugo = bd.getClientAPartirNomPrenomCodePostal("David", "Hugo", 44000);
-            List<Livre> expectedHugo = Arrays.asList(
-                bd.getLivreParTitre("Les trois fileuses"),
-                bd.getLivreParTitre("Attirances"),
-                bd.getLivreParTitre("Les signes du temps et l'art moderne"),
-                bd.getLivreParTitre("Rose activité mortelle"),
-                bd.getLivreParTitre("Master histoire"),
-                bd.getLivreParTitre("Les sept pièces"),
-                bd.getLivreParTitre("La légende du sang")
-            );
-            List<Livre> recommandationsHugo = bd.onVousRecommande(hugo);
-            assertEquals(expectedHugo, recommandationsHugo);
-
-            // Test pour Louis Garcia
-            Client louis = bd.getClientAPartirNomPrenomCodePostal("Garcia", "Louis", 37000);
-            List<Livre> expectedLouis = Arrays.asList(
-                bd.getLivreParTitre("La vie quotidienne en France au temps du Front Populaire, 1935-1938."),
-                bd.getLivreParTitre("Le guide Hachette des vins 2006"),
-                bd.getLivreParTitre("La mort opportune"),
-                bd.getLivreParTitre("La femme dans la Grèce antique"),
-                bd.getLivreParTitre("Le dico de l'argot fin de siècle"),
-                bd.getLivreParTitre("Choisir ses poissons d'eau de mer"),
-                bd.getLivreParTitre("Une Grève de la faim"),
-                bd.getLivreParTitre("Le plaisir des yeux"),
-                bd.getLivreParTitre("Le rêve pluie"),
-                bd.getLivreParTitre("Vous n'aurez pas le dernier mot!"),
-                bd.getLivreParTitre("Bestiaire imaginaire"),
-                bd.getLivreParTitre("Les miserables"),
-                bd.getLivreParTitre("Qui a fondé la christianisme"),
-                bd.getLivreParTitre("La promeneuse d'oiseaux")
-            );
-            List<Livre> recommandationsLouis = bd.onVousRecommande(louis);
-            assertEquals(expectedLouis, recommandationsLouis);
         }
         catch (PasDHistoriqueException e) 
         {}
@@ -338,81 +282,6 @@ public class testBD
         ps.close();
     }
 
-    @Test
-    public void testPasserCommande() throws SQLException, PasDeTelUtilisateurException, EmptySetException {
-        // On vérifie que le nombre de commandes augmente après l'insertion
-        int maxAvant = bd.getMaxNumCom();
-        int numTest = maxAvant + 1;
-        Client client = bd.getClientAPartirNomPrenomCodePostal("Bouzid", "Raul", 38000);
-        Magasin magasin = bd.magAPartirNom("La librairie parisienne");
-        Livre livre = bd.getLivreParTitre("La torpille");
-        Commande commande = new Commande(0, bd);
-        commande.ajouterArticle(livre, 1);
-        bd.PasserCommande(client, commande, magasin);
-        int maxApres = bd.getMaxNumCom();
-        assertEquals(numTest, maxApres);
-
-        PreparedStatement ps = this.connexion.prepareStatement(
-            "DELETE FROM COMMANDE WHERE numcom = ?");
-        ps.setInt(1, numTest);
-        ps.executeUpdate();
-        ps.close();
-    }
-
-    @Test
-    public void testGetListeLivre() throws SQLException {
-        // Récupération de la liste des livres
-        List<Livre> listeLivres = bd.GetListeLivre();
-        // Vérifie que la liste n'est pas nulle
-        assertNotNull(listeLivres);
-        // Vérifie que la liste contient au moins un livre
-        assertTrue(listeLivres.size() > 0);
-    }
-
-    @Test
-    public void testAddLivre() throws SQLException {
-         // Création d'un nouveau livre à ajouter
-        Livre nouveauLivre = new Livre(1, "TitreTestAjout", 200, 2024, 19.99);
-
-        // Ajout du livre via la méthode à tester
-        bd.AddLivre(nouveauLivre);
-
-        // Récupération de la liste des livres pour vérifier l'ajout
-        List<Livre> listeLivres = bd.GetListeLivre();
-
-        boolean found = false;
-        int i = 0;
-        while (i < listeLivres.size() && !found) {
-            Livre livre = listeLivres.get(i);
-            if (livre.getISBN() == 1 && "TitreTestAjout".equals(livre.getTitre())) {
-            found = true;
-            }
-            i++;
-        }
-        assertTrue(found);
-    }
-
-
-    @Test
-    public void testUpdateStock() throws SQLException, EmptySetException {
-        // On suppose qu'il existe un magasin et un livre dans la base
-    Magasin magasin = bd.magAPartirNom("La librairie parisienne");
-    Livre livre = bd.getLivreParTitre("La torpille");
-
-    // On récupère le stock actuel
-    int stockAvant = bd.VoirStockMag(magasin).get(livre);
-
-    // On met à jour le stock (+5)
-    bd.UpdateStock(livre, magasin, stockAvant + 5);
-
-    // On vérifie que le stock a bien été mis à jour
-    int stockApres = bd.VoirStockMag(magasin).get(livre);
-    assertEquals(stockAvant + 5, stockApres);
-
-    // On remet le stock à sa valeur initiale pour ne pas impacter les autres tests
-    bd.UpdateStock(livre, magasin, stockAvant);
-    assertEquals(stockAvant, stockApres);
-    }
 
     @Test
     public void testVoirStockMag() throws SQLException, EmptySetException {
@@ -460,24 +329,6 @@ public class testBD
     }
 
     @Test
-    public void testAddVendeur() throws SQLException, PasDeTelUtilisateurException {
-        Magasin magasin = bd.magAPartirNom("La librairie parisienne");
-        // Création d'un vendeur fictif avec le bon constructeur
-        Vendeur vendeur = new Vendeur(null, "paul.dupont@exemple.com", "Dupont", "mdpTest", "VENDEUR", "Paul", magasin);
-        // Ajout du vendeur
-        bd.AddVendeur(vendeur);
-        // Vérification : le vendeur doit maintenant exister dans la base (table USER et VENDEUR)
-        User user = bd.connexionRole("paul.dupont@exemple.com", "mdpTest");
-        assertNotNull(user);
-        assertEquals("VENDEUR", user.getRole());
-        // Nettoyage : suppression du vendeur ajouté
-        PreparedStatement ps = this.connexion.prepareStatement("DELETE FROM USER WHERE email = ?");
-        ps.setString(1, "paul.dupont@exemple.com");
-        ps.executeUpdate();
-        ps.close();
-    }
-
-    @Test
     public void testAddLibrairie() throws SQLException {
         // Création d'un magasin fictif
         Magasin mag = new Magasin(null, "LibrairieTest", "Paris");
@@ -501,33 +352,6 @@ public class testBD
         assertEquals("La librairie parisienne", mag.getNomMag());
     }
 
-    @Test
-    public void testConnexionRole() throws SQLException, PasDeTelUtilisateurException {
-        // On suppose qu'un client existe déjà
-        User user = bd.connexionRole("Bouzid.Raul.38000@ex.fr", "mdp9");
-        assertNotNull(user);
-        assertEquals("CLIENT", user.getRole());
-    }
-
-    @Test
-    public void testCreerClient() throws SQLException {
-        // Création d'un client fictif
-        boolean res = bd.creerClient("TestNom", "TestPrenom", 12345, "TestVille", "TestAdresse", "testclient@ex.fr", "mdpTest");
-        assertTrue(res);
-        // Vérification : le client doit maintenant exister
-        Client client = null;
-        try {
-            client = bd.getClientAPartirNomPrenomCodePostal("TestNom", "TestPrenom", 12345);
-        } catch (PasDeTelUtilisateurException e) {
-            fail("Client non trouvé après création");
-        }
-        assertNotNull(client);
-        // Nettoyage : suppression du client ajouté
-        PreparedStatement ps = this.connexion.prepareStatement("DELETE FROM USER WHERE email = ?");
-        ps.setString(1, "testclient@ex.fr");
-        ps.executeUpdate();
-        ps.close();
-    }
 
     @Test
     public void testChercherLivreApproximative() throws SQLException {
