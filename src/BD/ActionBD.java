@@ -288,11 +288,11 @@ public class ActionBD{
                     user = new Administrateur(
                         rsA.getInt("idad"),
                         rsA.getString("email"),
-                        rsA.getString("nomad"),
+                        rsA.getString("nom"),
                         rsA.getString("motDePasse"),
                         role,
                         rsA.getString("prenomad"),
-                        magAPartirNom(rsA.getString("magasin"))
+                        null
                     );
                 }
                 rsA.close();

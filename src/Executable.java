@@ -108,7 +108,7 @@ public class Executable{
                                 Vendeur.application(bd, user, scanner);
                                 // Actions vendeur
                                 break;
-                            case "Admin":
+                            case "Administrateur":
                                 System.out.println("Bienvenue, administrateur !");
                                 Administrateur.application(bd, user, scanner);
                                 // Actions admin
