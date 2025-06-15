@@ -311,7 +311,7 @@ public class Vendeur extends User{
                     System.out.println("Veuillez entrer un nombre");
                 }
             }
-            Magasin m = bd.getMagasinParId(idmag);
+            Magasin m = bd.magAPartirId(idmag);
             bd.Transfer(isbn, m, v.getMagasin(), qte);
 
         }
@@ -382,6 +382,7 @@ public class Vendeur extends User{
             System.out.println("Erreur SQL");
         }
     }
+    
     public static void FacturesCli(ActionBD bd, Vendeur v, Scanner scan)
     {
         try {

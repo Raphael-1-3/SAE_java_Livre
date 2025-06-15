@@ -410,6 +410,15 @@ public class ActionBD{
         } catch(SQLException e) {ps.close(); return false;}
     }
 
+    /**
+     * Permet de changer l'adresse d'un client
+     * @param client Le client en question
+     * @param nouvelleAdresse La nouvelle adresse
+     * @param nouveauCP Le nouveau code postal
+     * @param nouvelleVille La nouvelle ville
+     * @return Vrai si le changement est valide
+     * @throws SQLException
+     */
     public boolean changerAdresse(Client client, String nouvelleAdresse, int nouveauCP, String nouvelleVille) throws SQLException
     {
         PreparedStatement ps = this.connexion.prepareStatement("update CLIENT set adressecli = ?, codepostal = ?, villecli = ? where idcli = ?");
@@ -517,7 +526,12 @@ public class ActionBD{
         return tabLivre;
     }
 
-
+    /**
+     * Permet de retrouver un auteur a partir de son nom 
+     * @param nomauteur Le nom de l'auteur
+     * @return La liste des auteurs correspondant approximativement au nom
+     * @throws SQLException
+     */
     public List<Auteur> rechercheAuteurApproximative(String nomauteur) throws SQLException
     {
         PreparedStatement ps = this.connexion.prepareStatement("select * from AUTEUR where lower(nomauteur) like ?");
@@ -746,10 +760,7 @@ public class ActionBD{
             ajouterArrivee.executeUpdate();
             ajouterArrivee.close();
         }
-
     }
-
-    
     
     /**
      * Ajoute un magasin a la base de donnees
@@ -764,7 +775,6 @@ public class ActionBD{
         ps.executeUpdate();
         ps.close();
     }
-    public static void InfosTableauBord(){}
 
     /**
      * renvoie le numéro de commande le plus élever
@@ -787,7 +797,7 @@ public class ActionBD{
      * @return l'identifiant le plus grand de la BD.
      * @throws SQLException.
      */
-    public  int getIdUserMax() throws SQLException
+    public int getIdUserMax() throws SQLException
     {
         ResultSet rs = this.connexion.createStatement().executeQuery("select max(idu) from USER");
         rs.next();
@@ -830,7 +840,7 @@ public class ActionBD{
      * @param tabLivre
      * @return
      */
-    public  HashMap<Integer, String> getClassificationAPartirHistorique(List<Livre> tabLivre)
+    public HashMap<Integer, String> getClassificationAPartirHistorique(List<Livre> tabLivre)
     {
         HashMap<Integer, String> res = new HashMap<>();
         HashMap<Integer, String> tmp = new HashMap<>();
@@ -900,8 +910,12 @@ public class ActionBD{
         return res;
     }
 
-    
-
+    /**
+     * Recupere un objet Magasin a partir de son nom
+     * @param nomMagasin le nom du magasin
+     * @return le magasin
+     * @throws SQLException
+     */
     public Magasin magAPartirNom(String nomMagasin) throws SQLException
     {
         PreparedStatement ps = this.connexion.prepareStatement("select * from MAGASIN where nommag = ?");
@@ -918,10 +932,6 @@ public class ActionBD{
         ps.close();
         return mag;
     }
-
-    
-
-    
 
     /**
      * Permet d obtenir la liste de tout les magasin
@@ -1027,9 +1037,6 @@ public class ActionBD{
         return c;
     }
 
-    
-
-
     /**
      * Permet de recuperer la date actuelle 
      * @return Date
@@ -1078,20 +1085,13 @@ public class ActionBD{
         return rs.getLong(1);
     }
 
-    public Magasin getMagasinParId(Integer idmag) throws SQLException
-    {
-        PreparedStatement ps = this.connexion.prepareStatement("select * from MAGASIN where idmag = ?");
-        ps.setInt(1, idmag);
-        ResultSet rs = ps.executeQuery();
-        rs.next();
-        String nom = rs.getString("nommag");
-        String ville = rs.getString("villemag");
-        Magasin m = new Magasin(idmag, nom, ville);
-        return m;
-    }
-
     
-
+    /**
+     * Recupere un objet magasin a partir de son ID
+     * @param idmag L'id du magasin
+     * @return Le magasin 
+     * @throws SQLException
+     */
     public Magasin magAPartirId(Integer idmag) throws SQLException
     {
         ResultSet rs = this.connexion.createStatement().executeQuery("select * from MAGASIN where idmag = "+idmag);
@@ -1107,7 +1107,12 @@ public class ActionBD{
     }
 
     /**
-     * Génère la facture détaillée d'un client pour un mois et une année donnés.
+     * Permet d'edition des factures d'un client
+     * @param client Un client
+     * @param mois Le mois d'edition des factures
+     * @param annee L'annee d'edition des factures
+     * @return Chaine de caractere representant les factures
+     * @throws SQLException
      */
     public String factureClient(Client client, int mois, int annee) throws SQLException {
         PreparedStatement ps = this.connexion.prepareStatement(
@@ -1123,19 +1128,30 @@ public class ActionBD{
             "group by month(datecom), numcom, isbn"
         );
         
+        //insertion des parametres de la requete
         ps.setInt(1, mois);
         ps.setInt(2, annee);
         ps.setInt(3, client.getId());
+
+        //execution de la requete
         ResultSet rs = ps.executeQuery();
+
+        //Creation de la chaine de caractere 
         String res = "Factures du " + mois + "/" + annee + "\n";
         res = res + "Edition des factures du client " + client.getId() + "\n";
+
+        //Instanciation des parametres utiles pour la creation de la chaine de caractere
         Integer idcom = null;
         Integer nbLivres = 0;
         Double CaTotal = 0.0;
         Double CaCommande = 0.0;
         Integer numero = null;
+
+        //parcours de touts les livres commandes
         while(rs.next())
         {
+
+            //recuperation des colonnes de la requete
             String nom = rs.getString("nomcli");
             String prenom = rs.getString("prenomcli");
             String adresse = rs.getString("adressecli");
@@ -1149,13 +1165,19 @@ public class ActionBD{
             Double prix = rs.getDouble("prix");
             Double totalArticle = rs.getDouble("totalArticle");
             Double totalCom = rs.getDouble("total");
+
+            //incrementation du prix total de tous les articles dans les factures
             CaTotal += totalArticle;
             
+            //incrementation du nombre de livres commandes 
             nbLivres += qte;
+
+            //creation du header de chaque facture
             if (!numcom.equals(idcom))
             {
                 if (idcom != null)
                 {
+                    //creation du footer de chaque facture
                     res = res + " ".repeat(70) + "_".repeat(8) + " ".repeat(2) + "\n";
                     res = res + " ".repeat(68) + "Total" + " ".repeat(4) + CaCommande + "\n";
                 }
@@ -1172,12 +1194,16 @@ public class ActionBD{
             {
                 numero++;
             }
+
+            // ajout de la ligne de livre
             CaCommande += totalArticle;
             idcom = numcom;
             res = res + " " + String.format("%-2s", "" + numero) + " " + String.format("%-20s", "" + isbn) + String.format("%-40s", titre) + qte + " " + prix + " ".repeat(2) + totalArticle + "\n";
             
 
         }
+
+        //lignes de fin de factures
         res = res + " ".repeat(70) + "_".repeat(8) + " ".repeat(2) + "\n";
         res = res + " ".repeat(68) + "Total" + " ".repeat(4) + CaCommande + "\n";
         res = res + "-".repeat(80) + "\n";
@@ -1188,7 +1214,12 @@ public class ActionBD{
     }
 
     /**
-     * Génère la facture globale d'un magasin pour un mois et une année donnés.
+     * Genere un chaine de caractere permettant d'afficher des factures pour un magasin
+     * @param mag Un magasin
+     * @param mois mois d'edition des factures
+     * @param annee annee d'edition des factures
+     * @return Chaine de caractere formatee pour les factures
+     * @throws SQLException
      */
     public String factureMagasin(Magasin mag, int mois, int annee) throws SQLException {
 
@@ -1205,12 +1236,19 @@ public class ActionBD{
             "group by month(datecom), numcom, isbn"
         );
         
+        //insertion des parametres de la requete
         ps.setInt(1, mois);
         ps.setInt(2, annee);
         ps.setInt(3, mag.getIdmag());
+
+        //execution
         ResultSet rs = ps.executeQuery();
+        
+        //creation de la chaine de caractere
         String res = "Factures du " + mois + "/" + annee + "\n";
         res = res + "Edition des factures du magasin + " + mag.getNomMag() + "\n";
+        
+        //Instanciation des variables utiles pour les factures
         Integer idcom = null;
         Integer nbLivres = 0;
         Double CaTotal = 0.0;
@@ -1218,6 +1256,8 @@ public class ActionBD{
         Integer numero = null;
         while(rs.next())
         {
+
+            //recuperation des colonnes de la requete
             String nom = rs.getString("nomcli");
             String prenom = rs.getString("prenomcli");
             String adresse = rs.getString("adressecli");
@@ -1231,16 +1271,22 @@ public class ActionBD{
             Double prix = rs.getDouble("prix");
             Double totalArticle = rs.getDouble("totalArticle");
             Double totalCom = rs.getDouble("total");
-            CaTotal += totalArticle;
             
+            //mise a jour du total de prix global 
+            CaTotal += totalArticle;
+            //mise a jour du nombre de livres total
             nbLivres += qte;
+
+            //header en cas de nouvelle commande
             if (!numcom.equals(idcom))
             {
                 if (idcom != null)
                 {
+                    //a afficher pour la fin de chaque commande
                     res = res + " ".repeat(70) + "_".repeat(8) + " ".repeat(2) + "\n";
                     res = res + " ".repeat(68) + "Total" + " ".repeat(4) + CaCommande + "\n";
                 }
+                //afficher au debut des commandes
                 res = res + "-".repeat(80) + "\n";
                 res = res + nom + " " + prenom + "\n";
                 res = res + adresse + "\n";
@@ -1252,14 +1298,17 @@ public class ActionBD{
             }
             else
             {
+                //numero de ligne
                 numero++;
             }
             CaCommande += totalArticle;
             idcom = numcom;
+            //affichage des informations de la commande 
             res = res + " " + String.format("%-2s", "" + numero) + " " + String.format("%-20s", "" + isbn) + String.format("%-40s", titre) + qte + " " + prix + " ".repeat(2) + totalArticle + "\n";
             
 
         }
+        //affichage de fin
         res = res + " ".repeat(70) + "_".repeat(8) + " ".repeat(2) + "\n";
         res = res + " ".repeat(68) + "Total" + " ".repeat(4) + CaCommande + "\n";
         res = res + "-".repeat(80) + "\n";
@@ -1288,7 +1337,7 @@ public class ActionBD{
         while (rs.next())
         {
             int annee = rs.getInt("annee");
-            Magasin mag = getMagasinParId(rs.getInt("idmag"));
+            Magasin mag = magAPartirId(rs.getInt("idmag"));
             int nblivre = rs.getInt("nblivre");
             if (!res.containsKey(annee))
             {

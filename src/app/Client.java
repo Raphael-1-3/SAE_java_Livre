@@ -155,17 +155,6 @@ public class Client extends User {
         
     }
 
-    // Les méthodes suivantes sont des exemples ou des stubs, à compléter selon les besoins
-    public void CommanderCommande() {
-        System.out.println("╭────────────────────────────╮");
-        System.out.println("│       Menu                 │");
-        System.out.println("├────────────────────────────┤");
-        System.out.println("│ 1 : exemple                │");
-        System.out.println("│ 2 : exemple                │");
-        System.out.println("│ Q : quitter                │");
-        System.out.println("╰────────────────────────────╯");
-    }
-
     public static void application(ActionBD bd, User client, Scanner scanner) throws SQLException
     {
         Client clientC = (Client) client;
@@ -207,6 +196,7 @@ public class Client extends User {
             }
         }
     }
+    
     public static void choixDisponibilite(ActionBD bd, Client client, Scanner scanner) throws SQLException {
         // Premier menu : choix du mode de recherche
         List<String> menuModeRecherche = new ArrayList<>();
