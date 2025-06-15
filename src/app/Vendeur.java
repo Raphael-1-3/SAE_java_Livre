@@ -16,7 +16,7 @@ import Exceptions.PasAssezLivreException;
 public class Vendeur extends User{
     private String prenom;
     private Magasin mag;
-    public Vendeur(int idve, String email, String nom, String mdp, String role, String prenom, Magasin mag)
+    public Vendeur(Integer idve, String email, String nom, String mdp, String role, String prenom, Magasin mag)
     {
         super(idve, email,nom, mdp, role);
         this.prenom = prenom;

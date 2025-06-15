@@ -2,13 +2,13 @@ package app;
 
 
 public abstract class User {
-    protected int idu;
+    protected Integer idu;
     protected String email;
     protected String nom;
     protected String motDePasse;
     protected String role;
 
-    public User(int idu, String email, String nom, String mdp, String role)
+    public User(Integer idu, String email, String nom, String mdp, String role)
     {
         this.idu = idu;
         this.email = email;
@@ -19,7 +19,7 @@ public abstract class User {
 
     public String getEmail(){return this.email;}
     public String getNom(){return this.nom;}
-    public int getId(){return this.idu;}
+    public Integer getId(){return this.idu;}
     public String getMdp() {return this.motDePasse;}
     public String getRole() {return this.role;}
 

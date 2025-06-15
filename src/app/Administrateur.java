@@ -113,16 +113,40 @@ public class Administrateur extends Vendeur {
             String nom=scan.nextLine();
             System.out.println("Prenom Vendeur ");
             String prenom=scan.nextLine();
-            System.out.println("l'idve ");
-            int idve=Integer.parseInt(scan.nextLine());
-            System.out.println("l'id du magasin");
-            int idmag=Integer.parseInt(scan.nextLine());
+            boolean bonIdmag = false;
+            Integer idmag = null;
+            while (!bonIdmag)
+            {
+                try {
+                    System.out.println("l'id du magasin");
+                    idmag=Integer.parseInt(scan.nextLine());
+                    if (idmag <0)
+                    {
+                        System.out.println("Veuillez entrer un identifiant positif");
+                    }
+                    else
+                    {
+                        if (bd.magAPartirId(idmag) == null)
+                        {
+                            System.out.println("Aucun magasin de cet identifiant");
+                        }
+                        else
+                        {
+                            bonIdmag = true;
+                        }
+                    }
+                }
+                catch ( NumberFormatException e)
+                {
+                    System.out.println("Veuillez entrer un nombre !");
+                }
+            }
             System.out.println("l'email");
             String email=scan.nextLine();
             System.out.println("le mot de passe");
             String mdp=scan.nextLine();
             String role="VENDEUR";
-            Vendeur v= new Vendeur(idve, email, nom, mdp, role, prenom, bd.magAPartirId(idmag));
+            Vendeur v= new Vendeur(null, email, nom, mdp, role, prenom, bd.magAPartirId(idmag));
             bd.AddVendeur(v);
         }
         catch(SQLException e){
