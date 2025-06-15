@@ -1143,7 +1143,7 @@ public class ActionBD{
             "and idcli = ? " + 
             "group by month(datecom), numcom, isbn"
         );
-        
+
         //insertion des parametres de la requete
         ps.setInt(1, mois);
         ps.setInt(2, annee);
