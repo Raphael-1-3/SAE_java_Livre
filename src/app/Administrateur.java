@@ -1,11 +1,12 @@
 package app;
 
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Scanner;
+
+import javax.swing.Action;
 
 import Affichage.AfficherMenu;
 import BD.ActionBD;
@@ -54,39 +55,31 @@ public class Administrateur extends Vendeur {
 
             switch (commande) {
                 case "1":
-                    System.out.println("Création d'un vendeur...");
                     creerVendeur(bd, scanner);
                     break;
                 case "2":
-                    System.out.println("Ajouter une librairie.");
                     ajouterLibrairie(bd, scanner);
                     break;
                 case "3":
-                    System.out.println("Obtenir le panneau de bord");
                     panneauBord(bd);
                     break;
                 case "4":
-                    System.out.println("Obtenir le panneau de bord");
                     ajouterLivre(bd, scanner);
                     break;
                 case "5":
-                    System.out.println("Obtenir le panneau de bord");
                     updateStock(bd, null, scanner);
                     break;
                 case "6":
-                    System.out.println("Obtenir le panneau de bord");
                     disponibilites(bd, null);
                     break;
                 case "7":
-                    System.out.println("Obtenir le panneau de bord");
                     passerCommande(bd, scanner);
                     break;
                 case "8":
-                    System.out.println("Obtenir le panneau de bord");
                     Transfer(bd, null, scanner);
                     break;
                 case "9":
-                    System.out.println("Obtenir le panneau de bord");
+                    choisirMagasin(bd, a, scanner);
                     Factures(bd,a,scanner);
                     break;
                 case "10":
@@ -104,6 +97,46 @@ public class Administrateur extends Vendeur {
                 default:
                     System.out.println("Commande non reconnue, veuillez entrer un numéro valide.");
             }
+        }
+    }
+
+    public static void choisirMagasin(ActionBD bd, Administrateur a, Scanner scan)
+    {
+        try {
+            boolean bonIdMag = false;
+            Integer idMag = null;
+            while(!bonIdMag)
+            {
+                System.out.println("Identifiant du magasin recherche ");
+                try 
+                {
+                    idMag = Integer.parseInt(scan.nextLine());
+                    if (idMag < 0)
+                    {
+                        System.out.println("Veuillez entrer un nombre positif");
+                    }
+                    else
+                    {
+                        if (bd.magAPartirId(idMag) == null)
+                        {
+                            System.out.println("Veuilez entre un identifiant de magasin dans le reseau");
+                        }
+                        else
+                        {
+                            bonIdMag = true;
+                        }
+                    }
+                }
+                catch (NumberFormatException e )
+                {
+                    System.out.println("Veuillez entrer un nombre ");
+                }
+            }
+            a.setMag(bd.magAPartirId(idMag));
+        }
+        catch (SQLException e)
+        {
+            System.out.println("Erreur SQL");
         }
     }
 

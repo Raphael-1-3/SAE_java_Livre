@@ -2,7 +2,6 @@ package app;
 
 
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -21,6 +20,11 @@ public class Vendeur extends User{
         super(idve, email,nom, mdp, role);
         this.prenom = prenom;
         this.mag = mag;
+    }
+
+    public void setMag(Magasin m)
+    {
+        this.mag = m;
     }
 
     public String getPrenom() {return this.prenom;}
