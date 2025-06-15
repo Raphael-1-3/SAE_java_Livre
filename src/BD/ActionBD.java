@@ -1043,9 +1043,9 @@ public class ActionBD{
             "natural join MAGASIN " +
             "natural join DETAILCOMMANDE " +
             "natural join LIVRE " +
-            "where month(datecom) = ?" + 
-            "and year(datecom) = ?" + 
-            "and idmag = ?" + 
+            "where month(datecom) = ? " + 
+            "and year(datecom) = ? " + 
+            "and idmag = ? " + 
             "group by month(datecom), numcom, isbn"
         );
         
@@ -1053,12 +1053,12 @@ public class ActionBD{
         ps.setInt(2, annee);
         ps.setInt(3, mag.getIdmag());
         ResultSet rs = ps.executeQuery();
-
         String res = "Factures du " + mois + "/" + annee + "\n";
         res = res + "Edition des factures du magasin + " + mag.getNomMag() + "\n";
         Integer idcom = null;
         Integer nbLivres = 0;
         Double CaTotal = 0.0;
+        Double CaCommande = 0.0;
         Integer numero = null;
         while(rs.next())
         {
@@ -1076,13 +1076,14 @@ public class ActionBD{
             Double totalArticle = rs.getDouble("totalArticle");
             Double totalCom = rs.getDouble("total");
             CaTotal += totalArticle;
+            
             nbLivres += qte;
-            if (idcom != numcom)
+            if (!numcom.equals(idcom))
             {
                 if (idcom != null)
                 {
                     res = res + " ".repeat(70) + "_".repeat(8) + " ".repeat(2) + "\n";
-                    res = res + " ".repeat(68) + "Total" + " ".repeat(4) + totalCom + "\n";
+                    res = res + " ".repeat(68) + "Total" + " ".repeat(4) + CaCommande + "\n";
                 }
                 res = res + "-".repeat(80) + "\n";
                 res = res + nom + " " + prenom + "\n";
@@ -1091,19 +1092,20 @@ public class ActionBD{
                 res = res + " ".repeat(20) + "commande n°" + numcom + " du "  + datecom.toString() +"\n";
                 res = res + " ".repeat(5) + "ISBN" + " ".repeat(21) + "Titre" + " ".repeat(20) + "qte" + " ".repeat(3) + "prix" + " ".repeat(3) + "total" + "\n";
                 numero = 1;
+                CaCommande = 0.0;
             }
             else
             {
                 numero++;
             }
-            res = res + " " + String.format("%-2s", "" + numero) + " " + String.format("%-40s", titre) + qte + " " + prix + " ".repeat(2) + totalArticle + "\n";
-            if (idcom != numcom)
-            {
-               
-
-            }
+            CaCommande += totalArticle;
+            idcom = numcom;
+            res = res + " " + String.format("%-2s", "" + numero) + " " + String.format("%-20s", "" + isbn) + String.format("%-40s", titre) + qte + " " + prix + " ".repeat(2) + totalArticle + "\n";
+            
 
         }
+        res = res + " ".repeat(70) + "_".repeat(8) + " ".repeat(2) + "\n";
+        res = res + " ".repeat(68) + "Total" + " ".repeat(4) + CaCommande + "\n";
         res = res + "-".repeat(80) + "\n";
         res = res + "Chiffre d'affaire global : " + CaTotal + "\n";
         res = res + "Nombre livres vendus : " + nbLivres + "\n";
