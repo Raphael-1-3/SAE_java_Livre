@@ -136,7 +136,6 @@ public class Commande{
                     commande_faite = true;
             }
         }
-        scan.close();
     }
 
     public static void rechercher(ActionBD bd){
