@@ -202,6 +202,7 @@ public class Client extends User {
         List<String> menuModeRecherche = new ArrayList<>();
         menuModeRecherche.add("Parmi les livres disponibles en magasin");
         menuModeRecherche.add("Parmi tout les livres enregistrés");
+        menuModeRecherche.add("Choisir un magasin");
         menuModeRecherche.add("Quitter");
 
         boolean quitterRecherche = false;
@@ -220,6 +221,38 @@ public class Client extends User {
                     rechercheLivre(bd, client, scanner, rechercheDispoMag);
                     break;
                 case "3":
+                    // Choisir un magasin
+                    List<Magasin> magasins = bd.getAllMagasins();
+                    if (magasins == null || magasins.isEmpty()) {
+                        System.out.println("Aucun magasin disponible.");
+                        break;
+                    }
+                    List<String> nomsMagasins = new ArrayList<>();
+                    for (Magasin mag : magasins) {
+                        nomsMagasins.add(mag.getNomMag());
+                    }
+                    System.out.println(AfficherMenu.Menu("Choisir un magasin", nomsMagasins));
+                    System.out.print("Votre choix (numéro) : ");
+                    String choixMag = scanner.nextLine().strip();
+                    try {
+                        int numMag = Integer.parseInt(choixMag) - 1;
+                        if (numMag < 0 || numMag >= magasins.size()) {
+                            System.out.println("Numéro invalide.");
+                            break;
+                        }
+                        Magasin magasinChoisi = magasins.get(numMag);
+                        // Recherche uniquement parmi les livres de ce magasin
+                        List<Livre> livresDispo = bd.getLivresDispoDansMagasin(magasinChoisi);
+                        if (livresDispo == null || livresDispo.isEmpty()) {
+                            System.out.println("Aucun livre disponible dans ce magasin.");
+                        } else {
+                            afficherEtAjouterLivreAuPanier(scanner, client, livresDispo);
+                        }
+                    } catch (NumberFormatException e) {
+                        System.out.println("Entrée invalide.");
+                    }
+                    break;
+                case "4":
                 case "q":
                 case "quitter":
                     System.out.println("Vous quittez la recherche.");

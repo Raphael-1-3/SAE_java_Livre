@@ -997,6 +997,57 @@ public class ActionBD{
     }
 
     /**
+     * renvoie la liste de tout les magasin 
+     * @return
+     * @throws SQLException
+     */
+    public List<Magasin> getAllMagasins() throws SQLException
+    {
+        List<Magasin> magasins = new ArrayList<>();
+        ResultSet rs = this.connexion.createStatement().executeQuery("select * from MAGASIN");
+        while (rs.next()) {
+            magasins.add(new Magasin(
+                rs.getInt("idmag"),
+                rs.getString("nommag"),
+                rs.getString("villemag")
+            ));
+        }
+        rs.close();
+        return magasins;
+    }
+
+    /**
+     * Récupère la liste des livres disponibles dans un magasin donné.
+     * @param magasin Le magasin pour lequel on veut la liste des livres disponibles
+     * @return La liste des livres disponibles dans le magasin
+     * @throws SQLException
+     */
+    public List<Livre> getLivresDispoDansMagasin(Magasin magasin) throws SQLException {
+        List<Livre> livres = new ArrayList<>();
+        PreparedStatement ps = this.connexion.prepareStatement(
+            "SELECT LIVRE.isbn, LIVRE.titre, LIVRE.nbpages, LIVRE.datepubli, LIVRE.prix " +
+            "FROM POSSEDER " +
+            "JOIN LIVRE ON POSSEDER.isbn = LIVRE.isbn " +
+            "WHERE POSSEDER.idmag = ? AND POSSEDER.qte > 0"
+        );
+        ps.setInt(1, magasin.getIdmag());
+        ResultSet rs = ps.executeQuery();
+        while (rs.next()) {
+            Livre livre = new Livre(
+                rs.getLong("isbn"),
+                rs.getString("titre"),
+                rs.getInt("nbpages"),
+                rs.getInt("datepubli"),
+                rs.getDouble("prix")
+            );
+            livres.add(livre);
+        }
+        rs.close();
+        ps.close();
+        return livres;
+    }
+
+    /**
      * Permet de recuperer une liste de clients a partir d'un nom et d'un prenom
      * @param nom Nom du client
      * @param prenom Prenom du client
