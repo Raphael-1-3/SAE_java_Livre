@@ -11,7 +11,7 @@ public class Magasin {
     private String villeMag;
     
 
-    public Magasin(int id, String nom, String ville)
+    public Magasin(Integer id, String nom, String ville)
     {
         this.idMag = id;
         this.nomMag = nom;

@@ -769,7 +769,7 @@ public class ActionBD{
      */
     public void AddLibrairie(Magasin m) throws SQLException{
         PreparedStatement ps = this.connexion.prepareStatement("insert into MAGASIN (idmag, nommag, villemag) values (?, ?, ?)");
-        ps.setInt(1, m.getIdmag());
+        ps.setInt(1, getMaxIdMag() + 1);
         ps.setString(2, m.getNomMag());
         ps.setString(3, m.getVilleMag());
         ps.executeUpdate();
@@ -789,6 +789,21 @@ public class ActionBD{
         rs.close();
 
         return maxNumCommande;
+    }
+
+    /**
+     * Recupere l'identifiant max de magasin
+     * @return identifiant le plus grand de la table magasin
+     * @throws SQLException
+     */
+    public int getMaxIdMag() throws SQLException
+    {
+        ResultSet rs = this.connexion.createStatement().executeQuery("select max(idmag) from MAGASIN");
+        rs.next();
+        int maxIdMag = rs.getInt("max(idmag)");
+        rs.close();
+
+        return maxIdMag;
     }
 
     /**
