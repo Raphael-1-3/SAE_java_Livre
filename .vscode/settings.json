@@ -15,8 +15,8 @@
         "lib\\javafx-sdk-24.0.1\\lib\\jfx.incubator.input.jar",
         "lib\\javafx-sdk-24.0.1\\lib\\jfx.incubator.richtext.jar",
         "c:\\Users\\robin\\Documents\\iut\\SAE\\java\\SAE_java_Livre\\lib\\hamcrest-2.2.jar",
-        "c:\\Users\\robin\\Documents\\iut\\SAE\\java\\SAE_java_Livre\\lib\\junit-4.13.2.jar",
-        "c:\\Users\\robin\\Documents\\iut\\SAE\\java\\SAE_java_Livre\\lib\\mariadb-java-client-2.5.3.jar"
+        "c:\\Users\\robin\\Documents\\iut\\SAE\\java\\SAE_java_Livre\\lib\\mariadb-java-client-2.5.3.jar",
+        "c:\\Users\\robin\\Documents\\iut\\SAE\\java\\SAE_java_Livre\\lib\\junit-4.13.2.jar"
     ],
     "java.project.outputPath": "bin"
 }
