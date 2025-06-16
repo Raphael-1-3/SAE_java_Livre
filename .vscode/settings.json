@@ -1,11 +1,22 @@
 {
-    "java.search.scope": "all",
     "java.project.sourcePaths": [
         "src"
     ],
     "java.project.referencedLibraries": [
-        "lib/*.jar"
+        "lib\\javafx-sdk-24.0.1\\lib\\javafx.base.jar",
+        "lib\\javafx-sdk-24.0.1\\lib\\javafx.controls.jar",
+        "lib\\javafx-sdk-24.0.1\\lib\\javafx.fxml.jar",
+        "lib\\javafx-sdk-24.0.1\\lib\\javafx.graphics.jar",
+        "lib\\javafx-sdk-24.0.1\\lib\\javafx.media.jar",
+        "lib\\javafx-sdk-24.0.1\\lib\\javafx.swing.jar",
+        "lib\\javafx-sdk-24.0.1\\lib\\javafx.web.jar",
+        "lib\\javafx-sdk-24.0.1\\lib\\javafx-swt.jar",
+        "lib\\javafx-sdk-24.0.1\\lib\\jdk.jsobject.jar",
+        "lib\\javafx-sdk-24.0.1\\lib\\jfx.incubator.input.jar",
+        "lib\\javafx-sdk-24.0.1\\lib\\jfx.incubator.richtext.jar",
+        "c:\\Users\\robin\\Documents\\iut\\SAE\\java\\SAE_java_Livre\\lib\\hamcrest-2.2.jar",
+        "c:\\Users\\robin\\Documents\\iut\\SAE\\java\\SAE_java_Livre\\lib\\junit-4.13.2.jar",
+        "c:\\Users\\robin\\Documents\\iut\\SAE\\java\\SAE_java_Livre\\lib\\mariadb-java-client-2.5.3.jar"
     ],
-    "editor.formatOnSave": true,
     "java.project.outputPath": "bin"
 }
