@@ -394,16 +394,16 @@ public class ActionBD{
     }
 
     /**
-     * Permet a un client de changer de mot de passe (celui par defaut et pas trop secu)
-     * @param client
+     * Permet a un user de changer de mot de passe (celui par defaut et pas trop secu)
+     * @param user
      * @param nouveauMdp
      * @throws SQLException
      */
-    public boolean changerMotDePasse(Client client, String nouveauMdp) throws SQLException
+    public boolean changerMotDePasse(User user, String nouveauMdp) throws SQLException
     {
         PreparedStatement ps = this.connexion.prepareStatement("update USER set motDePasse = ? where idu = ?");
         ps.setString(1, nouveauMdp);
-        ps.setInt(2, client.getId());
+        ps.setInt(2, user.getId());
         try{ 
             ps.executeUpdate();
             ps.close();
