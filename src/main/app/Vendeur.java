@@ -1,4 +1,4 @@
-package app;
+package main.app;
 
 
 import java.sql.SQLException;
@@ -8,9 +8,9 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Scanner;
 
-import Affichage.AfficherMenu;
-import BD.ActionBD;
-import Exceptions.PasAssezLivreException;
+import main.Affichage.AfficherMenu;
+import main.BD.ActionBD;
+import main.Exceptions.PasAssezLivreException;
 
 public class Vendeur extends User{
     private String prenom;

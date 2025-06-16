@@ -1,15 +1,15 @@
-package BD;
+package main.BD;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import app.*;
-import Exceptions.EmptySetException;
-import Exceptions.PasAssezLivreException;
-import Exceptions.PasDHistoriqueException;
-import Exceptions.PasDeTelUtilisateurException;
+import main.app.*;
+import main.Exceptions.EmptySetException;
+import main.Exceptions.PasAssezLivreException;
+import main.Exceptions.PasDHistoriqueException;
+import main.Exceptions.PasDeTelUtilisateurException;
 
 import java.util.List;
 

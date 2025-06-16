@@ -1,4 +1,4 @@
-package app;
+package main.app;
 
 
 import java.util.List;
@@ -10,8 +10,8 @@ import java.util.HashSet;
 import java.util.Arrays;
 import java.util.Scanner;
 
-import Affichage.AfficherMenu;
-import BD.ActionBD;
+import main.Affichage.AfficherMenu;
+import main.BD.ActionBD;
 
 import java.util.Map;
 

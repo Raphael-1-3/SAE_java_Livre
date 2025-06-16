@@ -2,9 +2,9 @@ import java.sql.SQLException;
 import java.util.NoSuchElementException;
 import java.util.Scanner;
 
-import BD.*;
-import Exceptions.*;
-import app.*;
+import main.BD.*;
+import main.Exceptions.*;
+import main.app.*;
 public class Executable{
     public static void main (String [] args)
     {

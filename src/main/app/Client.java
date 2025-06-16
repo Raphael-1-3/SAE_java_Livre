@@ -1,4 +1,4 @@
-package app;
+package main.app;
 
 
 import java.sql.SQLException;
@@ -7,11 +7,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Scanner;
 
-import Affichage.*;
-import BD.*;
-import app.*;
-import Exceptions.*;
-import Exceptions.PasDHistoriqueException;
+import main.Affichage.*;
+import main.BD.*;
+import main.app.*;
+import main.Exceptions.*;
+import main.Exceptions.PasDHistoriqueException;
 
 public class Client extends User {
     private int codePostal;

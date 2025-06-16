@@ -1,4 +1,4 @@
-package Affichage;
+package main.Affichage;
 
 import java.util.Collections;
 import java.util.Comparator;

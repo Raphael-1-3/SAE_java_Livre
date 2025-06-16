@@ -1,4 +1,4 @@
-package app;
+package main.app;
 
 import java.sql.SQLException;
 import java.util.Arrays;
@@ -8,8 +8,8 @@ import java.util.Scanner;
 
 import javax.swing.Action;
 
-import Affichage.AfficherMenu;
-import BD.ActionBD;
+import main.Affichage.AfficherMenu;
+import main.BD.ActionBD;
 
 public class Administrateur extends Vendeur {
     public Administrateur(int id, String email, String nom, String motDePasse, String role, String prenom, Magasin mag) {
@@ -84,7 +84,7 @@ public class Administrateur extends Vendeur {
                     {
                         choisirMagasin(bd, a, scanner);
                     }
-                    updateStock(bd, null, scanner);
+                    updateStock(bd, a, scanner);
                     break;
                 case "6":
                     if (a.getMagasin() == null)

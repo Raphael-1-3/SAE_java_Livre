@@ -27,6 +27,10 @@ java -cp "bin:lib/*" main.Executable
 javac -d bin -cp "lib/*;src" src/**/*.java
 java -cp "bin;lib/*" main.Executable
 
+## github
+
+https://github.com/Raphael-1-3/SAE_java_Livre
+
 ## Creation de la base de Donnee 
 - executer creationLivreExpress.sql pour creer les tables
 - executer jeucomplet.sql pour avoir obtenir le jeu de donnees## Modification apporte a la bd
