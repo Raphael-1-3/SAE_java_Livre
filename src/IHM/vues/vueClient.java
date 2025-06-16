@@ -49,6 +49,7 @@ public class vueClient extends BorderPane
 
         // ssHbox 1 ----
         Text titre = new Text("Livre Expresse - Client");
+        titre.setFont(new Font("Times new Roman", 60));
         ImageView logo = new ImageView(new Image("file:./img/logo.jpg"));
         Text nomUtil = new Text("Vous êtes connecté en tant que " + " nom  " + " " + " prenom");
         Button param = new Button();
@@ -75,8 +76,10 @@ public class vueClient extends BorderPane
         Text ll   = new Text("Loire et livres");
         selectionMagasin.getItems().addAll(lp, cs, tlbr, euro, ctl, rl, ll);
 
+        Text OU = new Text("OU");
+        OU.setFont(new Font("Times new Roman", 60));
+
+        sstop2.getChildren().addAll(menuAction, OU ,selectionMagasin);
+        top.getChildren().addAll(sstop1, sstop2);
     }
-
-
-
 }
