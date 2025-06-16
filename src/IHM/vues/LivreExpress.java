@@ -1,5 +1,5 @@
 package IHM.vues;
-import main.*;
+import main.app.*;
 
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
@@ -29,8 +29,11 @@ public class LivreExpress extends Application {
         stage.setScene(scene);
         root.setPrefSize(1300, 700);
         root.setStyle("-fx-background-color : #d4d5d5;");
-        VueConnexion vueConnexion = new VueConnexion();
-        vueConnexion.fenetreInscription(root);
+        Client client = new Client(0, "s", "s", "s", "s", "s", 0, "k", "s");
+        vueClient vueclient = new  vueClient(this, client);
+        //VueConnexion vueConnexion = new VueConnexion();
+        //vueConnexion.fenetreInscription(root);
+        scene.setRoot(vueclient);
         stage.show();
         System.out.println("MARCHE");
     }

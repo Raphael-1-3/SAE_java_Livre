@@ -11,6 +11,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.geometry.Insets;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
+import junit.framework.TestFailure;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
@@ -19,6 +20,8 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
+import javafx.scene.shape.Line;
+import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
 import javafx.scene.control.ButtonBar.ButtonData ;
@@ -33,15 +36,16 @@ public class vueClient extends BorderPane
      * Instancie la fenetre liee au client
      * @param LEApp
      */
-    public vueClient(String LEApp, Client client)
+    public vueClient(LivreExpress LEApp, Client client)
     {
         super();
-        //this.setTop(top());
-        //this.setCenter(center());
+        this.setPrefSize(1300, 700);
+        this.setTop(top(client));
+        this.setCenter(centerRecommandation(client));
         //this.setBottom(bottom());
     }
 
-    public void top(Client client)
+    public Pane top(Client client)
     {
         VBox top = new VBox();
         HBox sstop1 = new HBox();
@@ -49,37 +53,101 @@ public class vueClient extends BorderPane
 
         // ssHbox 1 ----
         Text titre = new Text("Livre Expresse - Client");
-        titre.setFont(new Font("Times new Roman", 60));
+        titre.setFont(new Font("Times new Roman", 40));
         ImageView logo = new ImageView(new Image("file:./img/logo.jpg"));
+        logo.setFitHeight(100);
+        logo.setFitWidth(100);
+        Rectangle bordure = new Rectangle(logo.getFitWidth(), logo.getFitHeight());
+        bordure.setArcWidth(30);
+        bordure.setArcHeight(30);
+        logo.setClip(bordure);
         Text nomUtil = new Text("Vous êtes connecté en tant que " + " nom  " + " " + " prenom");
-        Button param = new Button();
-        Button deconnexion = new Button();
-
+        Button param = new Button("param");
+        Button deconnexion = new Button("deconnexion");
+        deconnexion.setFont(new Font("Times new Roman", 20));
+        deconnexion.setStyle(
+            "-fx-text-fill: white;" + 
+            "-fx-background-color : #3f4353;" +
+            "-fx-background-radius : 20;" +
+            "-fx-border-color : #df9d53;" + 
+            "-fx-border-width : 2;" + 
+            "-fx-border-radius : 20;"
+            );
+        deconnexion.setPadding(new Insets(0, 0, 0, 0));
+        deconnexion.setPrefWidth(200);
+        sstop1.setPadding(new Insets(3, 3, 3, 3));
+        sstop1.setSpacing(10);
         sstop1.getChildren().addAll(logo, titre, nomUtil, deconnexion, param);
 
-        // ssHBox 2 ----
-        TitledPane menuAction = new TitledPane();
-        ComboBox<Button> actions = new ComboBox<>();
-        Button RechercherNomLivre = new Button();
-        Button RechercheAuteur = new Button();
-        Button RechercheClassification = new Button();
-        Button RechercheEditeur = new Button();
-        actions.getItems().addAll(RechercherNomLivre, RechercheAuteur, RechercheClassification, RechercheEditeur);
+        // ssHBox 2 
+        ComboBox<String> actions = new ComboBox<>();
+        actions.getItems().addAll(
+            "Rechercher par nom de livre",
+            "Rechercher par auteur",
+            "Rechercher par classification",
+            "Rechercher par éditeur"
+        );
+
+        ComboBox<String> selectionMagasin = new ComboBox<>();
+        selectionMagasin.getItems().addAll(
+            "La librairie parisienne",
+            "Cap au Sud",
+            "Ty Li-Breizh-rie",
+            "L'européenne",
+            "Le Ch'ti livre",
+            "Rhône à lire",
+            "Loire et livres"
+        );
+
+        Button executerAction = new Button("Exécuter");
+        actions.setPromptText("Choisissez une action"); 
+        selectionMagasin.setPromptText("Choissiser un magasin");
+        VBox layout = new VBox(10); 
+        layout.setPadding(new Insets(10));
+        layout.getChildren().addAll(actions, selectionMagasin, executerAction);
+
+        TextField schearchbar = new TextField();
+        sstop2.setPadding(new Insets(10, 0, 10, 50));
+        sstop2.setSpacing(15);
+        sstop2.getChildren().addAll(actions, selectionMagasin, executerAction, schearchbar);
+        //
+        HBox boxLigne = new HBox();
+        Line sep = new Line(0, 0, 1100, 0);
+        boxLigne.setPadding(new Insets(5, 0, 5, 100));
+        boxLigne.getChildren().addAll(sep);
+
+        //
+        sstop1.setStyle("-fx-background-color: blue;");
+        sstop2.setStyle("-fx-background-color: lightblue;");
+        boxLigne.setStyle("-fx-background-color: lightgreen;");
+        //
+
         
-        ComboBox<Text> selectionMagasin = new ComboBox<>();
-        Text lp   = new Text("La librairie parisienne");
-        Text cs   = new Text("Cap au Sud");
-        Text tlbr = new Text("Ty Li-Breizh-rie");
-        Text euro = new Text("L'européenne");
-        Text ctl  = new Text("Le Ch'ti livre");
-        Text rl   = new Text("Rhône à lire");
-        Text ll   = new Text("Loire et livres");
-        selectionMagasin.getItems().addAll(lp, cs, tlbr, euro, ctl, rl, ll);
+        
+        top.getChildren().addAll(sstop1, boxLigne, sstop2);
 
-        Text OU = new Text("OU");
-        OU.setFont(new Font("Times new Roman", 60));
-
-        sstop2.getChildren().addAll(menuAction, OU ,selectionMagasin);
-        top.getChildren().addAll(sstop1, sstop2);
+        return top;
     }
+
+    public ScrollPane centerRecommandation(Client client)
+    {
+        VBox recommandations = new VBox(10);
+        recommandations.setPadding(new Insets(20));
+
+        // Exemple de recommandations fictives
+        for (int i = 1; i <= 10; i++) {
+            Label livre = new Label("Livre recommandé n°" + i);
+            livre.setFont(new Font("Arial", 18));
+            recommandations.getChildren().add(livre);
+        }
+
+        ScrollPane scrollPane = new ScrollPane(recommandations);
+        scrollPane.setFitToWidth(true);
+        scrollPane.setPrefHeight(400);
+        setMargin(scrollPane, new Insets(100, 100, 100, 100));
+
+        return scrollPane;
+    }
+
+    
 }
