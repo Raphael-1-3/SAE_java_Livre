@@ -6,14 +6,24 @@
     "configurations": [
         {
             "type": "java",
+            "name": "vueAdmin",
+            "request": "launch",
+            "vmArgs": "--module-path /usr/share/openjfx/lib/ --add-modules javafx.controls,javafx.fxml",
+            "mainClass": "IHM.vues.vueAdmin",
+            "projectName": "SAE_Java_livre_7d2549eb"
+        },
+        {
+            "type": "java",
             "name": "Current File",
             "request": "launch",
+            "vmArgs": "--module-path /usr/share/openjfx/lib/ --add-modules javafx.controls,javafx.fxml",
             "mainClass": "${file}"
         },
         {
             "type": "java",
             "name": "Executable",
             "request": "launch",
+            "vmArgs": "--module-path /usr/share/openjfx/lib/ --add-modules javafx.controls,javafx.fxml",
             "mainClass": "Executable",
             "projectName": "SAE_Java_livre_f66923bd"
         }
