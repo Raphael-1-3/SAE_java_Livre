@@ -27,6 +27,9 @@ java -cp "bin:lib/*" Executable
 javac -d bin -cp "lib/*;src" src/**/*.java
 java -cp "bin;lib/*" Executable
 
+## Compilation de secours 
+javac -d bin -cp "lib/*;src" src/app/*.java src/BD/*.java src/test/*.java src/Affichage/*.java src/Exceptions/*.java 
+java -cp "bin;lib/*" Executable
 ## github
 
 https://github.com/Raphael-1-3/SAE_java_Livre

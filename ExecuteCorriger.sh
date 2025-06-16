@@ -9,7 +9,7 @@ if [ $? -ne 0 ]; then
 fi
 
 echo " Génération de la documentation Javadoc..."
-javadoc -d doc -cp "lib/*:src" -sourcepath src -subpackages main.app main.BD main.Affichage main.Exceptions  main.test
+javadoc -d doc -cp "lib/*:src" -sourcepath src -subpackages app BD Affichage Exceptions test
 
 echo " Lancement de l'application..."
 java -cp "bin:lib/*" Executable
