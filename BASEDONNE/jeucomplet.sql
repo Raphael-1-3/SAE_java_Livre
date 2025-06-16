@@ -11589,6 +11589,8 @@ insert into ECRIRE(isbn,idauteur) values
 
 -- les stocks de livres
 insert into POSSEDER(idmag, isbn, qte) values
+	(1,'9782871295914',2),
+	(2,'9782871295914',2),
 	(7, '9782081295711', 2),
 	(5, '9782330001797', 3),
 	(4, '9782010144356', 7),

@@ -2,9 +2,9 @@ import java.sql.SQLException;
 import java.util.NoSuchElementException;
 import java.util.Scanner;
 
-import BD.*;
-import Exceptions.*;
-import app.*;
+import main.BD.*;
+import main.Exceptions.*;
+import main.app.*;
 public class Executable{
     public static void main (String [] args)
     {
@@ -13,9 +13,6 @@ public class Executable{
 
         System.out.print("Entrer le nom du serveur : ");
         String nomServeur = scanner.nextLine();
-
-        System.out.print("Entrer le nom de la base : ");
-        String nomBase = scanner.nextLine();
 
         System.out.print("Entrer le login : ");
         String nomLogin = scanner.nextLine();
@@ -27,7 +24,7 @@ public class Executable{
 
         try {
             connexion = new ConnexionMySQL();
-            connexion.connecter(nomServeur, nomBase, nomLogin,  motDePasse); //"localhost", "LibrairieJava", "root", "raphe"
+            connexion.connecter(nomServeur, "LibrairieJava", nomLogin,  motDePasse); //"localhost", "LibrairieJava", "root", "raphe"
             if (connexion.isConnecte()) 
             {
                 ActionBD bd = new ActionBD(connexion);
