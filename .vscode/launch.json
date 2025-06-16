@@ -22,7 +22,7 @@
             "name": "LivreExpress",
             "request": "launch",
             "mainClass": "IHM.vues.LivreExpress",
-            "vmArgs": "--module-path lib/javafx-sdk-24.0.1/lib/ --add-modules javafx.controls,javafx.fxml",
+            "vmArgs": "--module-path lib/javafx-sdk-24.0.1/lib/ --add-modules javafx.controls,javafx.fxml --enable-native-access=javafx.graphics",
             "projectName": "SAE_java_Livre_ee3eef8a"
         },
         {

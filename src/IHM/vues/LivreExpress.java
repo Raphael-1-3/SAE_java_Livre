@@ -27,10 +27,15 @@ public class LivreExpress extends Application {
         Scene scene = new Scene(root);
         stage.setTitle("LivreExpress");
         stage.setScene(scene);
+        root.setPrefSize(1300, 700);
+        root.setStyle("-fx-background-color : #d4d5d5;");
+        VueConnexion vueConnexion = new VueConnexion();
+        vueConnexion.fenetreInscription(root);
         stage.show();
+        System.out.println("MARCHE");
     }
 
     public static void main(String[] args) {
-        
+        launch(args);
     }
 }
