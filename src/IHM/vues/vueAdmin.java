@@ -23,7 +23,7 @@ import java.util.List;
 import javax.sound.sampled.Control;
 import javax.swing.plaf.basic.BasicOptionPaneUI.ButtonAreaLayout;
 
-import org.hamcrest.collection.IsMapWithSize;
+//import org.hamcrest.collection.IsMapWithSize;
 
 import java.util.Arrays;
 import java.io.File;
@@ -81,6 +81,7 @@ public class vueAdmin extends Application {
     private VBox top() {
         VBox banniere = new VBox();
         HBox ligne = new HBox();
+        HBox container = new HBox();
         HBox boutonsFixes = new HBox(25);
         boutonsFixes.setPadding(new Insets(25, 0, 0, 0));
         VBox contenuMenu = new VBox(15);
@@ -90,7 +91,7 @@ public class vueAdmin extends Application {
 
         TitledPane menuDeroulant = new TitledPane("Menu déroulant", contenuMenu);
         menuDeroulant.setExpanded(false);
-        menuDeroulant.setMaxWidth(80);
+        menuDeroulant.setMaxWidth(1000);
         // Met le fond du menu déroulant de la même couleur que le reste quand il est
         // ouvert
         contenuMenu.setBackground(new Background(new BackgroundFill(Color.LIGHTGRAY, CornerRadii.EMPTY, Insets.EMPTY)));
@@ -157,8 +158,9 @@ public class vueAdmin extends Application {
         HBox boxLigne = new HBox();
         boxLigne.setPadding(new Insets(10, 0, 10, 100));
         boxLigne.getChildren().addAll(sep);
-        menuDeroulant.setPadding(new Insets(0, 0, 0, 0));
-        banniere.getChildren().addAll(ligne, boxLigne, menuDeroulant);
+        container.getChildren().addAll(menuDeroulant);
+        container.setPadding(new Insets(0, 0, 0, 100));
+        banniere.getChildren().addAll(ligne, boxLigne, container);
         banniere.setPadding(new Insets(25, 0, 0, 0));
 
         return banniere;
