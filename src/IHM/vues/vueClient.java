@@ -31,6 +31,8 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+import IHM.controleurs.controleurSelectionClient;
+
 
 
 public class vueClient extends BorderPane
@@ -38,6 +40,9 @@ public class vueClient extends BorderPane
     private ActionBD modele;
     private Client client;
     private LivreExpress LEApp;
+    private TextField scheachbar;
+    private ComboBox<String> selectionRecherche;
+    private ComboBox<String> selectionMagasin;
 
     /**
      * Instancie la fenetre liee au client
@@ -49,10 +54,37 @@ public class vueClient extends BorderPane
         this.LEApp = LEApp;
         this.client = client;
         this.modele = modele;
+        this.selectionRecherche = new ComboBox<>();
+        this.selectionMagasin = new ComboBox<>();
+        this.scheachbar = new TextField();
         this.setPrefSize(1300, 700);
         this.setTop(top(client));
         this.setCenter(centerRecommandation(client));
         //this.setBottom(bottom());
+    }
+
+    public ActionBD getModele() {
+        return this.modele;
+    }
+
+    public Client getClient() {
+        return this.client;
+    }
+
+    public LivreExpress getLEApp() {
+        return this.LEApp;
+    }
+
+    public TextField getScheachbar() {
+        return this.scheachbar;
+    }
+
+    public ComboBox<String> getSelectionRecherche() {
+        return this.selectionRecherche;
+    }
+
+    public ComboBox<String> getSelectionMagasin() {
+        return this.selectionMagasin;
     }
 
     public Pane top(Client client)
@@ -119,18 +151,16 @@ public class vueClient extends BorderPane
 
 
         // ssHBox 2 
-        ComboBox<String> actions = new ComboBox<>();
-        actions.getItems().addAll(
+        this.selectionRecherche.getItems().addAll(
             "Rechercher par nom de livre",
             "Rechercher par auteur",
             "Rechercher par classification",
             "Rechercher par éditeur", 
             "Rechecher par magasin"
         );
-        actions.setPadding(new Insets(0, 0, 0, 15));
+        this.selectionRecherche.setPadding(new Insets(0, 0, 0, 15));
 
-        ComboBox<String> selectionMagasin = new ComboBox<>();
-        selectionMagasin.getItems().addAll(
+        this.selectionMagasin.getItems().addAll(
             "La librairie parisienne",
             "Cap au Sud",
             "Ty Li-Breizh-rie",
@@ -140,20 +170,20 @@ public class vueClient extends BorderPane
             "Loire et livres"
         );
         
-
         Button executerAction = new Button("Exécuter");
         executerAction.setPrefWidth(100);
-        actions.setPromptText("Choisissez une action"); 
-        selectionMagasin.setPromptText("Choissiser un magasin");
+        executerAction.setOnAction(new controleurSelectionClient(this.modele, this.LEApp, this.selectionRecherche, this.selectionMagasin));
+        this.selectionRecherche.setPromptText("Choisissez une action"); 
+        this.selectionMagasin.setPromptText("Choissiser un magasin");
         VBox layout = new VBox(10); 
         layout.setPadding(new Insets(10));
-        layout.getChildren().addAll(actions, selectionMagasin, executerAction);
+        layout.getChildren().addAll(this.selectionRecherche, this.selectionMagasin, executerAction);
 
-        TextField schearchbar = new TextField();
-        schearchbar.setPrefWidth(600); // Largeur préférée
+        this.scheachbar = new TextField();
+        this.scheachbar.setPrefWidth(600); // Largeur préférée
         sstop2.setPadding(new Insets(10, 0, 10, 50));
         sstop2.setSpacing(15);
-        sstop2.getChildren().addAll(actions, selectionMagasin,  schearchbar,executerAction);
+        sstop2.getChildren().addAll(this.selectionRecherche, this.selectionMagasin, this.scheachbar, executerAction);
         //
         HBox boxLigne = new HBox();
         Line sep = new Line(0, 0, 1100, 0);
@@ -196,8 +226,8 @@ public class vueClient extends BorderPane
         
         ScrollPane scrollPane = new ScrollPane(recommandations);
         scrollPane.setFitToWidth(true);
-        scrollPane.setPrefHeight(400);
-        setMargin(scrollPane, new Insets(70, 70, 70, 70));
+        scrollPane.setPrefWidth(1000);
+        setMargin(center, new Insets(70, 70, 70, 70));
         center.getChildren().addAll(scrollPane, ajouterPanier);
 
         return center;
