@@ -58,38 +58,14 @@ public class VueConnexion {
         VBox vb = new VBox(100);
         Button connexion = new Button("Connexion");
         connexion.setFont(new Font("Times new Roman", 30));
-        connexion.setStyle(
-            "-fx-text-fill: white;" + 
-            "-fx-background-color : #3f4353;" +
-            "-fx-background-radius : 20;" +
-            "-fx-border-color : #df9d53;" + 
-            "-fx-border-width : 2;" + 
-            "-fx-border-radius : 20;"
-            );
         connexion.setPadding(new Insets(0, 130, 0, 130));
         connexion.setPrefWidth(410);
         Button inscription = new Button("Inscription");
         inscription.setFont(new Font("Times new Roman", 30));
-        inscription.setStyle(
-            "-fx-text-fill: white;" + 
-            "-fx-background-color : #3f4353;" +
-            "-fx-background-radius : 20;" +
-            "-fx-border-color : #df9d53;" + 
-            "-fx-border-width : 2;" + 
-            "-fx-border-radius : 20;"
-            );
         inscription.setPadding(new Insets(0, 130, 0, 130));
         inscription.setPrefWidth(410);
         Button quitter = new Button("Quitter");
         quitter.setFont(new Font("Times new Roman", 30));
-        quitter.setStyle(
-            "-fx-text-fill: white;" + 
-            "-fx-background-color : #3f4353;" +
-            "-fx-background-radius : 20;" +
-            "-fx-border-color : #df9d53;" + 
-            "-fx-border-width : 2;" + 
-            "-fx-border-radius : 20;"
-            );
         quitter.setPadding(new Insets(0, 130, 0, 130));
         quitter.setPrefWidth(410);
 
@@ -111,14 +87,6 @@ public class VueConnexion {
         TextField email = new TextField();
         email.setPadding(new Insets(0, 10, 0, 10));
         email.setFont(new Font("Times new Roman", 30));
-        email.setStyle(
-            "-fx-text-fill: white;" + 
-            "-fx-background-color : #3f4353;" +
-            "-fx-background-radius : 15;" +
-            "-fx-border-color : #df9d53;" + 
-            "-fx-border-width : 2;" + 
-            "-fx-border-radius : 15;"
-            );
         email.setPrefColumnCount(4);
         email.setPrefWidth(410);
         email.setMaxWidth(410);
@@ -131,14 +99,6 @@ public class VueConnexion {
         PasswordField mdp = new PasswordField();
         mdp.setPadding(new Insets(0, 10, 0, 10));
         mdp.setFont(new Font("Times new Roman", 30));
-        mdp.setStyle(
-            "-fx-text-fill: white;" + 
-            "-fx-background-color : #3f4353;" +
-            "-fx-background-radius : 15;" +
-            "-fx-border-color : #df9d53;" + 
-            "-fx-border-width : 2;" + 
-            "-fx-border-radius : 15;"
-            );
         mdp.setPrefColumnCount(4);
         mdp.setPrefWidth(410);
         mdp.setMaxWidth(410);
@@ -147,26 +107,10 @@ public class VueConnexion {
 
         Button accueil = new Button("Accueil");
         accueil.setFont(new Font("Times new Roman", 20));
-        accueil.setStyle(
-            "-fx-text-fill: white;" + 
-            "-fx-background-color : #3f4353;" +
-            "-fx-background-radius : 20;" +
-            "-fx-border-color : #df9d53;" + 
-            "-fx-border-width : 2;" + 
-            "-fx-border-radius : 20;"
-            );
         accueil.setPadding(new Insets(3, 10, 3, 10));
         accueil.setPrefWidth(150);
         Button connecte = new Button("Se connecter");
         connecte.setFont(new Font("Times new Roman", 20));
-        connecte.setStyle(
-            "-fx-text-fill: white;" + 
-            "-fx-background-color : #3f4353;" +
-            "-fx-background-radius : 20;" +
-            "-fx-border-color : #df9d53;" + 
-            "-fx-border-width : 2;" + 
-            "-fx-border-radius : 20;"
-            );
         connecte.setPadding(new Insets(3, 10, 3, 10));
         connecte.setPrefWidth(150);
         
@@ -197,14 +141,6 @@ public class VueConnexion {
         TextField email = new TextField();
         email.setPadding(new Insets(0, 10, 0, 10));
         email.setFont(new Font("Times new Roman", 30));
-        email.setStyle(
-            "-fx-text-fill: white;" + 
-            "-fx-background-color : #3f4353;" +
-            "-fx-background-radius : 15;" +
-            "-fx-border-color : #df9d53;" + 
-            "-fx-border-width : 2;" + 
-            "-fx-border-radius : 15;"
-            );
         email.setPrefColumnCount(4);
         email.setPrefWidth(410);
         email.setMaxWidth(410);
@@ -217,14 +153,6 @@ public class VueConnexion {
         PasswordField mdp = new PasswordField();
         mdp.setPadding(new Insets(0, 10, 0, 10));
         mdp.setFont(new Font("Times new Roman", 30));
-        mdp.setStyle(
-            "-fx-text-fill: white;" + 
-            "-fx-background-color : #3f4353;" +
-            "-fx-background-radius : 15;" +
-            "-fx-border-color : #df9d53;" + 
-            "-fx-border-width : 2;" + 
-            "-fx-border-radius : 15;"
-            );
         mdp.setPrefColumnCount(4);
         mdp.setPrefWidth(410);
         mdp.setMaxWidth(410);
@@ -237,14 +165,6 @@ public class VueConnexion {
         TextField nom = new TextField();
         nom.setPadding(new Insets(0, 10, 0, 10));
         nom.setFont(new Font("Times new Roman", 30));
-        nom.setStyle(
-            "-fx-text-fill: white;" + 
-            "-fx-background-color : #3f4353;" +
-            "-fx-background-radius : 15;" +
-            "-fx-border-color : #df9d53;" + 
-            "-fx-border-width : 2;" + 
-            "-fx-border-radius : 15;"
-            );
         nom.setPrefColumnCount(4);
         nom.setPrefWidth(410);
         nom.setMaxWidth(410);
@@ -257,14 +177,6 @@ public class VueConnexion {
         TextField prenom = new TextField();
         prenom.setPadding(new Insets(0, 10, 0, 10));
         prenom.setFont(new Font("Times new Roman", 30));
-        prenom.setStyle(
-            "-fx-text-fill: white;" + 
-            "-fx-background-color : #3f4353;" +
-            "-fx-background-radius : 15;" +
-            "-fx-border-color : #df9d53;" + 
-            "-fx-border-width : 2;" + 
-            "-fx-border-radius : 15;"
-            );
         prenom.setPrefColumnCount(4);
         prenom.setPrefWidth(410);
         prenom.setMaxWidth(410);
@@ -274,11 +186,7 @@ public class VueConnexion {
         Button accueil = new Button("Accueil");
         accueil.setFont(new Font("Times new Roman", 20));
         accueil.setStyle(
-            "-fx-text-fill: white;" + 
-            "-fx-background-color : #3f4353;" +
             "-fx-background-radius : 20;" +
-            "-fx-border-color : #df9d53;" + 
-            "-fx-border-width : 2;" + 
             "-fx-border-radius : 20;"
             );
         accueil.setPadding(new Insets(3, 10, 3, 10));
@@ -286,11 +194,7 @@ public class VueConnexion {
         Button connecte = new Button("S'inscrire");
         connecte.setFont(new Font("Times new Roman", 20));
         connecte.setStyle(
-            "-fx-text-fill: white;" + 
-            "-fx-background-color : #3f4353;" +
             "-fx-background-radius : 20;" +
-            "-fx-border-color : #df9d53;" + 
-            "-fx-border-width : 2;" + 
             "-fx-border-radius : 20;"
             );
         connecte.setPadding(new Insets(3, 10, 3, 10));
@@ -308,14 +212,6 @@ public class VueConnexion {
         TextField codePost = new TextField();
         codePost.setPadding(new Insets(0, 10, 0, 10));
         codePost.setFont(new Font("Times new Roman", 30));
-        codePost.setStyle(
-            "-fx-text-fill: white;" + 
-            "-fx-background-color : #3f4353;" +
-            "-fx-background-radius : 15;" +
-            "-fx-border-color : #df9d53;" + 
-            "-fx-border-width : 2;" + 
-            "-fx-border-radius : 15;"
-            );
         codePost.setPrefColumnCount(4);
         codePost.setPrefWidth(410);
         codePost.setMaxWidth(410);
@@ -328,14 +224,6 @@ public class VueConnexion {
         TextField ville = new TextField();
         ville.setPadding(new Insets(0, 10, 0, 10));
         ville.setFont(new Font("Times new Roman", 30));
-        ville.setStyle(
-            "-fx-text-fill: white;" + 
-            "-fx-background-color : #3f4353;" +
-            "-fx-background-radius : 15;" +
-            "-fx-border-color : #df9d53;" + 
-            "-fx-border-width : 2;" + 
-            "-fx-border-radius : 15;"
-            );
         ville.setPrefColumnCount(4);
         ville.setPrefWidth(410);
         ville.setMaxWidth(410);
@@ -348,14 +236,6 @@ public class VueConnexion {
         TextField adresse = new TextField();
         adresse.setPadding(new Insets(0, 10, 0, 10));
         adresse.setFont(new Font("Times new Roman", 30));
-        adresse.setStyle(
-            "-fx-text-fill: white;" + 
-            "-fx-background-color : #3f4353;" +
-            "-fx-background-radius : 15;" +
-            "-fx-border-color : #df9d53;" + 
-            "-fx-border-width : 2;" + 
-            "-fx-border-radius : 15;"
-            );
         adresse.setPrefColumnCount(4);
         adresse.setPrefWidth(410);
         adresse.setMaxWidth(410);
