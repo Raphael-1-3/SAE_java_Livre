@@ -74,18 +74,6 @@ public class vueAdmin extends Application {
         menuDeroulant.setMaxWidth(450);
         contenuMenu.setBackground(new Background(new BackgroundFill(Color.LIGHTGRAY, CornerRadii.EMPTY, Insets.EMPTY)));
 
-        // Styles des boutons
-        String styleBouton = "-fx-text-fill: white;" +
-                "-fx-background-color : #3f4353;" +
-                "-fx-background-radius : 20;" +
-                "-fx-border-color : #df9d53;" +
-                "-fx-border-width : 2;" +
-                "-fx-border-radius : 20;";
-        bouton1.setStyle(styleBouton);
-        bouton2.setStyle(styleBouton);
-        boutonDeco.setStyle(styleBouton);
-        boutonParametres.setStyle(styleBouton);
-        boutonMaison.setStyle(styleBouton);
 
         // Logo et titre
         ImageView logo = new ImageView("file:./img/logo.jpg");
@@ -133,7 +121,7 @@ public class vueAdmin extends Application {
     public void start(Stage primaryStage) {
         primaryStage.setTitle("Livre Express - Admin");
         primaryStage.setScene(this.laScene());
-        scene.getStylesheets().add(getClass().getResource("style_md.css").toExternalForm());
+        scene.getStylesheets().add("file:./src/IHM/styles/globalCSS.css");
         primaryStage.show();
     }
 
