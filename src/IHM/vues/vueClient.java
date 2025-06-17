@@ -1,6 +1,7 @@
 package IHM.vues;
 
 import main.*;
+import main.BD.ActionBD;
 import main.app.*;
 import main.app.Client;
 import main.BD.*;
@@ -25,20 +26,29 @@ import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
 import javafx.scene.control.ButtonBar.ButtonData ;
+
+import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
 
 
 public class vueClient extends BorderPane
 {
+    private ActionBD modele;
+    private Client client;
+    private LivreExpress LEApp;
 
     /**
      * Instancie la fenetre liee au client
      * @param LEApp
      */
-    public vueClient(LivreExpress LEApp, Client client)
+    public vueClient(LivreExpress LEApp, Client client, ActionBD modele) throws SQLException
     {
         super();
+        this.LEApp = LEApp;
+        this.client = client;
+        this.modele = modele;
         this.setPrefSize(1300, 700);
         this.setTop(top(client));
         this.setCenter(centerRecommandation(client));
@@ -114,7 +124,8 @@ public class vueClient extends BorderPane
             "Rechercher par nom de livre",
             "Rechercher par auteur",
             "Rechercher par classification",
-            "Rechercher par éditeur"
+            "Rechercher par éditeur", 
+            "Rechecher par magasin"
         );
         actions.setPadding(new Insets(0, 0, 0, 15));
 
@@ -163,24 +174,33 @@ public class vueClient extends BorderPane
         return top;
     }
 
-    public ScrollPane centerRecommandation(Client client)
+    public Pane centerRecommandation(Client client) throws SQLException
     {
+        HBox center = new HBox();
         VBox recommandations = new VBox(10);
         recommandations.setPadding(new Insets(20));
+        VBox ajouterPanier = new VBox(1);
 
         // Exemple de recommandations fictives
-        for (int i = 1; i <= 10; i++) {
-            Label livre = new Label("Livre recommandé n°" + i);
-            livre.setFont(new Font("Arial", 18));
-            recommandations.getChildren().add(livre);
-        }
-
+        List<Livre> tabrecoC = null;
+        try
+        {
+            tabrecoC = modele.onVousRecommande(client);
+            for (Livre bouquin : tabrecoC)
+            {
+                Text affichage = new Text(bouquin.getTitre() + "   " + bouquin.getPrix());
+                recommandations.getChildren().addAll(affichage);
+            }
+        } catch (PasDHistoriqueException pdh) 
+        { recommandations.getChildren().setAll(new Text("Vous n'avez jamais rien commandé ou nous n'avons aucune recommendation a vous presenter"));}
+        
         ScrollPane scrollPane = new ScrollPane(recommandations);
         scrollPane.setFitToWidth(true);
         scrollPane.setPrefHeight(400);
         setMargin(scrollPane, new Insets(70, 70, 70, 70));
+        center.getChildren().addAll(scrollPane, ajouterPanier);
 
-        return scrollPane;
+        return center;
     }
 
     
