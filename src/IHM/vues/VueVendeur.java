@@ -83,7 +83,7 @@ public class VueVendeur extends Application {
 
         VBox vbox = new VBox();
         vbox.setPrefSize(200, 40);
-        // on enlève la couleur de fond ici aussi par sécurité
+
         vbox.setStyle("-fx-background-color: transparent;");
 
         Button bouton1 = new Button("Ajouter un livre");
@@ -107,8 +107,7 @@ public class VueVendeur extends Application {
         menuDeroulant.setPrefWidth(200);
         menuDeroulant.setLayoutX(0);
         menuDeroulant.setLayoutY(170);
-        menuDeroulant.setStyle("-fx-background-color: transparent;"); // ✅ MODIF IMPORTANTE
-
+        menuDeroulant.setStyle("-fx-background-color: transparent;"); 
         root.getChildren().addAll(titre, menuDeroulant, resultat);
         root.setStyle("-fx-background-color: lightgrey;");
 
