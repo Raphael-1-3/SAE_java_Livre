@@ -1,0 +1,27 @@
+.button, .combo-box, .text-field, .password-field  {
+            -fx-text-fill: white; 
+            -fx-background-color : #3f4353;
+            -fx-background-radius : 15;
+            -fx-border-color : #df9d53; 
+            -fx-border-width : 2; 
+            -fx-border-radius : 15;
+}
+.combo-box .list-cell {
+    -fx-text-fill: white;
+    -fx-background-color : #3f4353;
+}
+.combo-box .list-cell:selected{
+    -fx-text-fill: white;
+    -fx-border-width : 0;
+    -fx-border-radius : 15;
+}
+
+.combo-box .cell{
+    -fx-background-radius: 0;
+    -fx-border-width : 2;
+    -fx-border-color : #df9d53;
+}
+
+.combo-box {
+    -fx-padding : 0px 0px 0px 15px;
+}

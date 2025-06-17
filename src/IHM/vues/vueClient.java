@@ -52,8 +52,9 @@ public class vueClient extends BorderPane
         HBox sstop2 = new HBox();
 
         // ssHbox 1 ----
-        Text titre = new Text("Livre Expresse - Client");
-        titre.setFont(new Font("Times new Roman", 40));
+        Label titre = new Label("Livre Expresse - Client");
+        titre.setFont(new Font("Times new Roman", 50));
+        titre.setPadding(new Insets(15, 15, 0, 0));
         ImageView logo = new ImageView(new Image("file:./img/logo.jpg"));
         logo.setFitHeight(100);
         logo.setFitWidth(100);
@@ -61,23 +62,51 @@ public class vueClient extends BorderPane
         bordure.setArcWidth(30);
         bordure.setArcHeight(30);
         logo.setClip(bordure);
-        Text nomUtil = new Text("Vous êtes connecté en tant que " + " nom  " + " " + " prenom");
-        Button param = new Button("param");
-        Button deconnexion = new Button("deconnexion");
+        Label nomUtil = new Label("Connecté en tant que " + client.getNom() + " " + client.getPrenom());
+        nomUtil.setFont(new Font("Times new Roman", 25));
+        nomUtil.setPadding(new Insets(35, 0, 0, 0));
+        nomUtil.setMaxWidth(400);
+        nomUtil.setPrefWidth(400);
+        HBox boutonsDroite = new HBox(10);
+        Button param = new Button("");
+        ImageView paramIcon = new ImageView(new Image("file:./img/param.png"));
+        paramIcon.setFitHeight(40);
+        paramIcon.setFitWidth(40);
+        param.setGraphic(paramIcon);
+        param.setPadding(new Insets(0, 0, 0, 0));
+        param.setPrefSize(50, 50);
+        Button deconnexion = new Button();
+        ImageView decoIcon = new ImageView(new Image("file:./img/deco.png"));
+        decoIcon.setFitWidth(40);
+        decoIcon.setFitHeight(40);
+        deconnexion.setGraphic(decoIcon);
+        deconnexion.setText(""); // Optionally remove text if you want only the image
         deconnexion.setFont(new Font("Times new Roman", 20));
-        deconnexion.setStyle(
-            "-fx-text-fill: white;" + 
-            "-fx-background-color : #3f4353;" +
-            "-fx-background-radius : 20;" +
-            "-fx-border-color : #df9d53;" + 
-            "-fx-border-width : 2;" + 
-            "-fx-border-radius : 20;"
-            );
         deconnexion.setPadding(new Insets(0, 0, 0, 0));
-        deconnexion.setPrefWidth(200);
+        deconnexion.setPrefWidth(50);
+        deconnexion.setPrefHeight(50);
+
+        Button panier = new Button();
+        ImageView panierIcon = new ImageView(new Image("file:./img/panier.png"));
+        panierIcon.setFitHeight(40);
+        panierIcon.setFitWidth(40);
+        panier.setGraphic(panierIcon);
+        panier.setPadding(new Insets(0, 0, 0, 0));
+        panier.setPrefWidth(50);
+        panier.setPrefHeight(50);
+        
+
+        boutonsDroite.setPadding(new Insets(30, 0, 0, 105));
+        boutonsDroite.setAlignment(Pos.TOP_RIGHT);
+        
+        boutonsDroite.getChildren().addAll(deconnexion, param, panier);
+
+
         sstop1.setPadding(new Insets(3, 3, 3, 3));
         sstop1.setSpacing(10);
-        sstop1.getChildren().addAll(logo, titre, nomUtil, deconnexion, param);
+        sstop1.getChildren().addAll(logo, titre, nomUtil, boutonsDroite);
+
+
 
         // ssHBox 2 
         ComboBox<String> actions = new ComboBox<>();
@@ -87,6 +116,7 @@ public class vueClient extends BorderPane
             "Rechercher par classification",
             "Rechercher par éditeur"
         );
+        actions.setPadding(new Insets(0, 0, 0, 15));
 
         ComboBox<String> selectionMagasin = new ComboBox<>();
         selectionMagasin.getItems().addAll(
@@ -98,6 +128,7 @@ public class vueClient extends BorderPane
             "Rhône à lire",
             "Loire et livres"
         );
+        
 
         Button executerAction = new Button("Exécuter");
         actions.setPromptText("Choisissez une action"); 
@@ -116,10 +147,11 @@ public class vueClient extends BorderPane
         boxLigne.setPadding(new Insets(5, 0, 5, 100));
         boxLigne.getChildren().addAll(sep);
 
+        this.setStyle("-fx-background-color : #d4d5d5;");
         //
-        sstop1.setStyle("-fx-background-color: blue;");
-        sstop2.setStyle("-fx-background-color: lightblue;");
-        boxLigne.setStyle("-fx-background-color: lightgreen;");
+        //sstop1.setStyle("-fx-background-color: blue;");
+        //sstop2.setStyle("-fx-background-color: lightblue;");
+        //boxLigne.setStyle("-fx-background-color: lightgreen;");
         //
 
         

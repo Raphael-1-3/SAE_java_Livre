@@ -29,10 +29,11 @@ public class LivreExpress extends Application {
         stage.setScene(scene);
         root.setPrefSize(1300, 700);
         root.setStyle("-fx-background-color : #d4d5d5;");
+        scene.getStylesheets().add("file:./src/IHM/styles/globalCSS.css");
         Client client = new Client(0, "s", "s", "s", "s", "s", 0, "k", "s");
         vueClient vueclient = new  vueClient(this, client);
         //VueConnexion vueConnexion = new VueConnexion();
-        //vueConnexion.fenetreInscription(root);
+        //vueConnexion.fenetreAccueil(root);
         scene.setRoot(vueclient);
         stage.show();
         System.out.println("MARCHE");
