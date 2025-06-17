@@ -1,5 +1,6 @@
 package IHM.vues;
 
+import IHM.controleurs.ControleurVendeur;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.geometry.Insets;
@@ -9,24 +10,12 @@ import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.Line;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
-import javafx.scene.shape.Line;
 import javafx.scene.image.ImageView;
 
 public class VueVendeur extends Application {
-
-    private void styliserBouton(Button bouton) {
-        bouton.setFont(new Font("Times new Roman", 10));
-        bouton.setStyle(
-            "-fx-text-fill: white;" +
-            "-fx-background-color : #3f4353;" +
-            "-fx-background-radius : 20;" +
-            "-fx-border-color : #df9d53;" +
-            "-fx-border-width : 2;" +
-            "-fx-border-radius : 20;"
-        );
-    }
 
     private VBox createTitre(Button boutonquitter) {
         VBox vb = new VBox();
@@ -34,7 +23,7 @@ public class VueVendeur extends Application {
         hb.setPadding(new Insets(20, 0, 0, 20));
 
         Label vendeur = new Label("Vendeur");
-        vendeur.setFont(new Font("Times new Roman", 60));
+        vendeur.setFont(new Font("Times New Roman", 60));
         vendeur.setStyle("-fx-text-fill: #3f4353");
         vendeur.setPadding(new Insets(10, 0, 0, 400));
 
@@ -47,8 +36,6 @@ public class VueVendeur extends Application {
         bordure.setArcHeight(30);
         logo.setClip(bordure);
 
-        styliserBouton(boutonquitter);
-
         Region spacer = new Region();
         HBox.setHgrow(spacer, Priority.ALWAYS);
 
@@ -57,10 +44,9 @@ public class VueVendeur extends Application {
         Line sep = new Line(0, 0, 1100, 0);
         sep.setStrokeWidth(2);
         sep.setStroke(Color.DARKGREY);
-        VBox.setMargin(sep, new Insets(20, 0, 0, 100)); 
+        VBox.setMargin(sep, new Insets(20, 0, 0, 100));
 
         vb.getChildren().addAll(hb, sep);
-
         return vb;
     }
 
@@ -69,16 +55,14 @@ public class VueVendeur extends Application {
         resultat.setPrefSize(500, 340);
         resultat.setStyle("-fx-background-color: grey;");
         resultat.setLayoutX((1200 - 500) / 2);
-        resultat.setLayoutY((800 - 340) / 2); // Centré verticalement
+        resultat.setLayoutY((800 - 140) / 2);
         return resultat;
     }
 
     @Override
     public void start(Stage primaryStage) {
         Pane root = new Pane();
-
         Button boutonquitter = new Button("quitter");
-
         VBox titre = createTitre(boutonquitter);
         BorderPane resultat = createResultat();
 
@@ -97,14 +81,15 @@ public class VueVendeur extends Application {
         menuCombo.setLayoutY(170);
         menuCombo.setPrefWidth(200);
 
-      
+        ControleurVendeur controleur = new ControleurVendeur();
+        menuCombo.setOnAction(controleur);
         boutonquitter.setOnAction(e -> Platform.exit());
 
         root.getChildren().addAll(titre, menuCombo, resultat);
         root.setStyle("-fx-background-color: lightgrey;");
 
         Scene scene = new Scene(root, 1200, 800);
-        scene.getStylesheets().add("file:./src/IHM/styles/globalCSS.css");
+    scene.getStylesheets().add("file:./src/IHM/styles/globalCSS.css");
 
         primaryStage.setTitle("Vue Vendeur");
         primaryStage.setScene(scene);
