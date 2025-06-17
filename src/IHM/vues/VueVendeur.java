@@ -30,11 +30,12 @@ public class VueVendeur extends Application {
         ImageView logo = new ImageView(new Image("file:./img/logo.jpg"));
         logo.setFitWidth(100);
         logo.setFitHeight(100);
+        Button boutonquitter = new Button("quitter");
         Rectangle bordure = new Rectangle(logo.getFitWidth(), logo.getFitHeight());
         bordure.setArcWidth(30);
         bordure.setArcHeight(30);
         logo.setClip(bordure);
-        hb.getChildren().addAll(logo, vendeur);
+        hb.getChildren().addAll(logo, vendeur,boutonquitter);
         Line sep = new Line(0, 0, 1100, 0);
         
         sep.setStrokeWidth(2);
@@ -45,7 +46,7 @@ public class VueVendeur extends Application {
 
    
 
-    vb.getChildren().addAll(hb);
+    vb.getChildren().addAll(hb,sep);
 
     return vb;
 }
@@ -56,8 +57,8 @@ public class VueVendeur extends Application {
         BorderPane resultat = new BorderPane();
         resultat.setPrefSize(500, 340);
         resultat.setStyle("-fx-background-color: grey;");
-        resultat.setLayoutX((800 - 500) / 2);
-        resultat.setLayoutY(600 - 340 - 80);
+        resultat.setLayoutX((1200 - 500) / 2);
+        resultat.setLayoutY((800 - 340) - 80);
         return resultat;
     }
 
@@ -81,7 +82,7 @@ public class VueVendeur extends Application {
 
         TitledPane menuDeroulant = new TitledPane("☰", vbox);
         menuDeroulant.setExpanded(false);
-        menuDeroulant.setPrefWidth(80);
+        menuDeroulant.setPrefWidth(200);
         menuDeroulant.setLayoutX(0);       
         menuDeroulant.setLayoutY(170);     
 
