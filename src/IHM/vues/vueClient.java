@@ -1,9 +1,9 @@
 package IHM.vues;
 
 import main.*;
+import IHM.controleurs.ControleurClient.*;
 import main.BD.ActionBD;
 import main.app.*;
-import main.app.Client;
 import main.BD.*;
 import main.Exceptions.*;
 
@@ -31,11 +31,11 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-import IHM.controleurs.controleurSelectionClient;
 
 
 
-public class vueClient extends BorderPane
+
+public class VueClient extends BorderPane
 {
     private ActionBD modele;
     private Client client;
@@ -44,11 +44,16 @@ public class vueClient extends BorderPane
     private ComboBox<String> selectionRecherche;
     private ComboBox<String> selectionMagasin;
 
+    private HBox contenantRLIL;
+    private ScrollPane resultatRecherche2;
+    private VBox informationLivre;
+    private ScrollPane resultatRecherche1;
+
     /**
      * Instancie la fenetre liee au client
      * @param LEApp
      */
-    public vueClient(LivreExpress LEApp, Client client, ActionBD modele) throws SQLException
+    public VueClient(LivreExpress LEApp, Client client, ActionBD modele) throws SQLException
     {
         super();
         this.LEApp = LEApp;
@@ -57,10 +62,25 @@ public class vueClient extends BorderPane
         this.selectionRecherche = new ComboBox<>();
         this.selectionMagasin = new ComboBox<>();
         this.scheachbar = new TextField();
+        this.contenantRLIL = new HBox();
+        this.resultatRecherche1 = new ScrollPane();
+        this.resultatRecherche1.setPrefSize(400, 400);
+        this.resultatRecherche2 = new ScrollPane();
+        this.resultatRecherche2.setPrefSize(400, 400);
+        this.informationLivre = new VBox();
+        this.informationLivre.setPrefSize(400, 400);
+        this.contenantRLIL.setPrefSize(1000, 1000);
+        this.contenantRLIL.setStyle("-fx-background-color: blue;");
+        this.resultatRecherche2.setBackground(new Background(new BackgroundFill(Color.PINK, null, null)));
+        this.informationLivre.setStyle("-fx-background-color: green;");
+        this.resultatRecherche1.setStyle("-fx-background-color: orange;");
+        this.contenantRLIL.getChildren().addAll(this.resultatRecherche1, this.resultatRecherche2, this.informationLivre);
+        this.setCenter(this.contenantRLIL);
+        this.centerRecommandation(this.client);
+        this.setMargin(this.contenantRLIL, new Insets(60, 60, 60, 60));
         this.setPrefSize(1300, 700);
-        this.setTop(top(client));
-        this.setCenter(centerRecommandation(client));
-        //this.setBottom(bottom());
+        this.setTop(this.top(this.client));
+        //this.setBottom(this.bottom());
     }
 
     public ActionBD getModele() {
@@ -172,7 +192,7 @@ public class vueClient extends BorderPane
         
         Button executerAction = new Button("Exécuter");
         executerAction.setPrefWidth(100);
-        executerAction.setOnAction(new controleurSelectionClient(this.modele, this.LEApp, this.selectionRecherche, this.selectionMagasin));
+        executerAction.setOnAction(new controleurSelectionClient(this.modele, this.LEApp));
         this.selectionRecherche.setPromptText("Choisissez une action"); 
         this.selectionMagasin.setPromptText("Choissiser un magasin");
         VBox layout = new VBox(10); 
@@ -197,41 +217,132 @@ public class vueClient extends BorderPane
         //boxLigne.setStyle("-fx-background-color: lightgreen;");
         //
 
-        
-        
         top.getChildren().addAll(sstop1, boxLigne, sstop2);
 
         return top;
     }
 
-    public Pane centerRecommandation(Client client) throws SQLException
+    public void centerRecommandation(Client client) throws SQLException
     {
-        HBox center = new HBox();
-        VBox recommandations = new VBox(10);
-        recommandations.setPadding(new Insets(20));
-        VBox ajouterPanier = new VBox(1);
-
-        // Exemple de recommandations fictives
-        List<Livre> tabrecoC = null;
+        VBox livresBox = new VBox();
         try
         {
-            tabrecoC = modele.onVousRecommande(client);
-            for (Livre bouquin : tabrecoC)
-            {
-                Text affichage = new Text(bouquin.getTitre() + "   " + bouquin.getPrix());
-                recommandations.getChildren().addAll(affichage);
+            List<Livre> tabrecoC = this.modele.onVousRecommande(client);
+            if (tabrecoC == null || tabrecoC.isEmpty()) {
+                livresBox.getChildren().add(new Text("Aucune recommandation à afficher."));
+            } else {
+                for (Livre bouquin : tabrecoC)
+                {
+                    Label affichageT = new Label(bouquin.getTitre());
+                    affichageT.setPadding(new Insets(5));
+                    affichageT.setOnMouseClicked(new controleurSelectionLivre(this.modele, this.LEApp));
+                    livresBox.getChildren().add(affichageT);
+                }
             }
-        } catch (PasDHistoriqueException pdh) 
-        { recommandations.getChildren().setAll(new Text("Vous n'avez jamais rien commandé ou nous n'avons aucune recommendation a vous presenter"));}
-        
-        ScrollPane scrollPane = new ScrollPane(recommandations);
-        scrollPane.setFitToWidth(true);
-        scrollPane.setPrefWidth(1000);
-        setMargin(center, new Insets(70, 70, 70, 70));
-        center.getChildren().addAll(scrollPane, ajouterPanier);
-
-        return center;
+        } catch (PasDHistoriqueException pdh) {
+            livresBox.getChildren().add(new Text("Vous n'avez jamais rien commandé ou nous n'avons aucune recommandation à vous présenter"));
+        }
+        this.resultatRecherche2.setContent(livresBox);
     }
 
-    
+    /**
+     * Permet d'afficher dans le center de la vue la liste de livres en fonction de la recherche
+     * @param livres
+     */
+    public void centerAfficherLivres(List<Livre> livres) 
+    {
+        VBox libresbox = new VBox();
+        if (livres == null || livres.isEmpty()) {
+            libresbox.getChildren().add(new Text("Aucun livre à afficher."));
+        } else {
+            for (Livre livre : livres) {
+                Label affichageT = new Label(livre.getTitre());
+                affichageT.setPadding(new Insets(0, 0, 0, 10));
+                affichageT.setOnMouseClicked(new controleurSelectionLivre(this.modele, this.LEApp));
+                libresbox.getChildren().add(affichageT);
+            }
+        }
+        this.resultatRecherche2.setContent(libresbox);
+    }
+
+    public void afficheInfoLivre(Livre livre)
+    {
+        this.informationLivre.getChildren().clear();
+        if (livre == null) this.informationLivre.getChildren().add(new Text("Aucune information à afficher."));
+        try 
+        {
+            Label titre = new Label("Titre : " + livre.getTitre());
+            Label prix = new Label("Prix : " + livre.getPrix() + " €");
+
+            List<Auteur> auteurs = this.modele.getAuteurParIdLivre(livre.getISBN());
+            StringBuilder auteursStr = new StringBuilder("Auteurs : ");
+            if (auteurs.isEmpty()) auteursStr.append("Aucun");
+            else for (Auteur a : auteurs) auteursStr.append(a.getNomAuteur());
+
+            Label auteursLabel = new Label(auteursStr.toString());
+
+            List<Classification> classes = this.modele.getClassificationParIdLivre(livre.getISBN());
+            StringBuilder classStr = new StringBuilder("Classifications : ");
+            if (classes.isEmpty()) classStr.append("Aucune");
+            else for (Classification c : classes) classStr.append(c.getNomClass());
+            Label classLabel = new Label(classStr.toString());
+
+            List<Editeur> editeurs = this.modele.getEditeurParIdLivre(livre.getISBN());
+            StringBuilder editStr = new StringBuilder("Editeurs : ");
+            if (editeurs.isEmpty()) editStr.append("Aucun");
+            else for (Editeur e : editeurs) editStr.append(e.getNomEdit());
+            Label editLabel = new Label(editStr.toString());
+
+            this.informationLivre.getChildren().addAll(titre, prix, auteursLabel, classLabel, editLabel);
+        
+        } catch (Exception e) {
+            this.informationLivre.getChildren().clear();
+            this.informationLivre.getChildren().add(new Text("Erreur lors de l'affichage des informations du livre."));
+        }
+    }
+
+    public void centerAfficheEditeur(List<Editeur> editeurs) {
+        VBox editeursBox = new VBox();
+        if (editeurs == null || editeurs.isEmpty()) {
+            editeursBox.getChildren().add(new Text("Aucun éditeur à afficher."));
+        } else {
+            for (Editeur editeur : editeurs) {
+                Label affichageE = new Label(editeur.getNomEdit());
+                affichageE.setOnMouseClicked(new controleurSelectionEditeur(this.modele, this.LEApp));
+                affichageE.setPadding(new Insets(0, 0, 0, 10));
+                editeursBox.getChildren().add(affichageE);
+            }
+        }
+        this.resultatRecherche1.setContent(editeursBox);
+    }
+
+    public void centerAfficheClassification(List<Classification> classifications) {
+        VBox classificationsBox = new VBox();
+        if (classifications == null || classifications.isEmpty()) {
+            classificationsBox.getChildren().add(new Text("Aucune classification à afficher."));
+        } else {
+            for (Classification classification : classifications) {
+                Label affichageC = new Label(classification.getNomClass());
+                affichageC.setOnMouseClicked(new controleurSelectionClassification(this.modele, this.LEApp));
+                affichageC.setPadding(new Insets(0, 0, 0, 10));
+                classificationsBox.getChildren().add(affichageC);
+            }
+        }
+        this.resultatRecherche1.setContent(classificationsBox);
+    }
+
+    public void centerAfficheAuteur(List<Auteur> auteurs) {
+        VBox auteursBox = new VBox();
+        if (auteurs == null || auteurs.isEmpty()) {
+            auteursBox.getChildren().add(new Text("Aucun auteur à afficher."));
+        } else {
+            for (Auteur auteur : auteurs) {
+                Label affichageA = new Label(auteur.getNomAuteur());
+                affichageA.setOnMouseClicked(new controleurSelectionAuteur(this.modele, this.LEApp));
+                affichageA.setPadding(new Insets(0, 0, 0, 10));
+                auteursBox.getChildren().add(affichageA);
+            }
+        }
+        this.resultatRecherche1.setContent(auteursBox);
+    }
 }

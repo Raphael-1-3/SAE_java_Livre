@@ -1,6 +1,6 @@
 package IHM.vues;
 
-import IHM.controleurs.ControleurVendeur;
+import IHM.controleurs.ControleurVendeur.*;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.geometry.Insets;

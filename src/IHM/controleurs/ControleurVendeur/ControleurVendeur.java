@@ -1,4 +1,4 @@
-package IHM.controleurs;
+package IHM.controleurs.ControleurVendeur;
 
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;

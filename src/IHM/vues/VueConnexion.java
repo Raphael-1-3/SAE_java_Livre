@@ -20,9 +20,7 @@ import javafx.scene.text.TextAlignment;
 import javafx.scene.control.ButtonBar.ButtonData ;
 import java.util.List;
 
-import IHM.controleurs.controleurAccueil;
-import IHM.controleurs.controleurConnexion;
-import IHM.controleurs.controleurInscription;
+import IHM.controleurs.ControleurAcceuil.*;
 import main.*;
 public class VueConnexion {
 
@@ -42,7 +40,7 @@ public class VueConnexion {
     public VueConnexion(LivreExpress app)
     {
         this.app = app;
- 
+
 
         // ------------ Connexion ---------------------
 
