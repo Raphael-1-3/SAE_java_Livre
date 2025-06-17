@@ -80,10 +80,8 @@ public class controleurConnexion implements EventHandler<ActionEvent> {
                 }
                 catch (PasDeTelUtilisateurException e)
                 {
-                    System.out.println("User existe pas");
+                    this.app.getVueConnexion().popUpUtilisateurExistePas().showAndWait();
                 }
-                break;
-            default:
                 break;
         }
     }
