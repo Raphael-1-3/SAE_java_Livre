@@ -464,10 +464,11 @@ public class ActionBD{
      * @return Une liste de livres correspondant à la classification.
      * @throws SQLException
      */
-    public List<Livre> chercherLivreAPartirClassification(Classification classi) throws SQLException
+    public List<Livre> chercherLivreAPartirClassification(Classification classi, Magasin mag) throws SQLException
     {
-        PreparedStatement ps = this.connexion.prepareStatement("select isbn, titre, nbpages, datepubli, prix from LIVRE natural join THEMES natural join CLASSIFICATION where iddewey = ?");
+        PreparedStatement ps = this.connexion.prepareStatement("select isbn, titre, nbpages, datepubli, prix from LIVRE natural join POSSEDER natural join MAGASIN natural join THEMES natural join CLASSIFICATION where iddewey = ? and idmag = ? ");
         ps.setInt(1, classi.getIddewey());
+        ps.setInt(2, mag.getIdmag());
         ResultSet rs = ps.executeQuery();
         List<Livre> tabLivre = new ArrayList<>();
         while (rs.next())
@@ -508,10 +509,11 @@ public class ActionBD{
      * @return Une liste de livres correspondant à l'éditeur.
      * @throws SQLException
      */
-    public List<Livre> chercherLivreAPartiEditeur(Editeur Editeur) throws SQLException
+    public List<Livre> chercherLivreAPartiEditeur(Editeur Editeur, Magasin mag) throws SQLException
     {
-        PreparedStatement ps = this.connexion.prepareStatement("select isbn, titre, nbpages, datepubli, prix from LIVRE natural join EDITER natural join EDITEUR where idedit = ?");
+        PreparedStatement ps = this.connexion.prepareStatement("select isbn, titre, nbpages, datepubli, prix from LIVRE natural join POSSEDER natural join MAGASIN natural join EDITER natural join EDITEUR where idedit = ? and idmag = ?");
         ps.setInt(1, Editeur.getIdEditeur());
+        ps.setInt(2, mag.getIdmag());
         ResultSet rs = ps.executeQuery();
         List<Livre> tabLivre = new ArrayList<>();
         while (rs.next())
@@ -557,10 +559,11 @@ public class ActionBD{
      * @return
      * @throws SQLException
      */
-    public List<Livre> cherhcherLivreApproximative(String nomApproximativeLivre) throws SQLException
+    public List<Livre> cherhcherLivreApproximative(String nomApproximativeLivre, Magasin mag) throws SQLException
     {
-        PreparedStatement ps = this.connexion.prepareStatement("SELECT * FROM LIVRE WHERE LOWER(titre) LIKE ?");
+        PreparedStatement ps = this.connexion.prepareStatement("SELECT isbn, titre, nbpages, datepubli, prix FROM LIVRE natural join POSSEDER natural join MAGASIN WHERE LOWER(titre) LIKE ? and idmag = ?");
         ps.setString(1, "%" + nomApproximativeLivre.toLowerCase() + "%");
+        ps.setInt(2, mag.getIdmag());
         ResultSet rs = ps.executeQuery();
         List<Livre> livres = new ArrayList<>();
         while (rs.next()) {
@@ -584,12 +587,13 @@ public class ActionBD{
      * @return
      * @throws SQLException
      */
-    public  List<Livre> rechercheLivreAuteur(Auteur auteurRecherche) throws SQLException
+    public  List<Livre> rechercheLivreAuteur(Auteur auteurRecherche, Magasin mag) throws SQLException
     {
-        PreparedStatement ps = this.connexion.prepareStatement("SELECT isbn, titre, nbpages, datepubli, prix FROM LIVRE natural join ECRIRE natural join AUTEUR WHERE idauteur = ?");
+        PreparedStatement ps = this.connexion.prepareStatement("SELECT isbn, titre, nbpages, datepubli, prix FROM MAGASIN natural join POSSEDER natural join LIVRE natural join ECRIRE natural join AUTEUR WHERE idauteur = ? and idmag = ? ");
         ps.setString(1,  auteurRecherche.getIdAuteur());
+        ps.setInt(2, mag.getIdmag());
         ResultSet rs = ps.executeQuery();
-        List<Livre> livres = new ArrayList<>();
+        List<Livre> livres = new ArrayList<>(); 
         while (rs.next()) {
             Livre l = new Livre(
             rs.getLong("isbn"),
