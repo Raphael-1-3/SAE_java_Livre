@@ -1,7 +1,10 @@
 package IHM.vues;
+import main.BD.ActionBD;
+import main.BD.ConnexionMySQL;
 import main.app.*;
 
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Insets;
 import javafx.scene.text.Font;
@@ -18,25 +21,89 @@ import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
 import javafx.scene.control.ButtonBar.ButtonData ;
 import java.util.List;
+import java.util.Scanner;
 
 public class LivreExpress extends Application {
 
+    private VueConnexion vueCo;
+    private ActionBD modele;
+    private BorderPane root;
+    private Scene scene;
+
+    @Override
+    public void init()
+    {
+        System.out.println("Connexion base");
+        Scanner scanner = new Scanner(System.in);
+
+        System.out.print("Entrer le nom du serveur : ");
+        String nomServeur = scanner.nextLine();
+
+        System.out.print("Entrer le login : ");
+        String nomLogin = scanner.nextLine();
+
+        System.out.print("Entrer le mot de passe : ");
+        String motDePasse = scanner.nextLine();
+        scanner.close();
+        ConnexionMySQL connexion = null;
+
+        try {
+            connexion = new ConnexionMySQL();
+            connexion.connecter(nomServeur, "LibrairieJava", nomLogin,  motDePasse); //"localhost", "LibrairieJava", "root", "raphe"
+            if (connexion.isConnecte()) 
+            {
+                this.modele = new ActionBD(connexion);
+                System.out.println("Connexion réussie !");
+            }
+        }
+        catch (Exception e)
+        {
+            System.out.println("ERREUR");
+        }
+        this.vueCo = new VueConnexion(this);
+        root = new BorderPane();
+    }
+
     @Override
     public void start(Stage stage) throws Exception{
-        BorderPane root = new BorderPane();
-        Scene scene = new Scene(root);
+        this.scene = new Scene(this.root);
         stage.setTitle("LivreExpress");
         stage.setScene(scene);
-        root.setPrefSize(1300, 700);
-        root.setStyle("-fx-background-color : #d4d5d5;");
+        this.root.setPrefSize(1300, 700);
+        this.root.setStyle("-fx-background-color : #d4d5d5;");
         scene.getStylesheets().add("file:./src/IHM/styles/globalCSS.css");
         Client client = new Client(0, "s", "s", "s", "s", "s", 0, "k", "s");
-        vueClient vueclient = new  vueClient(this, client);
-        //VueConnexion vueConnexion = new VueConnexion();
-        //vueConnexion.fenetreAccueil(root);
-        scene.setRoot(vueclient);
+        //vueClient vueclient = new  vueClient(this, client);
+
+        vueCo.fenetreAccueil(root);
+        //scene.setRoot(vueclient);
         stage.show();
         System.out.println("MARCHE");
+    }
+
+    public VueConnexion getVueConnexion ()
+    {
+        return this.vueCo;
+    }
+
+    public Scene getScene()
+    {
+        return this.scene;
+    }
+
+    public ActionBD getModele()
+    {
+        return this.modele;
+    }
+
+    public BorderPane getRoot()
+    {
+        return this.root;
+    }
+
+    public void quiiter()
+    {
+        Platform.exit();
     }
 
     public static void main(String[] args) {
