@@ -200,8 +200,6 @@ public class Client extends User {
     public static void choixDisponibilite(ActionBD bd, Client client, Scanner scanner) throws SQLException {
         // Premier menu : choix du mode de recherche
         List<String> menuModeRecherche = new ArrayList<>();
-        menuModeRecherche.add("Parmi les livres disponibles en magasin");
-        menuModeRecherche.add("Parmi tout les livres enregistrés");
         menuModeRecherche.add("Choisir un magasin");
         menuModeRecherche.add("Quitter");
 
@@ -213,14 +211,6 @@ public class Client extends User {
             boolean rechercheDispoMag = false;
             switch (choixMode) {
                 case "1":
-                    rechercheDispoMag = true;
-                    rechercheLivre(bd, client, scanner, rechercheDispoMag);
-                    break;
-                case "2":
-                    rechercheDispoMag = false;
-                    rechercheLivre(bd, client, scanner, rechercheDispoMag);
-                    break;
-                case "3":
                     // Choisir un magasin
                     List<Magasin> magasins = bd.getAllMagasins();
                     if (magasins == null || magasins.isEmpty()) {
@@ -241,13 +231,7 @@ public class Client extends User {
                             break;
                         }
                         Magasin magasinChoisi = magasins.get(numMag);
-                        // Recherche uniquement parmi les livres de ce magasin
-                        List<Livre> livresDispo = bd.getLivresDispoDansMagasin(magasinChoisi);
-                        if (livresDispo == null || livresDispo.isEmpty()) {
-                            System.out.println("Aucun livre disponible dans ce magasin.");
-                        } else {
-                            afficherEtAjouterLivreAuPanier(scanner, client, livresDispo);
-                        }
+                        rechercheLivre(bd, client, scanner, magasinChoisi);
                     } catch (NumberFormatException e) {
                         System.out.println("Entrée invalide.");
                     }
@@ -264,7 +248,7 @@ public class Client extends User {
         }
     }
 
-    public static void rechercheLivre(ActionBD bd, Client client, Scanner scanner, boolean rechercheDispoMag) throws SQLException
+    public static void rechercheLivre(ActionBD bd, Client client, Scanner scanner, Magasin magasinChoisi) throws SQLException
     {
         List<String> menuSousRecherche = new ArrayList<>();
         menuSousRecherche.add("Par auteur");
@@ -304,39 +288,20 @@ public class Client extends User {
                     }
                     Auteur auteur = tabAuteur.get(Auteurnb - 1);
                     System.out.println("Vous avez choisi l'auteur " + auteur.getNomAuteur());
-                    List<Livre> LivreAuteur = bd.rechercheLivreAuteur(auteur);
-                    if (rechercheDispoMag) {
-                        List<Livre> livresDispo = new ArrayList<>();
-                        for (Livre livre : LivreAuteur) {
-                            List<Magasin> magasins = bd.getMagasinOuLivreDispo(livre);
-                            if (magasins != null && !magasins.isEmpty()) {
-                                livresDispo.add(livre);
-                            }
-                        }
-                        LivreAuteur = livresDispo;
-                    }
+                    List<Livre> LivreAuteur = bd.rechercheLivreAuteur(auteur, magasinChoisi);
                     afficherEtAjouterLivreAuPanier(scanner, client, LivreAuteur);
                     break;
                 case "2": // Par nom de livre
                     System.out.print("Entrez le titre du livre : ");
                     String titreRecherche = scanner.nextLine().strip();
-                    List<Livre> livresTitre = bd.cherhcherLivreApproximative(titreRecherche);
-                    if (rechercheDispoMag) {
-                        List<Livre> livresDispo = new ArrayList<>();
-                        for (Livre livre : livresTitre) {
-                            List<Magasin> magasins = bd.getMagasinOuLivreDispo(livre);
-                            if (magasins != null && !magasins.isEmpty()) {
-                                livresDispo.add(livre);
-                            }
-                        }
-                        livresTitre = livresDispo;
-                    }
+                    List<Livre> livresTitre = bd.cherhcherLivreApproximativeParMag(titreRecherche, magasinChoisi);
+                    
                     afficherEtAjouterLivreAuPanier(scanner, client, livresTitre);
                     break;
                 case "3": // Recommandations
                     try {
                         List<Livre> recommandations = bd.onVousRecommande(client);
-                        if (rechercheDispoMag) {
+                        if (true) {
                             List<Livre> livresDispo = new ArrayList<>();
                             for (Livre livre : recommandations) {
                                 List<Magasin> magasins = bd.getMagasinOuLivreDispo(livre);
@@ -376,17 +341,8 @@ public class Client extends User {
                     }
                     Editeur editeur = tabEditeur.get(editeurnb - 1);
                     System.out.println("Vous avez choisi l'éditeur " + editeur.getNomEdit());
-                    List<Livre> LivreEditeur = bd.chercherLivreAPartiEditeur(editeur);
-                    if (rechercheDispoMag) {
-                        List<Livre> livresDispo = new ArrayList<>();
-                        for (Livre livre : LivreEditeur) {
-                            List<Magasin> magasins = bd.getMagasinOuLivreDispo(livre);
-                            if (magasins != null && !magasins.isEmpty()) {
-                                livresDispo.add(livre);
-                            }
-                        }
-                        LivreEditeur = livresDispo;
-                    }
+                    List<Livre> LivreEditeur = bd.chercherLivreAPartiEditeur(editeur, magasinChoisi);
+            
                     afficherEtAjouterLivreAuPanier(scanner, client, LivreEditeur);
                     break;
                 case "5": // Par classification
@@ -414,17 +370,7 @@ public class Client extends User {
                     }
                     Classification classification = tabClassification.get(Classificationnb - 1);
                     System.out.println("Vous avez choisi la classification " + classification.getNomClass());
-                    List<Livre> LivreClassification = bd.chercherLivreAPartirClassification(classification);
-                    if (rechercheDispoMag) {
-                        List<Livre> livresDispo = new ArrayList<>();
-                        for (Livre livre : LivreClassification) {
-                            List<Magasin> magasins = bd.getMagasinOuLivreDispo(livre);
-                            if (magasins != null && !magasins.isEmpty()) {
-                                livresDispo.add(livre);
-                            }
-                        }
-                        LivreClassification = livresDispo;
-                    }
+                    List<Livre> LivreClassification = bd.chercherLivreAPartirClassification(classification, magasinChoisi);
                     afficherEtAjouterLivreAuPanier(scanner, client, LivreClassification);
                     break;
                 case "6":
