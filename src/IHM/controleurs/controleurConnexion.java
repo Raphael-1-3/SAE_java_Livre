@@ -57,7 +57,7 @@ public class controleurConnexion implements EventHandler<ActionEvent> {
                         {
                             case "Client":
                                 System.out.println("Bienvenue, client !");
-                                vueClient vc = new vueClient(this.app, (Client) user);
+                                vueClient vc = new vueClient(this.app, (Client) user, modele);
                                 this.app.getScene().setRoot(vc);
                                 break;
                             case "Vendeur":
