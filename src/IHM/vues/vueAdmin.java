@@ -21,12 +21,11 @@ public class vueAdmin extends StackPane {
     private BorderPane carre;
     private final VBox top;
     private final StackPane fenetre = new StackPane();
-    private final Scene scene;
 
     public vueAdmin() {
+        super();
         this.carre = createCadre();
         this.top = createTop();
-
         boutonMaison.setGraphic(new ImageView());
         boutonMaison.setPrefSize(50, 20);
 
@@ -36,18 +35,7 @@ public class vueAdmin extends StackPane {
         boutonDeco.setGraphic(new ImageView());
         boutonDeco.setPrefSize(50, 20);
 
-        this.scene = createScene();
-        this.getChildren().addAll(carre, top);
-    }
-
-    private Scene createScene() {
-        fenetre.getChildren().addAll(carre, top);
-        StackPane.setAlignment(top, Pos.TOP_LEFT);
-        StackPane.setAlignment(carre, Pos.CENTER);
-        fenetre.setBackground(new Background(new BackgroundFill(Color.LIGHTGRAY, CornerRadii.EMPTY, Insets.EMPTY)));
-        Scene scene = new Scene(fenetre, 1920, 1080);
-        scene.getStylesheets().add("file:./src/IHM/styles/globalCSS.css");
-        return scene;
+        super.getChildren().addAll(carre, top);
     }
 
     public void creerVendeur() {

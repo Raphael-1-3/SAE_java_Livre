@@ -78,6 +78,7 @@ public class LivreExpress extends Application {
         vueCo.fenetreAccueil(root);
         //scene.setRoot(vueclient);
         scene.setRoot(vuead);
+        stage.setScene(scene);
         stage.show();
         System.out.println("MARCHE");
 
