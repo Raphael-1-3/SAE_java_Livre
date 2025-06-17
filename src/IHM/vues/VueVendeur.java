@@ -1,12 +1,11 @@
 package IHM.vues;
 
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.geometry.Insets;
 import javafx.stage.Stage;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.TitledPane;
+import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
@@ -29,7 +28,7 @@ public class VueVendeur extends Application {
         );
     }
 
-    private VBox createTitre() {
+    private VBox createTitre(Button boutonquitter) {
         VBox vb = new VBox();
         HBox hb = new HBox();
         hb.setPadding(new Insets(20, 0, 0, 20));
@@ -43,13 +42,12 @@ public class VueVendeur extends Application {
         logo.setFitWidth(100);
         logo.setFitHeight(100);
 
-        Button boutonquitter = new Button("quitter");
-        styliserBouton(boutonquitter);
-
         Rectangle bordure = new Rectangle(logo.getFitWidth(), logo.getFitHeight());
         bordure.setArcWidth(30);
         bordure.setArcHeight(30);
         logo.setClip(bordure);
+
+        styliserBouton(boutonquitter);
 
         Region spacer = new Region();
         HBox.setHgrow(spacer, Priority.ALWAYS);
@@ -59,6 +57,7 @@ public class VueVendeur extends Application {
         Line sep = new Line(0, 0, 1100, 0);
         sep.setStrokeWidth(2);
         sep.setStroke(Color.DARKGREY);
+        VBox.setMargin(sep, new Insets(20, 0, 0, 100)); 
 
         vb.getChildren().addAll(hb, sep);
 
@@ -70,7 +69,7 @@ public class VueVendeur extends Application {
         resultat.setPrefSize(500, 340);
         resultat.setStyle("-fx-background-color: grey;");
         resultat.setLayoutX((1200 - 500) / 2);
-        resultat.setLayoutY((800 - 340) - 80);
+        resultat.setLayoutY((800 - 340) / 2); // Centré verticalement
         return resultat;
     }
 
@@ -78,40 +77,34 @@ public class VueVendeur extends Application {
     public void start(Stage primaryStage) {
         Pane root = new Pane();
 
-        VBox titre = createTitre();
+        Button boutonquitter = new Button("quitter");
+
+        VBox titre = createTitre(boutonquitter);
         BorderPane resultat = createResultat();
 
-        VBox vbox = new VBox();
-        vbox.setPrefSize(200, 40);
+        ComboBox<String> menuCombo = new ComboBox<>();
+        menuCombo.getItems().addAll(
+            "Ajouter un livre",
+            "Modifier le stock",
+            "Regarde dispo",
+            "Commande pour client",
+            "Transferer un Livre",
+            "Obtenir facture"
+        );
+        menuCombo.setPromptText("☰ Menu Vendeur");
+        menuCombo.setStyle("-fx-background-radius: 20; -fx-border-color: #df9d53; -fx-border-radius: 20;");
+        menuCombo.setLayoutX(10);
+        menuCombo.setLayoutY(170);
+        menuCombo.setPrefWidth(200);
 
-        vbox.setStyle("-fx-background-color: transparent;");
+      
+        boutonquitter.setOnAction(e -> Platform.exit());
 
-        Button bouton1 = new Button("Ajouter un livre");
-        Button bouton2 = new Button("Modifier le stock");
-        Button bouton3 = new Button("Regarde dispo");
-        Button bouton4 = new Button("Commande pour client");
-        Button bouton5 = new Button("Transferer un Livre");
-        Button bouton6 = new Button("Obtenir facture");
-
-        styliserBouton(bouton1);
-        styliserBouton(bouton2);
-        styliserBouton(bouton3);
-        styliserBouton(bouton4);
-        styliserBouton(bouton5);
-        styliserBouton(bouton6);
-
-        vbox.getChildren().addAll(bouton1, bouton2, bouton3, bouton4, bouton5, bouton6);
-
-        TitledPane menuDeroulant = new TitledPane("☰", vbox);
-        menuDeroulant.setExpanded(false);
-        menuDeroulant.setPrefWidth(200);
-        menuDeroulant.setLayoutX(0);
-        menuDeroulant.setLayoutY(170);
-        menuDeroulant.setStyle("-fx-background-color: transparent;"); 
-        root.getChildren().addAll(titre, menuDeroulant, resultat);
+        root.getChildren().addAll(titre, menuCombo, resultat);
         root.setStyle("-fx-background-color: lightgrey;");
 
         Scene scene = new Scene(root, 1200, 800);
+        scene.getStylesheets().add("file:./src/IHM/styles/globalCSS.css");
 
         primaryStage.setTitle("Vue Vendeur");
         primaryStage.setScene(scene);
