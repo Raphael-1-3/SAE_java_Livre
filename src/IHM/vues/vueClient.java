@@ -131,6 +131,7 @@ public class vueClient extends BorderPane
         
 
         Button executerAction = new Button("Exécuter");
+        executerAction.setPrefWidth(100);
         actions.setPromptText("Choisissez une action"); 
         selectionMagasin.setPromptText("Choissiser un magasin");
         VBox layout = new VBox(10); 
@@ -138,9 +139,10 @@ public class vueClient extends BorderPane
         layout.getChildren().addAll(actions, selectionMagasin, executerAction);
 
         TextField schearchbar = new TextField();
+        schearchbar.setPrefWidth(600); // Largeur préférée
         sstop2.setPadding(new Insets(10, 0, 10, 50));
         sstop2.setSpacing(15);
-        sstop2.getChildren().addAll(actions, selectionMagasin, executerAction, schearchbar);
+        sstop2.getChildren().addAll(actions, selectionMagasin,  schearchbar,executerAction);
         //
         HBox boxLigne = new HBox();
         Line sep = new Line(0, 0, 1100, 0);
@@ -176,7 +178,7 @@ public class vueClient extends BorderPane
         ScrollPane scrollPane = new ScrollPane(recommandations);
         scrollPane.setFitToWidth(true);
         scrollPane.setPrefHeight(400);
-        setMargin(scrollPane, new Insets(100, 100, 100, 100));
+        setMargin(scrollPane, new Insets(70, 70, 70, 70));
 
         return scrollPane;
     }
