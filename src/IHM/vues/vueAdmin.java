@@ -12,6 +12,8 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.Line;
+import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
 import javafx.scene.control.ButtonBar.ButtonData;
@@ -105,21 +107,33 @@ public class vueAdmin extends Application {
                         "-fx-border-color : #df9d53;" +
                         "-fx-border-width : 2;" +
                         "-fx-border-radius : 20;");
-        Label logo = new Label("logo");
-        // logo.setFitHeight(30);
-        // logo.setFitWidth(30);
-        logo.setAlignment(Pos.TOP_LEFT);
+        ImageView logo = new ImageView("file:./img/logo.jpg");
+        logo.setFitHeight(100);
+        logo.setFitWidth(100);
         Label t = new Label("Livre Express - Admin");
         t.setFont(new Font("Times New Roman", 60));
+        t.setStyle("-fx-text-fill: #3f4353");
+        t.setPadding(new Insets(10, 0, 0, 400));
         t.setTextFill(Color.BLACK);
         t.setAlignment(Pos.TOP_LEFT);
         t.setPadding(new Insets(50));
 
-        ligne.getChildren().addAll(this.boutonMaison, this.boutonParametres, this.boutonDeco);
+        Rectangle bordure = new Rectangle(logo.getFitWidth(), logo.getFitHeight());
+        bordure.setArcWidth(30);
+        bordure.setArcHeight(30);
+        logo.setClip(bordure);
+
+        ligne.getChildren().addAll(logo, t, ligne, this.boutonMaison, this.boutonParametres, this.boutonDeco);
         ligne.setAlignment(Pos.CENTER_RIGHT);
 
         banniere.setBackground(new Background(new BackgroundFill(Color.LIGHTGRAY, CornerRadii.EMPTY, Insets.EMPTY)));
-        banniere.getChildren().addAll(logo, t, ligne, menuDeroulant);
+        banniere.getChildren().addAll(ligne, menuDeroulant);
+        Line sep = new Line(0, 0, 1100, 0);
+        sep.setStrokeWidth(2);
+        sep.setStroke(Color.DARKGREY);
+        HBox boxLigne = new HBox();
+        boxLigne.setPadding(new Insets(10, 0, 100, 100));
+        boxLigne.getChildren().addAll(sep);
 
         return banniere;
     }
