@@ -1,3 +1,4 @@
 *.class
 lib
 launch.json
+.vscode
