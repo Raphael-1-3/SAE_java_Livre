@@ -22,6 +22,7 @@ import java.util.List;
 
 import IHM.controleurs.controleurAccueil;
 import IHM.controleurs.controleurConnexion;
+import IHM.controleurs.controleurInscription;
 import main.*;
 public class VueConnexion {
 
@@ -117,6 +118,42 @@ public class VueConnexion {
         this.tfAdresse.setPrefColumnCount(4);
         this.tfAdresse.setPrefWidth(410);
         this.tfAdresse.setMaxWidth(410);
+    }
+
+    public Alert popUpUtilisateurExistePas()
+    {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle("Alerte");
+        alert.setHeaderText(null);
+        alert.setContentText("L'identifiant ou le mot de passe ne sont pas correctes");
+        return alert;
+    }
+
+    public Alert popUpPasUnNbr()
+    {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle("Alerte");
+        alert.setHeaderText(null);
+        alert.setContentText("Veuillez entrer un nombre dans le champ Code Postal");
+        return alert;
+    }
+
+    public Alert popUpClientCree()
+    {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle("Confirmation");
+        alert.setHeaderText(null);
+        alert.setContentText("Votre compte a ete cree avec succes");
+        return alert;
+    }
+
+    public Alert popUpChampsVides()
+    {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle("Alerte");
+        alert.setHeaderText(null);
+        alert.setContentText("Veuillez remplir tous les champs");
+        return alert;
     }
 
     public TextField getTfCo() {
@@ -242,6 +279,9 @@ public class VueConnexion {
         boutonsBas.setPadding(new Insets(50, 0, 30, 0));
         boutonsBas.setAlignment(Pos.CENTER);
 
+        accueil.setOnAction(new controleurConnexion(app, this.app.getModele()));
+        connecte.setOnAction(new controleurConnexion(app, this.app.getModele()));
+
         vb.getChildren().addAll(lbEmail, this.tfCo, lbPasswd, this.pwCo, boutonsBas);
         root.setCenter(vb);
     }
@@ -296,8 +336,8 @@ public class VueConnexion {
         connecte.setPadding(new Insets(3, 10, 3, 10));
         connecte.setPrefWidth(150);
         
-        accueil.setOnAction(new controleurConnexion(this.app, this.app.getModele()));
-        connecte.setOnAction(new controleurConnexion(this.app, this.app.getModele()));
+        accueil.setOnAction(new controleurInscription(this.app, this.app.getModele()));
+        connecte.setOnAction(new controleurInscription(this.app, this.app.getModele()));
         boutonsBas.getChildren().addAll(accueil, connecte);
         boutonsBas.setPadding(new Insets(50, 0, 30, 0));
         boutonsBas.setAlignment(Pos.CENTER);
