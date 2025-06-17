@@ -410,7 +410,8 @@ public class testBD
         assertNotNull(auteurs);
         assertTrue(auteurs.size() > 0);
         Auteur auteur = auteurs.get(0);
-        List<Livre> livres = bd.rechercheLivreAuteur(auteur);
+        Magasin mag = bd.magAPartirId(1);
+        List<Livre> livres = bd.rechercheLivreAuteur(auteur, mag);
         assertNotNull(livres);
     }
 

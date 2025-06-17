@@ -559,7 +559,34 @@ public class ActionBD{
      * @return
      * @throws SQLException
      */
-    public List<Livre> cherhcherLivreApproximative(String nomApproximativeLivre, Magasin mag) throws SQLException
+    public List<Livre> cherhcherLivreApproximative(String nomApproximativeLivre) throws SQLException
+    {
+        PreparedStatement ps = this.connexion.prepareStatement("SELECT isbn, titre, nbpages, datepubli, prix FROM LIVRE natural join POSSEDER  WHERE LOWER(titre) LIKE ?");
+        ps.setString(1, "%" + nomApproximativeLivre.toLowerCase() + "%");
+        ResultSet rs = ps.executeQuery();
+        List<Livre> livres = new ArrayList<>();
+        while (rs.next()) {
+            Livre l = new Livre(
+            rs.getLong("isbn"),
+            rs.getString("titre"),
+            rs.getInt("nbpages"),
+            rs.getInt("datepubli"),
+            rs.getDouble("prix")
+            );
+            livres.add(l);
+        }
+        rs.close();
+        ps.close();
+        return livres;
+    }
+
+    /**
+     * Permet de renvoyer une liste de livre a partir d un nom approximatife 
+     * @param nomApproximativeLivre
+     * @return
+     * @throws SQLException
+     */
+    public List<Livre> cherhcherLivreApproximativeParMag(String nomApproximativeLivre, Magasin mag) throws SQLException
     {
         PreparedStatement ps = this.connexion.prepareStatement("SELECT isbn, titre, nbpages, datepubli, prix FROM LIVRE natural join POSSEDER natural join MAGASIN WHERE LOWER(titre) LIKE ? and idmag = ?");
         ps.setString(1, "%" + nomApproximativeLivre.toLowerCase() + "%");
