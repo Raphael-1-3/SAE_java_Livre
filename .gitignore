@@ -1,7 +1,4 @@
-# Created by https://www.toptal.com/developers/gitignore/api/java
-# Edit at https://www.toptal.com/developers/gitignore?templates=java
-
-### Java ###
+ 
 # Compiled class file
 *.class
 
@@ -25,6 +22,15 @@
 
 # virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
 hs_err_pid*
-replay_pid*
 
-# End of https://www.toptal.com/developers/gitignore/api/java
+.vscode/*
+.vscode/settings.json
+!.vscode/tasks.json
+.vscode/launch.json
+!.vscode/extensions.json
+*.code-workspace
+
+# Local History for Visual Studio Code
+.history/
+
+# End of https://mrkandreev.name/snippets/gitignore-generator/#Java,VisualStudioCode
