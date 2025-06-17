@@ -80,8 +80,10 @@ public class vueAdmin extends Application {
 
     private VBox top() {
         VBox banniere = new VBox();
-        HBox ligne = new HBox(100);
-        VBox contenuMenu = new VBox();
+        HBox ligne = new HBox();
+        HBox boutonsFixes = new HBox(25);
+        boutonsFixes.setPadding(new Insets(25, 0, 0, 0));
+        VBox contenuMenu = new VBox(15);
         Button bouton1 = new Button("Action 1");
         Button bouton2 = new Button("Action 2");
         contenuMenu.getChildren().addAll(bouton1, bouton2);
@@ -107,33 +109,57 @@ public class vueAdmin extends Application {
                         "-fx-border-color : #df9d53;" +
                         "-fx-border-width : 2;" +
                         "-fx-border-radius : 20;");
+        boutonDeco.setStyle(
+                "-fx-text-fill: white;" +
+                        "-fx-background-color : #3f4353;" +
+                        "-fx-background-radius : 20;" +
+                        "-fx-border-color : #df9d53;" +
+                        "-fx-border-width : 2;" +
+                        "-fx-border-radius : 20;");
+        boutonParametres.setStyle(
+                "-fx-text-fill: white;" +
+                        "-fx-background-color : #3f4353;" +
+                        "-fx-background-radius : 20;" +
+                        "-fx-border-color : #df9d53;" +
+                        "-fx-border-width : 2;" +
+                        "-fx-border-radius : 20;");
+        boutonMaison.setStyle(
+                "-fx-text-fill: white;" +
+                        "-fx-background-color : #3f4353;" +
+                        "-fx-background-radius : 20;" +
+                        "-fx-border-color : #df9d53;" +
+                        "-fx-border-width : 2;" +
+                        "-fx-border-radius : 20;");
         ImageView logo = new ImageView("file:./img/logo.jpg");
         logo.setFitHeight(100);
         logo.setFitWidth(100);
         Label t = new Label("Livre Express - Admin");
         t.setFont(new Font("Times New Roman", 60));
         t.setStyle("-fx-text-fill: #3f4353");
-        t.setPadding(new Insets(10, 0, 0, 400));
+        t.setPadding(new Insets(10, 0, 0, 0));
         t.setTextFill(Color.BLACK);
         t.setAlignment(Pos.TOP_LEFT);
-        t.setPadding(new Insets(50));
+        t.setPadding(new Insets(0, 500, 0, 15));
 
         Rectangle bordure = new Rectangle(logo.getFitWidth(), logo.getFitHeight());
         bordure.setArcWidth(30);
         bordure.setArcHeight(30);
         logo.setClip(bordure);
 
-        ligne.getChildren().addAll(logo, t, ligne, this.boutonMaison, this.boutonParametres, this.boutonDeco);
-        ligne.setAlignment(Pos.CENTER_RIGHT);
+        boutonsFixes.getChildren().addAll(this.boutonMaison, this.boutonParametres, this.boutonDeco);
+        ligne.getChildren().addAll(logo, t, boutonsFixes);
+        ligne.setAlignment(Pos.CENTER_LEFT);
 
         banniere.setBackground(new Background(new BackgroundFill(Color.LIGHTGRAY, CornerRadii.EMPTY, Insets.EMPTY)));
-        banniere.getChildren().addAll(ligne, menuDeroulant);
-        Line sep = new Line(0, 0, 1100, 0);
+        Line sep = new Line(0, 0, 1700, 0);
         sep.setStrokeWidth(2);
-        sep.setStroke(Color.DARKGREY);
+        sep.setStroke(Color.BLACK);
         HBox boxLigne = new HBox();
-        boxLigne.setPadding(new Insets(10, 0, 100, 100));
+        boxLigne.setPadding(new Insets(10, 0, 10, 100));
         boxLigne.getChildren().addAll(sep);
+        menuDeroulant.setPadding(new Insets(0, 0, 0, 0));
+        banniere.getChildren().addAll(ligne, boxLigne, menuDeroulant);
+        banniere.setPadding(new Insets(25, 0, 0, 0));
 
         return banniere;
     }
