@@ -1,4 +1,4 @@
-.button, .combo-box, .text-field, .password-field  {
+.button, .combo-box, .text-field, .password-field, .titled-pane > .title  {
             -fx-text-fill: white; 
             -fx-background-color : #3f4353;
             -fx-background-radius : 15;

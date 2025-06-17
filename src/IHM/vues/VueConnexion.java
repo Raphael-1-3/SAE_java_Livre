@@ -20,8 +20,140 @@ import javafx.scene.text.TextAlignment;
 import javafx.scene.control.ButtonBar.ButtonData ;
 import java.util.List;
 
+import IHM.controleurs.controleurAccueil;
+import IHM.controleurs.controleurConnexion;
 import main.*;
 public class VueConnexion {
+
+    private TextField tfCo;
+    private PasswordField pwCo;
+
+    private TextField tfEmail;
+    private PasswordField pwInsc;
+    private TextField tfNom;
+    private TextField tfPrenom;
+
+    private TextField tfCodePo;
+    private TextField tfVille;
+    private TextField tfAdresse;
+
+    private LivreExpress app;
+    public VueConnexion(LivreExpress app)
+    {
+        this.app = app;
+ 
+
+        // ------------ Connexion ---------------------
+
+        //Instanciation du TextField email de Connexion
+        this.tfCo = new TextField();
+        this.tfCo.setPadding(new Insets(0, 10, 0, 10));
+        this.tfCo.setFont(new Font("Times new Roman", 30));
+        this.tfCo.setPrefColumnCount(4);
+        this.tfCo.setPrefWidth(410);
+        this.tfCo.setMaxWidth(410);
+
+        //Instanciation du TextField password de Connexion
+        this.pwCo = new PasswordField();
+        this.pwCo.setPadding(new Insets(0, 10, 0, 10));
+        this.pwCo.setFont(new Font("Times new Roman", 30));
+        this.pwCo.setPrefColumnCount(4);
+        this.pwCo.setPrefWidth(410);
+        this.pwCo.setMaxWidth(410);
+
+        // --------------- Inscription -----------------------
+        //Instanciation du TextField email de Inscription
+        this.tfEmail = new TextField();
+        this.tfEmail.setPadding(new Insets(0, 10, 0, 10));
+        this.tfEmail.setFont(new Font("Times new Roman", 30));
+        this.tfEmail.setPrefColumnCount(4);
+        this.tfEmail.setPrefWidth(410);
+        this.tfEmail.setMaxWidth(410);
+
+        //Instanciation du PasswordField mdp de Inscription
+        this.pwInsc = new PasswordField();
+        this.pwInsc.setPadding(new Insets(0, 10, 0, 10));
+        this.pwInsc.setFont(new Font("Times new Roman", 30));
+        this.pwInsc.setPrefColumnCount(4);
+        this.pwInsc.setPrefWidth(410);
+        this.pwInsc.setMaxWidth(410);
+
+        //Instanciation du TextField nom de Inscription
+        this.tfNom = new TextField();
+        this.tfNom.setPadding(new Insets(0, 10, 0, 10));
+        this.tfNom.setFont(new Font("Times new Roman", 30));
+        this.tfNom.setPrefColumnCount(4);
+        this.tfNom.setPrefWidth(410);
+        this.tfNom.setMaxWidth(410);
+
+       //Instanciation du TextField prenom de Inscription
+        this.tfPrenom = new TextField();
+        this.tfPrenom.setPadding(new Insets(0, 10, 0, 10));
+        this.tfPrenom.setFont(new Font("Times new Roman", 30));
+        this.tfPrenom.setPrefColumnCount(4);
+        this.tfPrenom.setPrefWidth(410);
+        this.tfPrenom.setMaxWidth(410); 
+        
+        //Instanciation du TextField code Postal de Inscription
+        this.tfCodePo = new TextField();
+        this.tfCodePo.setPadding(new Insets(0, 10, 0, 10));
+        this.tfCodePo.setFont(new Font("Times new Roman", 30));
+        this.tfCodePo.setPrefColumnCount(4);
+        this.tfCodePo.setPrefWidth(410);
+        this.tfCodePo.setMaxWidth(410);
+
+        //Instanciation du TextField ville de Inscription 
+        this.tfVille = new TextField();
+        this.tfVille.setPadding(new Insets(0, 10, 0, 10));
+        this.tfVille.setFont(new Font("Times new Roman", 30));
+        this.tfVille.setPrefColumnCount(4);
+        this.tfVille.setPrefWidth(410);
+        this.tfVille.setMaxWidth(410);
+
+        //Instanciation du TextField adresse de Inscription
+        this.tfAdresse = new TextField();
+        this.tfAdresse.setPadding(new Insets(0, 10, 0, 10));
+        this.tfAdresse.setFont(new Font("Times new Roman", 30));
+        this.tfAdresse.setPrefColumnCount(4);
+        this.tfAdresse.setPrefWidth(410);
+        this.tfAdresse.setMaxWidth(410);
+    }
+
+    public TextField getTfCo() {
+        return tfCo;
+    }
+
+    public PasswordField getPwCo() {
+        return pwCo;
+    }
+
+    public TextField getTfEmail() {
+        return tfEmail;
+    }
+
+    public PasswordField getPwInsc() {
+        return pwInsc;
+    }
+
+    public TextField getTfNom() {
+        return tfNom;
+    }
+
+    public TextField getTfPrenom() {
+        return tfPrenom;
+    }
+
+    public TextField getTfCodePo() {
+        return tfCodePo;
+    }
+
+    public TextField getTfVille() {
+        return tfVille;
+    }
+
+    public TextField getTfAdresse() {
+        return tfAdresse;
+    }
     
     public void setTop(BorderPane root, String titre)
     {
@@ -45,7 +177,7 @@ public class VueConnexion {
         sep.setStrokeWidth(2);
         sep.setStroke(Color.DARKGREY);
         HBox boxLigne = new HBox();
-        boxLigne.setPadding(new Insets(10, 0, 100, 100));
+        boxLigne.setPadding(new Insets(10, 0, 0, 100));
         boxLigne.getChildren().addAll(sep);
         vb.getChildren().addAll(hb, boxLigne);
         root.setTop(vb);
@@ -60,6 +192,7 @@ public class VueConnexion {
         connexion.setFont(new Font("Times new Roman", 30));
         connexion.setPadding(new Insets(0, 130, 0, 130));
         connexion.setPrefWidth(410);
+        
         Button inscription = new Button("Inscription");
         inscription.setFont(new Font("Times new Roman", 30));
         inscription.setPadding(new Insets(0, 130, 0, 130));
@@ -68,6 +201,10 @@ public class VueConnexion {
         quitter.setFont(new Font("Times new Roman", 30));
         quitter.setPadding(new Insets(0, 130, 0, 130));
         quitter.setPrefWidth(410);
+
+        connexion.setOnAction(new controleurAccueil(this.app));
+        inscription.setOnAction(new controleurAccueil(this.app));
+        quitter.setOnAction(new controleurAccueil(this.app));
 
         vb.getChildren().addAll(connexion, inscription, quitter);
         vb.setAlignment(Pos.CENTER);
@@ -84,24 +221,11 @@ public class VueConnexion {
         lbEmail.setFont(new Font("Times new Roman", 30));
         lbEmail.setStyle("-fx-text-fill: #3f4353");
 
-        TextField email = new TextField();
-        email.setPadding(new Insets(0, 10, 0, 10));
-        email.setFont(new Font("Times new Roman", 30));
-        email.setPrefColumnCount(4);
-        email.setPrefWidth(410);
-        email.setMaxWidth(410);
 
         Label lbPasswd = new Label("Mot de passe");
         lbPasswd.setPadding(new Insets(20, 0, 10, 0));
         lbPasswd.setFont(new Font("Times new Roman", 30));
         lbPasswd.setStyle("-fx-text-fill: #3f4353");
-
-        PasswordField mdp = new PasswordField();
-        mdp.setPadding(new Insets(0, 10, 0, 10));
-        mdp.setFont(new Font("Times new Roman", 30));
-        mdp.setPrefColumnCount(4);
-        mdp.setPrefWidth(410);
-        mdp.setMaxWidth(410);
 
         HBox boutonsBas = new HBox(110);
 
@@ -118,7 +242,7 @@ public class VueConnexion {
         boutonsBas.setPadding(new Insets(50, 0, 30, 0));
         boutonsBas.setAlignment(Pos.CENTER);
 
-        vb.getChildren().addAll(lbEmail, email, lbPasswd, mdp, boutonsBas);
+        vb.getChildren().addAll(lbEmail, this.tfCo, lbPasswd, this.pwCo, boutonsBas);
         root.setCenter(vb);
     }
 
@@ -134,52 +258,24 @@ public class VueConnexion {
         droite.setAlignment(Pos.TOP_LEFT);
 
         Label lbEmail = new Label("Email");
-        lbEmail.setPadding(new Insets(20, 0, 10, 0));
+        lbEmail.setPadding(new Insets(0, 0, 10, 0));
         lbEmail.setFont(new Font("Times new Roman", 30));
         lbEmail.setStyle("-fx-text-fill: #3f4353");
-
-        TextField email = new TextField();
-        email.setPadding(new Insets(0, 10, 0, 10));
-        email.setFont(new Font("Times new Roman", 30));
-        email.setPrefColumnCount(4);
-        email.setPrefWidth(410);
-        email.setMaxWidth(410);
 
         Label lbPasswd = new Label("Mot de passe");
         lbPasswd.setPadding(new Insets(20, 0, 10, 0));
         lbPasswd.setFont(new Font("Times new Roman", 30));
         lbPasswd.setStyle("-fx-text-fill: #3f4353");
 
-        PasswordField mdp = new PasswordField();
-        mdp.setPadding(new Insets(0, 10, 0, 10));
-        mdp.setFont(new Font("Times new Roman", 30));
-        mdp.setPrefColumnCount(4);
-        mdp.setPrefWidth(410);
-        mdp.setMaxWidth(410);
-
         Label lbNom = new Label("Nom");
         lbNom.setPadding(new Insets(20, 0, 10, 0));
         lbNom.setFont(new Font("Times new Roman", 30));
         lbNom.setStyle("-fx-text-fill: #3f4353");
 
-        TextField nom = new TextField();
-        nom.setPadding(new Insets(0, 10, 0, 10));
-        nom.setFont(new Font("Times new Roman", 30));
-        nom.setPrefColumnCount(4);
-        nom.setPrefWidth(410);
-        nom.setMaxWidth(410);
-
         Label lbPrenom = new Label("Prenom");
         lbPrenom.setPadding(new Insets(20, 0, 10, 0));
         lbPrenom.setFont(new Font("Times new Roman", 30));
         lbPrenom.setStyle("-fx-text-fill: #3f4353");
-
-        TextField prenom = new TextField();
-        prenom.setPadding(new Insets(0, 10, 0, 10));
-        prenom.setFont(new Font("Times new Roman", 30));
-        prenom.setPrefColumnCount(4);
-        prenom.setPrefWidth(410);
-        prenom.setMaxWidth(410);
 
         HBox boutonsBas = new HBox(180);
 
@@ -200,6 +296,8 @@ public class VueConnexion {
         connecte.setPadding(new Insets(3, 10, 3, 10));
         connecte.setPrefWidth(150);
         
+        accueil.setOnAction(new controleurConnexion(this.app, this.app.getModele()));
+        connecte.setOnAction(new controleurConnexion(this.app, this.app.getModele()));
         boutonsBas.getChildren().addAll(accueil, connecte);
         boutonsBas.setPadding(new Insets(50, 0, 30, 0));
         boutonsBas.setAlignment(Pos.CENTER);
@@ -209,41 +307,20 @@ public class VueConnexion {
         lbCodePos.setFont(new Font("Times new Roman", 30));
         lbCodePos.setStyle("-fx-text-fill: #3f4353");
 
-        TextField codePost = new TextField();
-        codePost.setPadding(new Insets(0, 10, 0, 10));
-        codePost.setFont(new Font("Times new Roman", 30));
-        codePost.setPrefColumnCount(4);
-        codePost.setPrefWidth(410);
-        codePost.setMaxWidth(410);
-
         Label lbVille = new Label("Ville");
         lbVille.setPadding(new Insets(20, 0, 10, 0));
         lbVille.setFont(new Font("Times new Roman", 30));
         lbVille.setStyle("-fx-text-fill: #3f4353");
-
-        TextField ville = new TextField();
-        ville.setPadding(new Insets(0, 10, 0, 10));
-        ville.setFont(new Font("Times new Roman", 30));
-        ville.setPrefColumnCount(4);
-        ville.setPrefWidth(410);
-        ville.setMaxWidth(410);
 
         Label lbAdresse = new Label("Adresse");
         lbAdresse.setPadding(new Insets(20, 0, 10, 0));
         lbAdresse.setFont(new Font("Times new Roman", 30));
         lbAdresse.setStyle("-fx-text-fill: #3f4353");
 
-        TextField adresse = new TextField();
-        adresse.setPadding(new Insets(0, 10, 0, 10));
-        adresse.setFont(new Font("Times new Roman", 30));
-        adresse.setPrefColumnCount(4);
-        adresse.setPrefWidth(410);
-        adresse.setMaxWidth(410);
-
-        droite.getChildren().addAll(lbCodePos, codePost, lbVille, ville, lbAdresse, adresse);
+        droite.getChildren().addAll(lbCodePos, this.tfCodePo, lbVille, this.tfVille, lbAdresse, this.tfAdresse);
         centre.setRight(droite);
 
-        gauche.getChildren().addAll(lbEmail, email, lbPasswd, mdp, lbNom, nom, lbPrenom, prenom);
+        gauche.getChildren().addAll(lbEmail, this.tfEmail, lbPasswd, this.pwInsc, lbNom, this.tfNom, lbPrenom, this.tfPrenom);
         centre.setLeft(gauche);
 
         centre.setBottom(boutonsBas);
