@@ -53,7 +53,7 @@ public class controleurConnexionClavier implements EventHandler<KeyEvent> {
                     {
                         case "Client":
                             System.out.println("Bienvenue, client !");
-                            this.app.setVueClient(new VueClient(this.app, (Client) user, modele));
+                            this.app.setVueClient(new VueClient(this.app, (Client) user, this.modele));
                             this.app.getScene().setRoot(this.app.getVueClient());
                             break;
                         case "Vendeur":
