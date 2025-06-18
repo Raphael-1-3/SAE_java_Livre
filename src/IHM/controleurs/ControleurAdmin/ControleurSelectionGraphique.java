@@ -44,23 +44,30 @@ public class ControleurSelectionGraphique implements EventHandler<ActionEvent>
         try {
             
             String choixGra = this.app.getVueAdmin().getSelectionStat().getValue();
-            String recherche = this.app.getVueAdmin().getTfAnnee().getText();
+            String recherche = this.app.getVueAdmin().getRecherchStat().getText();
 
             if (choixGra == null || choixGra.isEmpty() || (besoinDeParametre(choixGra) && (recherche == null || recherche.isEmpty()))) {
                 this.app.getVueConnexion().popUpChampsVides().showAndWait();
             } else {
+
                 switch (choixGra) {
                     case "NombreDeLivreVendueParMagasinParAns":
                         System.out.println("Appel de NombreDeLivreVendueParMagasinParAns");
-                        var donnees = this.modele.NombreDeLivreVendueParMagasinParAns();
-                        System.out.println(donnees);
-                        this.app.getVueAdmin().afficheGraphiqueNombreDeLivreVendueParMagasinParAns(donnees);
+                        var donneesNDELVPMPA = this.modele.NombreDeLivreVendueParMagasinParAns();
+                        System.out.println(donneesNDELVPMPA);
+                        this.app.getVueAdmin().afficheGraphiqueNombreDeLivreVendueParMagasinParAns(donneesNDELVPMPA);
                         break;
                     case "chiffreAffaireParClassificationParAns":
-                        this.app.getVueAdmin().afficheGraphiqueChiffreAffaireParClassificationParAns(this.modele.chiffreAffaireParClassificationParAns(Integer.parseInt(recherche)));
+                        System.out.println("Appel de chiffreAffaireParClassificationParAns");
+                        var donneesCAPCPA = this.modele.chiffreAffaireParClassificationParAns(Integer.parseInt(recherche));
+                        System.out.println(donneesCAPCPA);
+                        this.app.getVueAdmin().afficheGraphiqueChiffreAffaireParClassificationParAns(donneesCAPCPA);
                         break;
                     case "CAMagasinParMoisParAnnee":
-                        this.app.getVueAdmin().afficheGraphiqueCAMagasinParMoisParAnnee(this.modele.CAMagasinParMoisParAnnee(Integer.parseInt(recherche)));
+                        System.out.println("Appel de CAMagasinParMoisParAnnee");
+                        var donneesCAMagasinParMoisParAnnee = this.modele.CAMagasinParMoisParAnnee(Integer.parseInt(recherche));
+                        System.out.println(donneesCAMagasinParMoisParAnnee);
+                        this.app.getVueAdmin().afficheGraphiqueCAMagasinParMoisParAnnee(donneesCAMagasinParMoisParAnnee);
                         break;
                     case "CAVenteEnLigneEnMagasinParAnnee":
                         this.app.getVueAdmin().afficheGraphiqueCAVenteEnLigneEnMagasinParAnnee(this.modele.CAVenteEnLigneEnMagasinParAnnee(Integer.parseInt(recherche)));

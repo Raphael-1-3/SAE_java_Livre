@@ -18,9 +18,11 @@ import javafx.stage.Stage;
 import junit.framework.TestFailure;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
+import javafx.scene.chart.AreaChart;
 import javafx.scene.chart.BarChart;
 import javafx.scene.chart.CategoryAxis;
 import javafx.scene.chart.NumberAxis;
+import javafx.scene.chart.PieChart;
 import javafx.scene.chart.XYChart;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
@@ -63,6 +65,7 @@ public class VueAdmin extends BorderPane
     private ComboBox<String> selectionAction;
     private ComboBox<String> selectionMagasin;
     private ComboBox<String> selectionStat;
+    private TextField recherchStat;
 
     private TextField tfEmail = new TextField();
     private PasswordField pfMDP = new PasswordField();
@@ -95,6 +98,7 @@ public class VueAdmin extends BorderPane
         super();
         this.selectionMagasin = new ComboBox<>();
         this.selectionAction = new ComboBox<>();
+        this.recherchStat = new TextField();
         this.LEApp = LEApp;
         this.admin = admin;
         this.modele = modele;
@@ -366,7 +370,7 @@ public class VueAdmin extends BorderPane
             "auteurLePlusVenduParAnnee"
         );
         this.selectionStat.setPromptText("Choisissez une statistique");
-        HBox hboxCombo = new HBox(this.selectionStat);
+        HBox hboxCombo = new HBox(this.selectionStat, this.recherchStat);
         hboxCombo.setAlignment(Pos.CENTER); 
         hboxCombo.setPadding(new Insets(10)); 
         this.centre.setTop(hboxCombo);
@@ -433,13 +437,78 @@ public class VueAdmin extends BorderPane
         barChart.setBackground(new Background(new BackgroundFill(Color.WHITE, CornerRadii.EMPTY, Insets.EMPTY)));
 
 
-        this.centre.setCenter(barChart);
+        Stage stage = new Stage();
+        BorderPane root = new BorderPane(barChart);
+        Scene scene = new Scene(root, 800, 600);
+        stage.setScene(scene);
+        stage.setTitle("Nombre de livre vendue par magasins par ans");
+        stage.show();
+        
     }
 
+    public void afficheGraphiqueChiffreAffaireParClassificationParAns(HashMap<Classification, Integer> donnees) 
+    {
+        PieChart pieChart = new PieChart();
+
+        for (Classification classification : donnees.keySet()) {
+            String nom = classification.getNomClass(); 
+            int montant = donnees.get(classification);
+            pieChart.getData().add(new PieChart.Data(nom, montant));
+        }
+
+        pieChart.setTitle("Chiffre d'affaire 2025 par thème");
+
+        VBox chart = new VBox(pieChart);
+        Stage stage = new Stage();
+        BorderPane root = new BorderPane(chart);
+        Scene scene = new Scene(root, 800, 600);
+        stage.setScene(scene);
+        stage.setTitle("Chiffre d'affaire 2025 par thème");
+        stage.show();
+    }
     
     
-    public void afficheGraphiqueChiffreAffaireParClassificationParAns(HashMap<Classification, Integer> donnees) {}
-    public void afficheGraphiqueCAMagasinParMoisParAnnee(HashMap<Integer, HashMap<Magasin, Integer>> donnees) {}
+    public void afficheGraphiqueCAMagasinParMoisParAnnee(HashMap<Integer, HashMap<Magasin, Integer>> donnees) 
+    {
+        CategoryAxis xAxis = new CategoryAxis();
+        xAxis.setLabel("Mois");
+    
+        NumberAxis yAxis = new NumberAxis();
+        yAxis.setLabel("Chiffre d'affaires (€)");
+        
+        AreaChart<String, Number> areaChart = new AreaChart<>(xAxis, yAxis);
+        areaChart.setTitle("Évolution CA des magasins par mois en 2024");
+        
+        Map<String, XYChart.Series<String, Number>> seriesMap = new HashMap<>();
+        
+        for (int mois = 1; mois <= 12; mois++) {
+            String moisStr = String.valueOf(mois);
+            HashMap<Magasin, Integer> caParMag = donnees.get(mois);
+            if (caParMag != null) {
+                for (Map.Entry<Magasin, Integer> entry : caParMag.entrySet()) {
+                    String nomMag = entry.getKey().getNomMag(); 
+                    int ca = entry.getValue();
+                
+                    
+                    XYChart.Series<String, Number> serie = seriesMap.computeIfAbsent(nomMag, k -> {
+                        XYChart.Series<String, Number> s = new XYChart.Series<>();
+                        s.setName(k);
+                        return s;
+                    });
+                
+                    serie.getData().add(new XYChart.Data<>(moisStr, ca));
+                }
+            }
+        }
+    
+        areaChart.getData().addAll(seriesMap.values());
+        Stage stage = new Stage();
+        BorderPane root = new BorderPane(areaChart);
+        Scene scene = new Scene(root, 800, 600);
+        stage.setScene(scene);
+        stage.setTitle("Graphique CA des Magasins");
+        stage.show();
+    }
     public void afficheGraphiqueCAVenteEnLigneEnMagasinParAnnee(HashMap<Integer, HashMap<String, Integer>> donnees) {}
     public void afficheGraphiqueNombreAuteurParEditeur(HashMap<Editeur, Integer> donnees) {}
     public void afficheGraphiqueNombreClientParVilleQuiOntAcheterAuteur(HashMap<String, Integer> donnees) {}
@@ -449,6 +518,7 @@ public class VueAdmin extends BorderPane
 
 
     public void setMagChoisi(Magasin magChoisi) { this.MagChoisi = magChoisi; }
+    public TextField getRecherchStat() { return this.recherchStat; }
     public ComboBox<String> getSelectionStat() { return this.selectionStat; }
     public Magasin getMagChoisi() { return this.MagChoisi; }
     public ActionBD getModele() { return this.modele; }
