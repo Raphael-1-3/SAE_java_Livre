@@ -26,6 +26,7 @@ import java.util.Scanner;
 public class LivreExpress extends Application {
 
     private VueConnexion vueCo;
+    private VueClient vueclient;
     private ActionBD modele;
     private BorderPane root;
     private Scene scene;
@@ -33,7 +34,7 @@ public class LivreExpress extends Application {
     @Override
     public void init()
     {
-        System.out.println("Connexion base");
+        /* System.out.println("Connexion base");
         Scanner scanner = new Scanner(System.in);
 
         System.out.print("Entrer le nom du serveur : ");
@@ -44,12 +45,12 @@ public class LivreExpress extends Application {
 
         System.out.print("Entrer le mot de passe : ");
         String motDePasse = scanner.nextLine();
-        scanner.close();
+        scanner.close();*/
         ConnexionMySQL connexion = null;
 
         try {
             connexion = new ConnexionMySQL();
-            connexion.connecter(nomServeur, "LibrairieJava", nomLogin,  motDePasse); //"localhost", "LibrairieJava", "root", "raphe"
+            connexion.connecter("localhost", "LibrairieJava", "root",  "raphe"); //"localhost", "LibrairieJava", "root", "raphe"
             if (connexion.isConnecte()) 
             {
                 this.modele = new ActionBD(connexion);
@@ -86,6 +87,14 @@ public class LivreExpress extends Application {
     public VueConnexion getVueConnexion ()
     {
         return this.vueCo;
+    }
+
+    public VueClient getVueClient() {
+        return this.vueclient;
+    }
+
+    public void setVueClient(VueClient vueclient) {
+        this.vueclient = vueclient;
     }
 
     public Scene getScene()
