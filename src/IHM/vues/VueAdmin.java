@@ -1,22 +1,28 @@
 package IHM.vues;
+import javax.swing.Action;
 
+import IHM.controleurs.ControleurAdmin.*;
+import IHM.controleurs.ControleurAdmin.ControleurChangerPage;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
+import main.BD.ActionBD;
 
-public class VueAdmin extends StackPane {
+public class vueAdmin extends StackPane {
+     private ActionBD modele;
 
     // Boutons principaux
     private final Button boutonParametres = new Button();
     private final Button boutonMaison = new Button();
-    private final Button boutonDeco = new Button();
 
     private BorderPane carre;
     private final VBox top;
@@ -28,7 +34,8 @@ public class VueAdmin extends StackPane {
     private TextField tfIdMag;
 
 
-    public VueAdmin() {
+    public vueAdmin(LivreExpress app, ActionBD modele) {
+        this.modele=modele;
         this.carre = createCadre();
         this.top = createTop();
         boutonMaison.setGraphic(new ImageView("file:./img/deco.png"));
@@ -56,7 +63,7 @@ public class VueAdmin extends StackPane {
         top.setMaxHeight(2);
         
 
-        super.getChildren().addAll(top,carre);
+        super.getChildren().addAll(carre,top);
         StackPane.setAlignment(this.top, Pos.TOP_LEFT);
     }
 
@@ -171,7 +178,7 @@ private VBox createTop() {
         new Button("Choisir Un magasin")
     );
 
-    TitledPane menuDeroulant = new TitledPane("Actions", contenuMenu);
+    TitledPane menuDeroulant = new TitledPane("Liste Des Commadnes", contenuMenu);
     menuDeroulant.setExpanded(false);
     menuDeroulant.setMaxWidth(450);
     contenuMenu.setBackground(new Background(new BackgroundFill(Color.LIGHTGRAY, CornerRadii.EMPTY, Insets.EMPTY)));
@@ -207,6 +214,11 @@ private VBox createTop() {
     banniere.getChildren().addAll(ligne, boxLigne, menuDeroulant);
     banniere.setPadding(new Insets(25, 0, 0, 0));
     VBox.setMargin(menuDeroulant, new Insets(0, 0, 0, 40));
+    ControleurChangerPage controleur = new ControleurChangerPage(modele, this);
+        for (Node node : contenuMenu.getChildren()) {
+            if (node instanceof Button) {
+                ((Button) node).addEventHandler(MouseEvent.MOUSE_CLICKED, controleur);
+    }}
 
     return banniere;
 }
