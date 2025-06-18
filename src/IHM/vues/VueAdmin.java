@@ -34,7 +34,7 @@ public class VueAdmin extends StackPane {
     private TextField tfIdMag;
 
 
-    public vueAdmin(LivreExpress app, ActionBD modele) {
+    public VueAdmin(LivreExpress app, ActionBD modele) {
         this.modele=modele;
         this.carre = createCadre();
         this.top = createTop();

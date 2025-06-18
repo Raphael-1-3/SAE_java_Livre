@@ -62,9 +62,7 @@ public class VueClient extends BorderPane
     public VueClient(LivreExpress LEApp, Client client, ActionBD modele) throws SQLException
     {
         super();
-        Label titre = new Label("Catalogue");
-        titre.setFont(new Font("Times new Roman", 30));
-        titre.setPadding(new Insets(0, 0, 0, 500));
+        
         this.LEApp = LEApp;
         this.client = client;
         this.modele = modele;
@@ -80,7 +78,6 @@ public class VueClient extends BorderPane
         this.box3.setPrefSize(400, 400);
         this.centre = new VBox();
         this.TitrePage = new HBox();
-        this.TitrePage.getChildren().add(titre);
         this.TitrePage.setPrefHeight(25);
         this.box1.setStyle("-fx-background-radius : 15px;" + 
         "-fx-background-color : #f9f9f9;" + 
@@ -104,7 +101,7 @@ public class VueClient extends BorderPane
         this.centre.getChildren().addAll(this.TitrePage, this.contenantRLIL);
         this.setCenter(this.centre);
         this.setCenterRecommandation(this.client);
-        this.setMargin(this.centre, new Insets(60, 120, 60, 60));
+        BorderPane.setMargin(this.centre, new Insets(60, 120, 60, 60));
         this.setPrefSize(1300, 700);
         this.setTop(this.top(this.client));
         //this.setBottom(this.bottom());
@@ -263,6 +260,9 @@ public class VueClient extends BorderPane
 
     public void setCenterRecommandation(Client client) throws SQLException
     {
+        Label titre = new Label("Catalogue");
+        titre.setFont(new Font("Times new Roman", 30));
+        titre.setPadding(new Insets(0, 0, 0, 500));
         ProgressIndicator loading = new ProgressIndicator();
         VBox vb = new VBox();
         ScrollPane sp = new ScrollPane();
@@ -286,7 +286,7 @@ public class VueClient extends BorderPane
         sp.setContent(vb);
         this.box2.getChildren().clear();
         this.box2.getChildren().add(sp);
-        
+        this.TitrePage.getChildren().add(titre);
         new Thread(task).start();
     }
 
@@ -339,6 +339,7 @@ public class VueClient extends BorderPane
         }
         ScrollPane sp = new ScrollPane(libresbox);
         this.box2.getChildren().add(sp);
+        VBox.setVgrow(sp, Priority.ALWAYS);
     }
 
     public void afficheInfoLivre(Livre livre)
@@ -387,6 +388,7 @@ public class VueClient extends BorderPane
         }
         this.box3.getChildren().add(infoBox);
         this.boutouAjouterPanier();
+        
     }
 
     public void boutouAjouterPanier()
@@ -413,6 +415,7 @@ public class VueClient extends BorderPane
         }
         ScrollPane sp = new ScrollPane(editeursBox);
         this.box1.getChildren().add(sp);
+        VBox.setVgrow(sp, Priority.ALWAYS);
     }
 
     public void centerAfficheClassification(List<Classification> classifications) {
@@ -431,6 +434,7 @@ public class VueClient extends BorderPane
         }
         ScrollPane sp = new ScrollPane(classificationsBox);
         this.box1.getChildren().add(sp);
+        VBox.setVgrow(sp, Priority.ALWAYS);
     }
     
 
@@ -450,6 +454,7 @@ public class VueClient extends BorderPane
         }
         ScrollPane sp = new ScrollPane(auteursBox);
         this.box1.getChildren().add(sp);
+        VBox.setVgrow(sp, Priority.ALWAYS);
     }
 
     
@@ -457,7 +462,9 @@ public class VueClient extends BorderPane
     public void consulterPanier()
     {
         this.TitrePage.getChildren().clear();
-        Text titre = new Text("Votre Panier");
+        Label titre = new Label("Votre Panier");
+        titre.setFont(new Font("Times new Roman", 30));
+        titre.setPadding(new Insets(0, 0, 0, 500));
         this.TitrePage.getChildren().addAll(titre);
         VBox panierBox = new VBox();
         HashMap<Livre, Integer> panier = this.getclient().getPanier();
@@ -489,6 +496,7 @@ public class VueClient extends BorderPane
         this.box1.getChildren().add(sp);
         this.contenantRLIL.getChildren().clear();
         this.contenantRLIL.getChildren().addAll(this.box1, this.box3, this.box2);
+        VBox.setVgrow(sp, Priority.ALWAYS);
     }
 
     public void reset()
@@ -496,12 +504,15 @@ public class VueClient extends BorderPane
         this.box3.getChildren().clear();
         this.box1.getChildren().clear();
         this.box2.getChildren().clear();
-        this.barRecherche.clear();
-        this.TitrePage.getChildren().clear();
     }
 
     public void majCatalogue()
     {
+        this.TitrePage.getChildren().clear();
+        Label titre = new Label("Catalogue");
+        titre.setFont(new Font("Times new Roman", 30));
+        titre.setPadding(new Insets(0, 0, 0, 500));
+        this.TitrePage.getChildren().addAll(titre);
         this.contenantRLIL.getChildren().clear();
         this.contenantRLIL.getChildren().addAll(this.box1, this.box2, this.box3);
     }
