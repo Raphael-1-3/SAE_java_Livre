@@ -59,7 +59,7 @@ public class VueConnexion {
         this.pwCo.setPrefColumnCount(4);
         this.pwCo.setPrefWidth(410);
         this.pwCo.setMaxWidth(410);
-
+        this.pwCo.setOnKeyPressed(new controleurConnexionClavier(this.app, this.app.getModele()));
         // --------------- Inscription -----------------------
         //Instanciation du TextField email de Inscription
         this.tfEmail = new TextField();
