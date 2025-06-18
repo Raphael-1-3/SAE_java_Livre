@@ -8,22 +8,22 @@ import javafx.scene.control.TextField;
 public class ControleurModificationStock implements EventHandler<ActionEvent> {
 
     private final TextField champMagasin;
-    private final TextField champISBN;
+    private final TextField champLivre;
     private final TextField champQuantite;
 
-    public ControleurModificationStock(TextField champMagasin, TextField champISBN, TextField champQuantite) {
+    public ControleurModificationStock(TextField champMagasin, TextField champLivre, TextField champQuantite) {
         this.champMagasin = champMagasin;
-        this.champISBN = champISBN;
+        this.champLivre = champLivre;
         this.champQuantite = champQuantite;
     }
 
     @Override
-    public void handle(ActionEvent e) {
-        String magasin = champMagasin.getText().trim();
-        String isbn = champISBN.getText().trim();
+    public void handle(ActionEvent event) {
+        String nomMagasin = champMagasin.getText().trim();
+        String nomLivre = champLivre.getText().trim();
         String quantiteStr = champQuantite.getText().trim();
 
-        if (magasin.isEmpty() || isbn.isEmpty() || quantiteStr.isEmpty()) {
+        if (nomMagasin.isEmpty() || nomLivre.isEmpty() || quantiteStr.isEmpty()) {
             Alert alert = new Alert(Alert.AlertType.WARNING, "Veuillez remplir tous les champs.");
             alert.showAndWait();
             return;
@@ -31,13 +31,16 @@ public class ControleurModificationStock implements EventHandler<ActionEvent> {
 
         try {
             int quantite = Integer.parseInt(quantiteStr);
-            // Appel au DAO pour modifier le stock
+            if (quantite < 0) {
+                throw new NumberFormatException("Quantité négative");
+            }
 
-            Alert alert = new Alert(Alert.AlertType.INFORMATION, "Stock modifié avec succès !");
+            Alert alert = new Alert(Alert.AlertType.INFORMATION, 
+                "Stock modifié : magasin '" + nomMagasin + "', livre '" + nomLivre + "', nouvelle quantité : " + quantite);
             alert.showAndWait();
 
-        } catch (NumberFormatException ex) {
-            Alert alert = new Alert(Alert.AlertType.WARNING, "La quantité doit être un entier.");
+        } catch (NumberFormatException e) {
+            Alert alert = new Alert(Alert.AlertType.WARNING, "La quantité doit être un entier positif.");
             alert.showAndWait();
         }
     }
