@@ -59,6 +59,43 @@ public class VueVendeur extends Application {
         return resultat;
     }
 
+    // Affiche le formulaire d'ajout de livre
+    public void afficherFormulaireAjoutLivre(BorderPane resultat) {
+        VBox formulaire = new VBox(10);
+        formulaire.setPadding(new Insets(20));
+        formulaire.setStyle("-fx-background-color: grey; -fx-padding: 20;");
+
+        TextField champISBN = new TextField();
+        champISBN.setPromptText("ISBN");
+
+        TextField champTitre = new TextField();
+        champTitre.setPromptText("Titre");
+
+        TextField champNbPages = new TextField();
+        champNbPages.setPromptText("Nombre de pages");
+
+        TextField champDatePubli = new TextField();
+        champDatePubli.setPromptText("Date de publication");
+
+        TextField champPrix = new TextField();
+        champPrix.setPromptText("Prix");
+
+        Button boutonValider = new Button("Valider");
+       
+        boutonValider.setOnAction(e -> {
+            Alert alert = new Alert(Alert.AlertType.INFORMATION, "Formulaire soumis (sans BD) !");
+            alert.showAndWait();
+        });
+
+        formulaire.getChildren().addAll(champISBN, champTitre, champNbPages, champDatePubli, champPrix, boutonValider);
+        resultat.setCenter(formulaire);
+    }
+
+   
+    public void clearResultat(BorderPane resultat) {
+        resultat.setCenter(null);
+    }
+
     @Override
     public void start(Stage primaryStage) {
         Pane root = new Pane();
@@ -81,15 +118,26 @@ public class VueVendeur extends Application {
         menuCombo.setLayoutY(170);
         menuCombo.setPrefWidth(200);
 
-        ControleurVendeur controleur = new ControleurVendeur();
-        menuCombo.setOnAction(controleur);
+   
+        menuCombo.setOnAction(e -> {
+            String choix = menuCombo.getValue();
+            switch (choix) {
+                case "Ajouter un livre":
+                    afficherFormulaireAjoutLivre(resultat);
+                    break;
+                default:
+                    clearResultat(resultat);
+                    break;
+            }
+        });
+
         boutonquitter.setOnAction(e -> Platform.exit());
 
         root.getChildren().addAll(titre, menuCombo, resultat);
         root.setStyle("-fx-background-color: lightgrey;");
 
         Scene scene = new Scene(root, 1200, 800);
-    scene.getStylesheets().add("file:./src/IHM/styles/globalCSS.css");
+        scene.getStylesheets().add("file:./src/IHM/styles/globalCSS.css");
 
         primaryStage.setTitle("Vue Vendeur");
         primaryStage.setScene(scene);
