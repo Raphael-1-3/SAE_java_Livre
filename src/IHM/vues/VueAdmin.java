@@ -16,8 +16,10 @@ import javafx.scene.shape.Line;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 import main.BD.ActionBD;
+import main.app.Administrateur;
 
 public class VueAdmin extends StackPane {
+    private Administrateur admin;
      private ActionBD modele;
 
     // Boutons principaux
@@ -25,7 +27,7 @@ public class VueAdmin extends StackPane {
     private final Button boutonMaison = new Button();
 
     private BorderPane carre;
-    private final VBox top;
+    private VBox top;
 
     private TextField tfEmail;
     private PasswordField pfMDP;
@@ -34,7 +36,8 @@ public class VueAdmin extends StackPane {
     private TextField tfIdMag;
 
 
-    public vueAdmin(LivreExpress app, ActionBD modele) {
+    public VueAdmin(LivreExpress app, ActionBD modele, Administrateur admin) {
+        this.admin = admin;
         this.modele=modele;
         this.carre = createCadre();
         this.top = createTop();

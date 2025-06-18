@@ -31,6 +31,7 @@ import java.util.EventListener;
 import java.util.List;
 
 import IHM.vues.LivreExpress;
+import IHM.vues.VueAdmin;
 import IHM.vues.VueClient;
 import IHM.vues.VueVendeur;
 
@@ -67,6 +68,8 @@ public class controleurConnexionClavier implements EventHandler<KeyEvent> {
                             break;
                         case "Administrateur":
                             System.out.println("Bienvenue, administrateur !");
+                            this.app.setVueAdmin(new VueAdmin(app, modele, (Administrateur) user));
+                            this.app.getScene().setRoot(this.app.getVueAdmin());
                             //Administrateur.application(bd, user, scanner);
                             // Actions admin
                             break;
