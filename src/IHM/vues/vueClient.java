@@ -29,6 +29,7 @@ import javafx.scene.control.ButtonBar.ButtonData ;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 
@@ -45,13 +46,12 @@ public class VueClient extends BorderPane
     private ComboBox<String> selectionMagasin;
     private Livre livreChoisi;
 
+    private VBox centre;
+    private HBox TitrePage;
     private HBox contenantRLIL;
     private ScrollPane resultatRecherche2;
     private VBox informationLivre;
     private ScrollPane resultatRecherche1;
-    private VBox ajouterPanir;
-    private VBox box3;
-
 
     /**
      * Instancie la fenetre liee au client
@@ -60,6 +60,7 @@ public class VueClient extends BorderPane
     public VueClient(LivreExpress LEApp, Client client, ActionBD modele) throws SQLException
     {
         super();
+        Text titre = new Text("Catalogue");
         this.LEApp = LEApp;
         this.client = client;
         this.modele = modele;
@@ -72,20 +73,21 @@ public class VueClient extends BorderPane
         this.resultatRecherche2 = new ScrollPane();
         this.resultatRecherche2.setPrefSize(400, 400);
         this.informationLivre = new VBox();
-        this.ajouterPanir = new VBox();
-        this.box3 = new VBox();
-        this.box3.setPrefSize(400, 400);
-        this.box3.getChildren().addAll(this.informationLivre, this.ajouterPanir);
-        this.boutouAjouterPanier();
+        this.informationLivre.setPrefSize(400, 400);
+        this.centre = new VBox();
+        this.TitrePage = new HBox();
+        this.TitrePage.getChildren().add(titre);
+        this.TitrePage.setPrefHeight(25);
         this.contenantRLIL.setPrefSize(1000, 1000);
         this.contenantRLIL.setStyle("-fx-background-color: blue;");
         this.resultatRecherche2.setBackground(new Background(new BackgroundFill(Color.PINK, null, null)));
         this.informationLivre.setStyle("-fx-background-color: green;");
         this.resultatRecherche1.setStyle("-fx-background-color: orange;");
         this.contenantRLIL.getChildren().addAll(this.resultatRecherche1, this.resultatRecherche2, this.informationLivre);
-        this.setCenter(this.contenantRLIL);
+        this.centre.getChildren().addAll(this.TitrePage, this.contenantRLIL);
+        this.setCenter(this.centre);
         this.centerRecommandation(this.client);
-        this.setMargin(this.contenantRLIL, new Insets(60, 60, 60, 60));
+        this.setMargin(this.centre, new Insets(60, 120, 60, 60));
         this.setPrefSize(1300, 700);
         this.setTop(this.top(this.client));
         //this.setBottom(this.bottom());
@@ -175,6 +177,7 @@ public class VueClient extends BorderPane
         panier.setPadding(new Insets(0, 0, 0, 0));
         panier.setPrefWidth(50);
         panier.setPrefHeight(50);
+        panier.setOnAction(new ControleurConsulterPanier(this.modele, this.LEApp));
         
 
         boutonsDroite.setPadding(new Insets(30, 0, 0, 105));
@@ -318,6 +321,7 @@ public class VueClient extends BorderPane
             this.informationLivre.getChildren().clear();
             this.informationLivre.getChildren().add(new Text("Erreur lors de l'affichage des informations du livre."));
         }
+        this.boutouAjouterPanier();
     }
 
     public void boutouAjouterPanier()
@@ -325,7 +329,7 @@ public class VueClient extends BorderPane
         Button ajtpanier =new Button("ajouter ce livre au panier");
         ajtpanier.setOnAction(new ControleurAjouterPanier(this.modele, this.LEApp));
         ajtpanier.setPadding(new Insets(10, 10, 10, 10));
-        this.ajouterPanir.getChildren().add(ajtpanier);
+        this.informationLivre.getChildren().add(ajtpanier);
     } 
 
     public void centerAfficheEditeur(List<Editeur> editeurs) {
@@ -379,5 +383,41 @@ public class VueClient extends BorderPane
         this.resultatRecherche1.setContent(null);
         this.resultatRecherche2.setContent(null);
         this.barRecherche.clear();
+        this.TitrePage.getChildren().clear();
+    }
+
+    public void consulterPanier()
+    {
+        this.TitrePage.getChildren().clear();
+        Text titre = new Text("Votre Panier");
+        this.TitrePage.getChildren().addAll(titre);
+        VBox panierBox = new VBox();
+        HashMap<Livre, Integer> panier = this.getclient().getPanier();
+        if (panier == null || panier.isEmpty()) {
+            panierBox.getChildren().add(new Text("Votre panier est vide."));
+        } else {
+            for (Livre livre : panier.keySet()) {
+                HBox ligne = new HBox();
+                Label quantiteLabel = new Label(String.valueOf(panier.get(livre)));
+                Label titreLabel = new Label(livre.getTitre());
+                titreLabel.setOnMouseClicked(new controleurSelectionLivre(modele, LEApp));
+
+                quantiteLabel.setPrefWidth(60);
+                titreLabel.setPrefWidth(300);
+
+                quantiteLabel.setAlignment(Pos.CENTER_LEFT);
+                titreLabel.setAlignment(Pos.CENTER_LEFT);
+
+                ligne.getChildren().addAll(quantiteLabel, titreLabel);
+                ligne.setSpacing(10);
+                panierBox.getChildren().add(ligne);
+            }
+        }
+        this.resultatRecherche1.setContent(panierBox);
+        VBox boutons = new VBox();
+        boutons.getChildren().addAll(new Button("supprimer livre"),new Button("Commader le panier"));
+        this.informationLivre.getChildren().clear();
+        this.contenantRLIL.getChildren().clear();
+        this.contenantRLIL.getChildren().addAll(this.informationLivre, this.resultatRecherche2);
     }
 }
