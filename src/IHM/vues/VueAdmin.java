@@ -17,7 +17,7 @@ import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 import main.BD.ActionBD;
 
-public class vueAdmin extends StackPane {
+public class VueAdmin extends StackPane {
      private ActionBD modele;
 
     // Boutons principaux
