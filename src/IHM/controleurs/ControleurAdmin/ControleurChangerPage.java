@@ -2,15 +2,15 @@ package IHM.controleurs.ControleurAdmin;
 import javafx.event.EventHandler;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.control.Button;
-import IHM.vues.vueAdmin;
+import IHM.vues.VueAdmin;
 import main.BD.ActionBD;
 
 public class ControleurChangerPage implements EventHandler<MouseEvent> 
 {
     private ActionBD modele;
-    private vueAdmin vue; // On utilise vueAdmin ici
+    private VueAdmin vue; // On utilise vueAdmin ici
 
-    public ControleurChangerPage(ActionBD m, vueAdmin vue){
+    public ControleurChangerPage(ActionBD m, VueAdmin vue){
         this.modele = m;
         this.vue = vue;
     }
