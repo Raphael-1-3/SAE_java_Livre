@@ -32,10 +32,10 @@ public class ControleurVendeur implements EventHandler<ActionEvent> {
                 vue.afficherFormulaireAjoutLivre(resultat);
                 break;
             case "Modifier le stock":
-                vue.afficherRechercheParMagasin(resultat);
+                vue.afficherModificationStock(resultat);
                 break;
             case "Regarde dispo":
-                vue.afficherRechercheParMagasin(resultat);
+                vue.afficherRechercheLivre(resultat);
                 break;
             case "Commande pour client":
                 vue.afficherPasserCommande(resultat);
