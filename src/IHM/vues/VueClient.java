@@ -501,8 +501,18 @@ public class VueClient extends BorderPane
     }
 
     public void majCatalogue()
-    {}
+    {
+        this.contenantRLIL.getChildren().clear();
+        this.getChildren().addAll(this.box1, this.box2, this.box3);
+    }
+
+    public void resetBox2()
+    {
+        this.box2.getChildren().clear();
+    }
 
     public void majPanier()
-    {}
+    {
+        this.consulterPanier();
+    }
 }

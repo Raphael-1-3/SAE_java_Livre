@@ -42,6 +42,7 @@ public class controleurSelectionClient implements EventHandler<ActionEvent>
     public void handle(ActionEvent event) 
     {
         this.app.getVueClient().reset();
+        this.app.getVueClient().majCatalogue();
         try 
         {
             VueClient vc = this.app.getVueClient(); 
