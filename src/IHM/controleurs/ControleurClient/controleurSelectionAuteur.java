@@ -41,6 +41,7 @@ public class controleurSelectionAuteur implements EventHandler<MouseEvent>
 
     public void handle(MouseEvent event) 
     {
+        
         Object source = event.getSource();
         this.app.getVueClient().resetBox2();
 
