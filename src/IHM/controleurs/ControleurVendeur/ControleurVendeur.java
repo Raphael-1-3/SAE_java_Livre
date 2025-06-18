@@ -3,6 +3,7 @@ package IHM.controleurs.ControleurVendeur;
 import IHM.vues.VueVendeur;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
+import javafx.scene.control.Alert;
 import javafx.scene.control.ComboBox;
 import javafx.scene.layout.BorderPane;
 
@@ -18,8 +19,13 @@ public class ControleurVendeur implements EventHandler<ActionEvent> {
 
     @Override
     public void handle(ActionEvent event) {
-        ComboBox<?> combo = (ComboBox<?>) event.getSource();
+        if (!(event.getSource() instanceof ComboBox<?> combo)) {
+            System.err.println("Source de l'événement inattendue");
+            return;
+        }
+
         String choix = (String) combo.getValue();
+        if (choix == null) return;
 
         switch (choix) {
             case "Ajouter un livre":
@@ -29,20 +35,20 @@ public class ControleurVendeur implements EventHandler<ActionEvent> {
                 vue.afficherRechercheParMagasin(resultat);
                 break;
             case "Regarde dispo":
-                vue.afficherRechercheNomMagasinSeul(resultat);
+                vue.afficherRechercheParMagasin(resultat);
                 break;
             case "Commande pour client":
                 vue.afficherPasserCommande(resultat);
                 break;
             case "Transferer un Livre":
-                System.out.println("Transferer un Livre (à implémenter)");
+                vue.afficherTransfererUnLivre(resultat);
                 break;
             case "Obtenir facture":
-                System.out.println("Obtenir facture (à implémenter)");
+                vue.afficherFacture(resultat);
                 break;
             default:
-                System.out.println("Action inconnue : " + choix);
+                new Alert(Alert.AlertType.ERROR, "Action inconnue : " + choix).showAndWait();
+                break;
         }
     }
 }
-

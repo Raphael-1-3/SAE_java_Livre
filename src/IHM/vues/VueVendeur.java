@@ -4,28 +4,28 @@ import IHM.controleurs.ControleurVendeur.ControleurVendeur;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.geometry.Insets;
-import javafx.stage.Stage;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
-import javafx.scene.image.ImageView;
+import javafx.stage.Stage;
 
 public class VueVendeur extends Application {
 
-    private VBox createTitre(Button boutonquitter) {
+    public VBox createTitre(Button boutonQuitter) {
         VBox vb = new VBox();
         HBox hb = new HBox();
-        hb.setPadding(new Insets(20, 0, 0, 20));
+        hb.setPadding(new Insets(20));
 
         Label vendeur = new Label("Vendeur");
         vendeur.setFont(new Font("Times New Roman", 60));
         vendeur.setStyle("-fx-text-fill: #3f4353");
-        vendeur.setPadding(new Insets(10, 0, 0, 400));
+        vendeur.setPadding(new Insets(0, 0, 0, 20));
 
         ImageView logo = new ImageView(new Image("file:./img/logo.jpg"));
         logo.setFitWidth(100);
@@ -39,30 +39,30 @@ public class VueVendeur extends Application {
         Region spacer = new Region();
         HBox.setHgrow(spacer, Priority.ALWAYS);
 
-        hb.getChildren().addAll(logo, vendeur, spacer, boutonquitter);
+        hb.getChildren().addAll(logo, vendeur, spacer, boutonQuitter);
 
         Line sep = new Line(0, 0, 1100, 0);
         sep.setStrokeWidth(2);
         sep.setStroke(Color.DARKGREY);
-        VBox.setMargin(sep, new Insets(20, 0, 0, 100));
+        VBox.setMargin(sep, new Insets(0, 0, 0, 20));
 
         vb.getChildren().addAll(hb, sep);
         return vb;
     }
 
-    private BorderPane createResultat() {
+    public BorderPane createResultat() {
         BorderPane resultat = new BorderPane();
         resultat.setPrefSize(500, 340);
         resultat.setStyle("-fx-background-color: grey;");
-        resultat.setLayoutX((1200 - 500) / 2);
-        resultat.setLayoutY((800 - 140) / 2);
         return resultat;
     }
+
+    // --- Méthodes d'affichage de vues, sans logique métier, juste UI ---
 
     public void afficherFormulaireAjoutLivre(BorderPane resultat) {
         VBox formulaire = new VBox(10);
         formulaire.setPadding(new Insets(20));
-        formulaire.setStyle("-fx-background-color: grey; -fx-padding: 20;");
+        formulaire.setStyle("-fx-background-color: grey;");
 
         TextField champISBN = new TextField();
         champISBN.setPromptText("ISBN");
@@ -80,10 +80,6 @@ public class VueVendeur extends Application {
         champPrix.setPromptText("Prix");
 
         Button boutonValider = new Button("Valider");
-        boutonValider.setOnAction(e -> {
-            Alert alert = new Alert(Alert.AlertType.INFORMATION, "Formulaire soumis (sans BD) !");
-            alert.showAndWait();
-        });
 
         formulaire.getChildren().addAll(champISBN, champTitre, champNbPages, champDatePubli, champPrix, boutonValider);
         resultat.setCenter(formulaire);
@@ -92,8 +88,10 @@ public class VueVendeur extends Application {
     public void afficherRechercheParMagasin(BorderPane resultat) {
         VBox vbox = new VBox(15);
         vbox.setPadding(new Insets(20));
+        vbox.setStyle("-fx-background-color: grey;");
 
         Label labelMag = new Label("Entrer le nom du magasin :");
+        labelMag.setStyle("-fx-text-fill: white; -fx-font-weight: bold;");
         TextField champMagasin = new TextField();
         champMagasin.setPromptText("Nom du magasin");
 
@@ -101,120 +99,149 @@ public class VueVendeur extends Application {
 
         vbox.getChildren().addAll(labelMag, champMagasin, validerMag);
         resultat.setCenter(vbox);
-
-        validerMag.setOnAction(e -> {
-            String nomMagasin = champMagasin.getText().trim();
-            if (!nomMagasin.isEmpty()) {
-                afficherRechercheLivre(resultat, nomMagasin);
-            } else {
-                Alert alert = new Alert(Alert.AlertType.WARNING, "Veuillez entrer un nom de magasin.");
-                alert.showAndWait();
-            }
-        });
     }
 
     public void afficherRechercheLivre(BorderPane resultat, String magasin) {
         VBox vbox = new VBox(15);
         vbox.setPadding(new Insets(20));
+        vbox.setStyle("-fx-background-color: grey;");
 
         Label labelLivre = new Label("Rechercher un livre dans : " + magasin);
+        labelLivre.setStyle("-fx-text-fill: white; -fx-font-weight: bold;");
         TextField champRechercheLivre = new TextField();
         champRechercheLivre.setPromptText("Nom du livre");
 
         Button boutonRecherche = new Button("Rechercher");
 
-        boutonRecherche.setOnAction(e -> {
-            String livre = champRechercheLivre.getText().trim();
-            if (!livre.isEmpty()) {
-                Alert alert = new Alert(Alert.AlertType.INFORMATION,
-                        "Recherche du livre \"" + livre + "\" dans le magasin \"" + magasin + "\" (à connecter au modèle)");
-                alert.showAndWait();
-            } else {
-                Alert alert = new Alert(Alert.AlertType.WARNING, "Veuillez entrer un nom de livre.");
-                alert.showAndWait();
-            }
-        });
-
         vbox.getChildren().addAll(labelLivre, champRechercheLivre, boutonRecherche);
         resultat.setCenter(vbox);
     }
 
-    public void clearResultat(BorderPane resultat) {
-        resultat.setCenter(null);
-    }
-
-    public void afficherRechercheNomMagasinSeul(BorderPane resultat) {
-        VBox vbox = new VBox(15);
-        vbox.setPadding(new Insets(20));
-
-        Label labelMag = new Label("Entrer le nom du magasin pour voir la disponibilité :");
-        TextField champMagasin = new TextField();
-        champMagasin.setPromptText("Nom du magasin");
-
-        Button boutonValider = new Button("Valider");
-
-        boutonValider.setOnAction(e -> {
-            String nomMagasin = champMagasin.getText().trim();
-            if (!nomMagasin.isEmpty()) {
-
-                Alert alert = new Alert(Alert.AlertType.INFORMATION, "Magasin recherché : " + nomMagasin + " (à connecter à la BD)");
-                alert.showAndWait();
-            } else {
-                Alert alert = new Alert(Alert.AlertType.WARNING, "Veuillez entrer un nom de magasin.");
-                alert.showAndWait();
-            }
-        });
-
-        vbox.getChildren().addAll(labelMag, champMagasin, boutonValider);
-        resultat.setCenter(vbox);
-    }
-
-
     public void afficherPasserCommande(BorderPane resultat) {
         VBox vbox = new VBox(15);
         vbox.setPadding(new Insets(20));
+        vbox.setStyle("-fx-background-color: grey;");
 
         Label labelClient = new Label("Nom du client :");
+        labelClient.setStyle("-fx-text-fill: white; -fx-font-weight: bold; -fx-font-size: 14px;");
+
         TextField champClient = new TextField();
         champClient.setPromptText("Nom du client");
+        champClient.setPrefWidth(300);
 
         Label labelLivre = new Label("Nom du livre :");
+        labelLivre.setStyle("-fx-text-fill: white; -fx-font-weight: bold; -fx-font-size: 14px;");
+
         TextField champLivre = new TextField();
         champLivre.setPromptText("Nom du livre");
+        champLivre.setPrefWidth(300);
 
         Label labelMagasin = new Label("Nom du magasin :");
+        labelMagasin.setStyle("-fx-text-fill: white; -fx-font-weight: bold; -fx-font-size: 14px;");
+
         TextField champMagasin = new TextField();
         champMagasin.setPromptText("Nom du magasin");
+        champMagasin.setPrefWidth(300);
 
         Button boutonCommander = new Button("Commander");
+        boutonCommander.setPrefWidth(150);
 
-        boutonCommander.setOnAction(e -> {
-            String client = champClient.getText().trim();
-            String livre = champLivre.getText().trim();
-            String magasin = champMagasin.getText().trim();
+        vbox.getChildren().addAll(
+                labelClient, champClient,
+                labelLivre, champLivre,
+                labelMagasin, champMagasin,
+                boutonCommander);
 
-            if (client.isEmpty() || livre.isEmpty() || magasin.isEmpty()) {
-                Alert alert = new Alert(Alert.AlertType.WARNING, "Veuillez remplir tous les champs.");
-                alert.showAndWait();
-            } else {
-                Alert alert = new Alert(Alert.AlertType.INFORMATION,
-                        "Commande passée pour le client : " + client + "\n" +
-                                "Livre : " + livre + "\n" +
-                                "Magasin : " + magasin);
-                alert.showAndWait();
-            }
-        });
+        resultat.setCenter(vbox);
+    }
 
-        vbox.getChildren().addAll(labelClient, champClient, labelLivre, champLivre, labelMagasin, champMagasin, boutonCommander);
+    public void afficherTransfererUnLivre(BorderPane resultat) {
+        VBox vbox = new VBox(15);
+        vbox.setPadding(new Insets(20));
+        vbox.setStyle("-fx-background-color: grey;");
+
+        Label labelISBN = new Label("ISBN du livre :");
+        labelISBN.setStyle("-fx-text-fill: white; -fx-font-weight: bold; -fx-font-size: 14px;");
+        TextField champISBN = new TextField();
+        champISBN.setPromptText("ISBN");
+
+        Label labelMagasinDepart = new Label("Magasin départ :");
+        labelMagasinDepart.setStyle("-fx-text-fill: white; -fx-font-weight: bold; -fx-font-size: 14px;");
+        TextField champMagasinDepart = new TextField();
+        champMagasinDepart.setPromptText("Magasin départ");
+
+        Label labelMagasinArrivee = new Label("Magasin arrivée :");
+        labelMagasinArrivee.setStyle("-fx-text-fill: white; -fx-font-weight: bold; -fx-font-size: 14px;");
+        TextField champMagasinArrivee = new TextField();
+        champMagasinArrivee.setPromptText("Magasin arrivée");
+
+        Label labelQte = new Label("Quantité :");
+        labelQte.setStyle("-fx-text-fill: white; -fx-font-weight: bold; -fx-font-size: 14px;");
+        TextField champQte = new TextField();
+        champQte.setPromptText("Quantité");
+
+        Button boutonTransferer = new Button("Transférer");
+        boutonTransferer.setPrefWidth(150);
+
+        vbox.getChildren().addAll(
+                labelISBN, champISBN,
+                labelMagasinDepart, champMagasinDepart,
+                labelMagasinArrivee, champMagasinArrivee,
+                labelQte, champQte,
+                boutonTransferer);
+
+        resultat.setCenter(vbox);
+    }
+
+    public void afficherFacture(BorderPane resultat) {
+        VBox vbox = new VBox(15);
+        vbox.setPadding(new Insets(20));
+        vbox.setStyle("-fx-background-color: grey;");
+
+        Label labelClient = new Label("Nom du client :");
+        labelClient.setStyle("-fx-text-fill: white; -fx-font-weight: bold; -fx-font-size: 14px;");
+
+        TextField champClient = new TextField();
+        champClient.setPromptText("Nom du client");
+        champClient.setPrefWidth(300);
+
+        Label labelMois = new Label("Mois (1-12) :");
+        labelMois.setStyle("-fx-text-fill: white; -fx-font-weight: bold; -fx-font-size: 14px;");
+
+        TextField champMois = new TextField();
+        champMois.setPromptText("Mois");
+        champMois.setPrefWidth(100);
+
+        Label labelAnnee = new Label("Année :");
+        labelAnnee.setStyle("-fx-text-fill: white; -fx-font-weight: bold; -fx-font-size: 14px;");
+
+        TextField champAnnee = new TextField();
+        champAnnee.setPromptText("Année");
+        champAnnee.setPrefWidth(100);
+
+        Button boutonAfficher = new Button("Afficher la facture");
+        boutonAfficher.setPrefWidth(150);
+
+        vbox.getChildren().addAll(
+                labelClient, champClient,
+                labelMois, champMois,
+                labelAnnee, champAnnee,
+                boutonAfficher
+        );
+
         resultat.setCenter(vbox);
     }
 
     @Override
     public void start(Stage primaryStage) {
         Pane root = new Pane();
-        Button boutonquitter = new Button("quitter");
-        VBox titre = createTitre(boutonquitter);
+        Button boutonQuitter = new Button("Quitter");
+        VBox titre = createTitre(boutonQuitter);
         BorderPane resultat = createResultat();
+
+      
+        resultat.setLayoutX((1200 - 500) / 2);
+        resultat.setLayoutY((800 - 340) / 2);
 
         ComboBox<String> menuCombo = new ComboBox<>();
         menuCombo.getItems().addAll(
@@ -231,10 +258,12 @@ public class VueVendeur extends Application {
         menuCombo.setLayoutY(170);
         menuCombo.setPrefWidth(200);
 
+        
         ControleurVendeur controleur = new ControleurVendeur(resultat, this);
+
         menuCombo.setOnAction(controleur);
 
-        boutonquitter.setOnAction(e -> Platform.exit());
+        boutonQuitter.setOnAction(e -> Platform.exit());
 
         root.getChildren().addAll(titre, menuCombo, resultat);
         root.setStyle("-fx-background-color: lightgrey;");
