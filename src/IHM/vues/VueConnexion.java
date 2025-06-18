@@ -154,6 +154,8 @@ public class VueConnexion {
         return alert;
     }
 
+    
+
     public TextField getTfCo() {
         return tfCo;
     }
@@ -218,9 +220,23 @@ public class VueConnexion {
         root.setTop(vb);
         
     }
+
+    public void reset()
+    {
+        this.tfCo.setText("");
+        this.pwCo.setText("");
+        this.tfEmail.setText("");
+        this.pwInsc.setText("");
+        this.tfNom.setText("");
+        this.tfPrenom.setText("");
+        this.tfCodePo.setText("");
+        this.tfVille.setText("");
+        this.tfAdresse.setText("");
+    }
     
     public void fenetreAccueil(BorderPane root)
     {
+        this.app.getScene().setRoot(root);
         setTop(root, "Bienvenue");
         VBox vb = new VBox(100);
         Button connexion = new Button("Connexion");

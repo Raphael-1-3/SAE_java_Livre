@@ -55,6 +55,11 @@ public class VueClient extends BorderPane
     private VBox box2;
     private VBox box3;
 
+    private PasswordField pwField;
+    private TextField tfAdresse;
+    private TextField tfVille;
+    private TextField tfCodePostal;
+
     /**
      * Instancie la fenetre liee au client
      * @param LEApp
@@ -62,9 +67,7 @@ public class VueClient extends BorderPane
     public VueClient(LivreExpress LEApp, Client client, ActionBD modele) throws SQLException
     {
         super();
-        Label titre = new Label("Catalogue");
-        titre.setFont(new Font("Times new Roman", 30));
-        titre.setPadding(new Insets(0, 0, 0, 500));
+        
         this.LEApp = LEApp;
         this.client = client;
         this.modele = modele;
@@ -80,7 +83,6 @@ public class VueClient extends BorderPane
         this.box3.setPrefSize(400, 400);
         this.centre = new VBox();
         this.TitrePage = new HBox();
-        this.TitrePage.getChildren().add(titre);
         this.TitrePage.setPrefHeight(25);
         this.box1.setStyle("-fx-background-radius : 15px;" + 
         "-fx-background-color : #f9f9f9;" + 
@@ -94,19 +96,31 @@ public class VueClient extends BorderPane
         this.box2.setStyle("-fx-background-radius : 15px;" + 
         "-fx-background-color : #f9f9f9;" + 
         "-fx-background : #f9f9f9;" + 
-        "-fx-border-width : 0 2px 0 2px;" + 
+        "-fx-border-width : 0 0 0 2px;" + 
         "-fx-border-color : #df9f53");
         this.box3.setStyle("-fx-background-color: #f9f9f9;" + 
-        "-fx-background-radius : 15px;" + 
+        "-fx-background-radius : 15px;" +
+        "-fx-border-width : 0 0 0 2px;" +
+        "-fx-border-color : #df9f53;" + 
         "-fx-background : #f9f9f9;");
         this.contenantRLIL.setPrefSize(1000, 1000);
         this.contenantRLIL.getChildren().addAll(this.box1, this.box2, this.box3);
         this.centre.getChildren().addAll(this.TitrePage, this.contenantRLIL);
         this.setCenter(this.centre);
         this.setCenterRecommandation(this.client);
-        this.setMargin(this.centre, new Insets(60, 120, 60, 60));
+        BorderPane.setMargin(this.centre, new Insets(60, 120, 60, 60));
         this.setPrefSize(1300, 700);
         this.setTop(this.top(this.client));
+        
+
+        this.pwField = new PasswordField();
+        this.pwField.setMaxWidth(380);
+        this.tfAdresse = new TextField();
+        this.tfAdresse.setMaxWidth(380);
+        this.tfCodePostal = new TextField();
+        this.tfCodePostal.setMaxWidth(380);
+        this.tfVille = new TextField();
+        this.tfVille.setMaxWidth(380);
         //this.setBottom(this.bottom());
     }
 
@@ -144,6 +158,48 @@ public class VueClient extends BorderPane
     public Client getclient() {
         return this.client;
     }
+    public PasswordField getPwField() {
+        return this.pwField;
+    }
+
+    public TextField getTfAdresse() {
+        return this.tfAdresse;
+    }
+
+    public TextField getTfVille() {
+        return this.tfVille;
+    }
+
+    public TextField getTfCodePostal() {
+        return this.tfCodePostal;
+    }
+
+    public Alert popUpChampsVides()
+    {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle("Alerte");
+        alert.setHeaderText(null);
+        alert.setContentText("Veuillez remplir tous les champs");
+        return alert;
+    }
+
+    public Alert popUpActionEffectuee()
+    {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle("Confirmation");
+        alert.setHeaderText(null);
+        alert.setContentText("Action effectuee !");
+        return alert;
+    }
+
+    public Alert popUpPasUnNbr()
+    {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle("Alerte");
+        alert.setHeaderText(null);
+        alert.setContentText("Veuillez entrer un nombre dans le code postal");
+        return alert;
+    }
 
     public Pane top(Client client)
     {
@@ -175,6 +231,7 @@ public class VueClient extends BorderPane
         param.setGraphic(paramIcon);
         param.setPadding(new Insets(0, 0, 0, 0));
         param.setPrefSize(50, 50);
+        param.setOnAction(new ControleurAllerParametres(this.modele, this.LEApp));
         Button deconnexion = new Button();
         ImageView decoIcon = new ImageView(new Image("file:./img/deco.png"));
         decoIcon.setFitWidth(40);
@@ -185,6 +242,7 @@ public class VueClient extends BorderPane
         deconnexion.setPadding(new Insets(0, 0, 0, 0));
         deconnexion.setPrefWidth(50);
         deconnexion.setPrefHeight(50);
+        deconnexion.setOnAction(new ControleurRetourAccueil(this.modele, this.LEApp));
 
         Button panier = new Button();
         ImageView panierIcon = new ImageView(new Image("file:./img/panier.png"));
@@ -263,6 +321,9 @@ public class VueClient extends BorderPane
 
     public void setCenterRecommandation(Client client) throws SQLException
     {
+        Label titre = new Label("Catalogue");
+        titre.setFont(new Font("Times new Roman", 30));
+        titre.setPadding(new Insets(0, 0, 0, 500));
         ProgressIndicator loading = new ProgressIndicator();
         VBox vb = new VBox();
         ScrollPane sp = new ScrollPane();
@@ -286,7 +347,7 @@ public class VueClient extends BorderPane
         sp.setContent(vb);
         this.box2.getChildren().clear();
         this.box2.getChildren().add(sp);
-        
+        this.TitrePage.getChildren().add(titre);
         new Thread(task).start();
     }
 
@@ -339,19 +400,24 @@ public class VueClient extends BorderPane
         }
         ScrollPane sp = new ScrollPane(libresbox);
         this.box2.getChildren().add(sp);
+        VBox.setVgrow(sp, Priority.ALWAYS);
     }
 
     public void afficheInfoLivre(Livre livre)
     {
         this.box3.getChildren().clear();
         VBox infoBox = new VBox(10);
+        infoBox.setPadding(new Insets(0, 0, 160, 0));
         if (livre == null) {
             infoBox.getChildren().add(new Text("Aucune information à afficher."));
         } else {
             try 
             {
                 Label titre = new Label("Titre : " + livre.getTitre());
+                titre.setStyle("-fx-font-weight : bold;");
+                titre.setFont(new Font(20));
                 Label prix = new Label("Prix : " + livre.getPrix() + " €");
+                prix.setFont(new Font(20));
 
                 List<Auteur> auteurs = this.modele.getAuteurParIdLivre(livre.getISBN());
                 StringBuilder auteursStr = new StringBuilder("Auteurs : ");
@@ -385,16 +451,20 @@ public class VueClient extends BorderPane
                 infoBox.getChildren().add(new Text("Erreur lors de l'affichage des informations du livre."));
             }
         }
-        this.box3.getChildren().add(infoBox);
-        this.boutouAjouterPanier();
+        VBox vb = new VBox();
+        vb.setPadding(new Insets(20));
+        vb.getChildren().addAll(infoBox, this.boutouAjouterPanier());
+        this.box3.getChildren().addAll(vb);
+        //this.boutouAjouterPanier();
     }
 
-    public void boutouAjouterPanier()
+    public Button boutouAjouterPanier()
     {
-        Button ajtpanier =new Button("ajouter ce livre au panier");
+        Button ajtpanier = new Button("ajouter ce livre au panier");
         ajtpanier.setOnAction(new ControleurAjouterPanier(this.modele, this.LEApp));
         ajtpanier.setPadding(new Insets(10, 10, 10, 10));
-        this.box3.getChildren().add(ajtpanier);
+        //this.box3.getChildren().add(ajtpanier);
+        return ajtpanier;
     } 
 
     public void centerAfficheEditeur(List<Editeur> editeurs) {
@@ -413,6 +483,7 @@ public class VueClient extends BorderPane
         }
         ScrollPane sp = new ScrollPane(editeursBox);
         this.box1.getChildren().add(sp);
+        VBox.setVgrow(sp, Priority.ALWAYS);
     }
 
     public void centerAfficheClassification(List<Classification> classifications) {
@@ -431,6 +502,7 @@ public class VueClient extends BorderPane
         }
         ScrollPane sp = new ScrollPane(classificationsBox);
         this.box1.getChildren().add(sp);
+        VBox.setVgrow(sp, Priority.ALWAYS);
     }
     
 
@@ -450,6 +522,7 @@ public class VueClient extends BorderPane
         }
         ScrollPane sp = new ScrollPane(auteursBox);
         this.box1.getChildren().add(sp);
+        VBox.setVgrow(sp, Priority.ALWAYS);
     }
 
     
@@ -457,7 +530,9 @@ public class VueClient extends BorderPane
     public void consulterPanier()
     {
         this.TitrePage.getChildren().clear();
-        Text titre = new Text("Votre Panier");
+        Label titre = new Label("Votre Panier");
+        titre.setFont(new Font("Times new Roman", 30));
+        titre.setPadding(new Insets(0, 0, 0, 500));
         this.TitrePage.getChildren().addAll(titre);
         VBox panierBox = new VBox();
         HashMap<Livre, Integer> panier = this.getclient().getPanier();
@@ -472,32 +547,50 @@ public class VueClient extends BorderPane
                 titreLabel.setOnMouseClicked(new controleurSelectionLivre(modele, LEApp));
 
                 quantiteLabel.setPrefWidth(60);
+                quantiteLabel.setFont(new Font(20));
                 titreLabel.setPrefWidth(300);
+                titreLabel.setFont(new Font(20));
 
                 quantiteLabel.setAlignment(Pos.CENTER_LEFT);
                 titreLabel.setAlignment(Pos.CENTER_LEFT);
-
+                quantiteLabel.setStyle("-fx-border-radius : 15px;");
+                titre.setStyle("-fx-border-radius : 15px;");
                 ligne.getChildren().addAll(quantiteLabel, titreLabel);
                 ligne.setSpacing(10);
+                ligne.setStyle("-fx-border-radius : 15px;");
                 panierBox.getChildren().add(ligne);
             }
         }
         ScrollPane sp = new ScrollPane(panierBox);
+        sp.setStyle("-fx-background-radius : 15px;");
+        sp.setPrefHeight(400);
         VBox droite = new VBox();
+        droite.setPadding(new Insets(20));
+        VBox.setVgrow(sp, Priority.ALWAYS);
+
+        HBox boutons = new HBox(60);
+        boutons.setPadding(new Insets(300, 0, 0, 0));
 
         Integer nbArticle = this.client.getNbArticles();
         Double prix = this.client.getPrixTotal();
 
+        Label nombreArticles = new Label("Nombre total d'articles : " + nbArticle);
+        nombreArticles.setFont(new Font(20));
+        Label prixTotal = new Label("Prix total du panier : " + prix + "€");
+        prixTotal.setFont(new Font(20));
 
-        Button suppr = new Button("supprimer livre");
+        Button suppr = new Button("Supprimer livre");
         Button commander = new Button("Commander le panier");
 
-        droite.getChildren().addAll(new Button("supprimer livre"),new Button("Commader le panier"));
+        boutons.getChildren().addAll(suppr, commander);
+
+        droite.getChildren().addAll(nombreArticles, prixTotal, boutons);
         this.box3.getChildren().clear();
         this.box2.getChildren().add(droite);
         this.box1.getChildren().add(sp);
         this.contenantRLIL.getChildren().clear();
         this.contenantRLIL.getChildren().addAll(this.box1, this.box3, this.box2);
+        VBox.setVgrow(sp, Priority.ALWAYS);
     }
 
     public void reset()
@@ -505,12 +598,15 @@ public class VueClient extends BorderPane
         this.box3.getChildren().clear();
         this.box1.getChildren().clear();
         this.box2.getChildren().clear();
-        this.barRecherche.clear();
-        this.TitrePage.getChildren().clear();
     }
 
     public void majCatalogue()
     {
+        this.TitrePage.getChildren().clear();
+        Label titre = new Label("Catalogue");
+        titre.setFont(new Font("Times new Roman", 30));
+        titre.setPadding(new Insets(0, 0, 0, 500));
+        this.TitrePage.getChildren().addAll(titre);
         this.contenantRLIL.getChildren().clear();
         this.contenantRLIL.getChildren().addAll(this.box1, this.box2, this.box3);
     }
@@ -523,5 +619,63 @@ public class VueClient extends BorderPane
     public void majPanier()
     {
         this.consulterPanier();
+    }
+
+    public void menuParametre()
+    {
+        this.TitrePage.getChildren().clear();
+        Label titre = new Label("Parametres");
+        titre.setFont(new Font(30));
+        titre.setPadding(new Insets(0, 0, 0, 500));
+        this.TitrePage.getChildren().addAll(titre);
+        //changer mot de passe
+        VBox gauche = new VBox(10);
+        gauche.setPadding(new Insets(10));
+        Label titreGauche = new Label("Changement mot de passe");
+        titreGauche.setFont(new Font(20));
+        titreGauche.setPadding(new Insets(0, 0, 0, 70));
+        titreGauche.setStyle("-fx-font-weight : bold;");
+
+        Label nvMdp = new Label("Nouveau mot de passe");
+        nvMdp.setFont(new Font(15));
+        nvMdp.setPadding(new Insets(20, 0, 0, 10));
+
+        VBox.setMargin(this.pwField, new Insets(10, 0, 200, 0));
+        Button bMdp = new Button("Changer Mot de Passe");
+        bMdp.setOnAction(new ControleurChangerMdp(this.modele, this));
+        VBox.setMargin(bMdp, new Insets(0, 100, 0, 100));
+
+        gauche.getChildren().addAll(titreGauche, nvMdp, this.pwField, bMdp);
+        
+        // changer adresse
+        VBox droite = new VBox(10);
+        droite.setPadding(new Insets(10));
+        Label titreDroite = new Label("Changement d'adresse");
+        titreDroite.setFont(new Font(20));
+        titreDroite.setPadding(new Insets(0, 0, 0, 70));
+        titreDroite.setStyle("-fx-font-weight : bold;");
+
+        Label lbVille = new Label("Ville");
+        lbVille.setFont(new Font(15));
+        lbVille.setPadding(new Insets(20, 0, 0, 10));
+        
+        Label lbAdresse = new Label("Adresse");
+        lbAdresse.setFont(new Font(15));
+        lbAdresse.setPadding(new Insets(20, 0, 0, 10));
+
+        Label lbCodePostal = new Label("Code Postal");
+        lbCodePostal.setFont(new Font(15));
+        lbCodePostal.setPadding(new Insets(20, 0, 0, 10));
+
+        Button bAdresse = new Button("Changer adresse");
+        bAdresse.setOnAction(new ControleurChangerAdresse(this.modele, this));
+        VBox.setMargin(bAdresse, new Insets(35, 100, 0, 120));
+
+        droite.getChildren().addAll(titreDroite, lbVille, tfVille, lbAdresse, tfAdresse, lbCodePostal, tfCodePostal, bAdresse);
+
+
+        this.box1.getChildren().add(gauche);
+        this.box3.getChildren().add(droite);
+
     }
 }

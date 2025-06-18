@@ -45,9 +45,9 @@ import main.app.Administrateur;
 
 
 
-public class VueAdmin extends StackPane {
-
-
+public class VueAdmin extends StackPane 
+{
+    private Administrateur admin;
      private ActionBD modele;
 
 
@@ -88,29 +88,6 @@ public class VueAdmin extends StackPane {
     private BorderPane carre;
 
     private VBox top;
-
-
-
-
-    private TextField tfEmail;
-
-
-    private PasswordField pfMDP;
-
-
-    private TextField tfNom;
-
-
-    private TextField tfPrenom;
-
-
-    private TextField tfIdMag;
-    private Administrateur admin;
-
-
-
-
-
 
 
 

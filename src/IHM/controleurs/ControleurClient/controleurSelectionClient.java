@@ -90,6 +90,9 @@ public class controleurSelectionClient implements EventHandler<ActionEvent>
                     case "Rechercher par éditeur":
                         List<Editeur> tousEditeurs = this.modele.cherhcherEditeurApproximative(recherche);
                         List<Editeur> editeursDansMag = this.modele.getEditeursDansMagasin(magasin);
+                        System.out.println(tousEditeurs);
+                        System.out.println();
+                        System.out.println(editeursDansMag);
                         if (tousEditeurs.equals(new ArrayList<>())) {
                             vc.centerAfficheEditeur(editeursDansMag);
                         } else {
