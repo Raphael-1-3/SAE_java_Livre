@@ -50,7 +50,7 @@ public class LivreExpress extends Application {
 
         try {
             connexion = new ConnexionMySQL();
-            connexion.connecter("localhost", "LibrairieJava", "root",  "raphe"); //"localhost", "LibrairieJava", "root", "raphe"
+            connexion.connecter("laptop-robin", "LibrairieJava", "root",  "robin"); //"localhost", "LibrairieJava", "root", "raphe"
             if (connexion.isConnecte()) 
             {
                 this.modele = new ActionBD(connexion);
@@ -81,7 +81,7 @@ public class LivreExpress extends Application {
 
         vueCo.fenetreAccueil(root);
         //scene.setRoot(vueclient);
-        scene.setRoot(vuead);
+        //scene.setRoot(vuead);
         stage.setScene(scene);
         stage.show();
         System.out.println("MARCHE");
