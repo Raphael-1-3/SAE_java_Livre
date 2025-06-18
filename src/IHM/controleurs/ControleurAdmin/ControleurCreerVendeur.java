@@ -27,7 +27,7 @@ public class ControleurCreerVendeur implements EventHandler<ActionEvent> {
             int idMagasin = Integer.parseInt(vue.getTfIdMag().getText());
 
             // Création du vendeur
-            Vendeur vendeur = new Vendeur(null,email, nom, mdp, "VENDEUR",prenom,ActionBD.magAPartirId(idMagasin));
+            Vendeur vendeur = new Vendeur(null,email, nom, mdp, "VENDEUR",prenom, this.modele.magAPartirId(idMagasin));
 
             // Ajout à la base de données
             modele.AddVendeur(vendeur);
