@@ -62,7 +62,9 @@ public class VueClient extends BorderPane
     public VueClient(LivreExpress LEApp, Client client, ActionBD modele) throws SQLException
     {
         super();
-        Text titre = new Text("Catalogue");
+        Label titre = new Label("Catalogue");
+        titre.setFont(new Font("Times new Roman", 30));
+        titre.setPadding(new Insets(0, 0, 0, 500));
         this.LEApp = LEApp;
         this.client = client;
         this.modele = modele;
@@ -86,20 +88,22 @@ public class VueClient extends BorderPane
         this.contenantRLIL.setStyle("-fx-background-radius : 15px;" + 
         "-fx-background-color : #f9f9f9;" + 
         "-fx-background : #f9f9f9;" + 
-        "-fx-border-width : 0 2px 0 2px;" + 
-        "-fx-border-color : #df9f53");
+        "-fx-border-width : 2px;" + 
+        "-fx-border-color : #df9f53;" + 
+        "-fx-border-radius : 15px;");
         this.box2.setStyle("-fx-background-radius : 15px;" + 
         "-fx-background-color : #f9f9f9;" + 
         "-fx-background : #f9f9f9;" + 
         "-fx-border-width : 0 2px 0 2px;" + 
         "-fx-border-color : #df9f53");
-        this.box3.setStyle("-fx-background-color: #f9f9f9;");
+        this.box3.setStyle("-fx-background-color: #f9f9f9;" + 
+        "-fx-background-radius : 15px;" + 
+        "-fx-background : #f9f9f9;");
         this.contenantRLIL.setPrefSize(1000, 1000);
-        this.contenantRLIL.setStyle("-fx-background-color: blue;");
         this.contenantRLIL.getChildren().addAll(this.box1, this.box2, this.box3);
         this.centre.getChildren().addAll(this.TitrePage, this.contenantRLIL);
         this.setCenter(this.centre);
-        this.centerRecommandation(this.client);
+        this.setCenterRecommandation(this.client);
         this.setMargin(this.centre, new Insets(60, 120, 60, 60));
         this.setPrefSize(1300, 700);
         this.setTop(this.top(this.client));
@@ -261,6 +265,9 @@ public class VueClient extends BorderPane
     {
         ProgressIndicator loading = new ProgressIndicator();
         VBox vb = new VBox();
+        ScrollPane sp = new ScrollPane();
+        sp.setPrefHeight(400);
+        sp.setFocusTraversable(false);
 
         Task<VBox> task = new Task<>() {
             @Override
@@ -271,11 +278,15 @@ public class VueClient extends BorderPane
         };
         loading.visibleProperty().bind(task.runningProperty());
         task.setOnSucceeded(e -> {
-            this.box2.getChildren().add(task.getValue());
+            vb.getChildren().clear();
+            vb.getChildren().add(task.getValue());
         });
         
         vb.getChildren().addAll(loading);
-        this.box2.getChildren().add(vb);
+        sp.setContent(vb);
+        this.box2.getChildren().clear();
+        this.box2.getChildren().add(sp);
+        
         new Thread(task).start();
     }
 
@@ -293,8 +304,9 @@ public class VueClient extends BorderPane
                 {
                     Label affichageT = new Label(bouquin.getTitre());
                     affichageT.setPadding(new Insets(5));
-                    affichageT.setFont(new Font(10));
+                    affichageT.setFont(new Font(15));
                     affichageT.setStyle("-fx-underline : true;");
+                    affichageT.setMinSize(Region.USE_PREF_SIZE, Region.USE_PREF_SIZE);
                     affichageT.setOnMouseClicked(new controleurSelectionLivre(this.modele, this.LEApp));
                     livresBox.getChildren().add(affichageT);
                 }

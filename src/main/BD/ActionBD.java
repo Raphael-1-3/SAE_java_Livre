@@ -537,7 +537,7 @@ public class ActionBD{
      */
     public List<Auteur> rechercheAuteurApproximative(String nomauteur) throws SQLException
     {
-        PreparedStatement ps = this.connexion.prepareStatement("select * from AUTEUR where lower(nomauteur) like ?");
+        PreparedStatement ps = this.connexion.prepareStatement("select * from AUTEUR where lower(nomauteur) like ? LIMIT 20");
         ps.setString(1, "%" +nomauteur+ "%");
         ResultSet rs = ps.executeQuery();
         List<Auteur> tabauteur = new ArrayList<>();

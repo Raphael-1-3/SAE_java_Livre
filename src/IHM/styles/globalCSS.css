@@ -42,3 +42,7 @@
     -fx-font-family: "Times New Roman";
     -fx-text-fill: #3f4353;
 }
+
+.scroll-pane:focused  {
+    -fx-background-color: #000000;
+}

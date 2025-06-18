@@ -27,6 +27,7 @@ public class LivreExpress extends Application {
 
     private VueConnexion vueCo;
     private VueClient vueclient;
+    private VueVendeur vueVendeur;
     private ActionBD modele;
     private BorderPane root;
     private Scene scene;
@@ -97,12 +98,22 @@ public class LivreExpress extends Application {
         return this.vueCo;
     }
 
+    public VueVendeur getVueVendeur()
+    {
+        return this.vueVendeur;
+    }
+
     public VueClient getVueClient() {
         return this.vueclient;
     }
 
     public void setVueClient(VueClient vueclient) {
         this.vueclient = vueclient;
+    }
+
+    public void setVueVendeur(VueVendeur vueVendeur)
+    {
+        this.vueVendeur = vueVendeur;
     }
 
     public Scene getScene()

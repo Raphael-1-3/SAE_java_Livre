@@ -24,6 +24,7 @@ import javafx.fxml.FXML;
 import main.BD.*;
 import main.Exceptions.PasDeTelUtilisateurException;
 import main.app.*;
+import main.test.testBD;
 
 import java.sql.SQLException;
 import java.util.EventListener;
@@ -31,6 +32,7 @@ import java.util.List;
 
 import IHM.vues.LivreExpress;
 import IHM.vues.VueClient;
+import IHM.vues.VueVendeur;
 
 public class controleurConnexionClavier implements EventHandler<KeyEvent> {
     public LivreExpress app;
@@ -59,6 +61,8 @@ public class controleurConnexionClavier implements EventHandler<KeyEvent> {
                         case "Vendeur":
                             System.out.println("Bienvenue, vendeur !");
                             //Vendeur.application(bd, user, scanner);
+                            this.app.setVueVendeur(new VueVendeur(app, modele, (Vendeur) user));
+                            this.app.getScene().setRoot(this.app.getVueVendeur());
                             // Actions vendeur
                             break;
                         case "Administrateur":

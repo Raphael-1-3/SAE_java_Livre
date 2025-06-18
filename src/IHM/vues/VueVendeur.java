@@ -14,9 +14,13 @@ import javafx.scene.shape.Line;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
+import main.BD.*;
+import main.app.Vendeur;
 
-public class VueVendeur extends Application {
-
+public class VueVendeur extends Pane {
+    private LivreExpress app;
+    private ActionBD modele;
+    private Vendeur vendeur;
     public VBox createTitre(Button boutonQuitter) {
         VBox vb = new VBox();
         HBox hb = new HBox();
@@ -232,9 +236,13 @@ public class VueVendeur extends Application {
         resultat.setCenter(vbox);
     }
 
-    @Override
-    public void start(Stage primaryStage) {
-        Pane root = new Pane();
+    
+    public VueVendeur(LivreExpress app, ActionBD modele, Vendeur vendeur) {
+        super();
+        super.setStyle("-fx-background-color : #d4d5d5");
+        this.app = app;
+        this.modele = modele;
+        this.vendeur = vendeur;
         Button boutonQuitter = new Button("Quitter");
         VBox titre = createTitre(boutonQuitter);
         BorderPane resultat = createResultat();
@@ -265,18 +273,6 @@ public class VueVendeur extends Application {
 
         boutonQuitter.setOnAction(e -> Platform.exit());
 
-        root.getChildren().addAll(titre, menuCombo, resultat);
-        root.setStyle("-fx-background-color: lightgrey;");
-
-        Scene scene = new Scene(root, 1200, 800);
-        scene.getStylesheets().add("file:./src/IHM/styles/globalCSS.css");
-
-        primaryStage.setTitle("Vue Vendeur");
-        primaryStage.setScene(scene);
-        primaryStage.show();
-    }
-
-    public static void main(String[] args) {
-        launch(args);
+        super.getChildren().addAll(titre, menuCombo, resultat);
     }
 }
