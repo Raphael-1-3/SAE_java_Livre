@@ -617,17 +617,13 @@ INSERT INTO USER (idu, nom, email, motDePasse, role) VALUES
 	(497, 'Bouzid', 'Bouzid.Leonor.497@ex.fr', 'mdp497', 'CLIENT'),
 	(498, 'Lefebvre', 'Lefebvre.Nathan.498@ex.fr', 'mdp498', 'CLIENT'),
 	(499, 'Vincent', 'Vincent.Sophie.499@ex.fr', 'mdp499', 'CLIENT'),
-	(500, 'Garcia', 'Garcia.Elodie.500@ex.fr', 'mdp500', 'CLIENT'),
-	(1000, 'Robin', 'robin.faucheux@etu.univ.orleans.fr', 'mdp', 'ADMIN'),
-	(1001, 'Vendeur', 'vendeur@v.fr', 'mdp', 'VENDEUR');
+	(500, 'Garcia', 'Garcia.Elodie.500@ex.fr', 'mdp500', 'CLIENT');
 
 -- insert de l admin
 
-INSERT INTO ADMIN (idad,prenomad) VALUES (501, 'Jango'),
-	(1000, 'Robin');
+INSERT INTO ADMIN (idad,prenomad) VALUES (501, 'Jango');
 
-INSERT INTO VENDEUR (prenomven, magasin, idve) VALUES 
-	('Vendeur', 1, 1001);
+
 -- les clients
 insert into CLIENT (idcli, nomcli, prenomcli, adressecli, codepostal, villecli) values
 	(1, 'Rodriguez', 'Fatima', '188 chemin de la Forêt', '45000', 'Orléans'),
@@ -11589,8 +11585,6 @@ insert into ECRIRE(isbn,idauteur) values
 
 -- les stocks de livres
 insert into POSSEDER(idmag, isbn, qte) values
-	(1,'9782871295914',2),
-	(2,'9782871295914',2),
 	(7, '9782081295711', 2),
 	(5, '9782330001797', 3),
 	(4, '9782010144356', 7),
@@ -18955,6 +18949,7 @@ insert into DETAILCOMMANDE(numcom, numlig, isbn, qte, prixvente) values
 	(282,1,9782010122705,2, 9.0),
 	(282,2,9782226136855,1,4.8),
 	(282,3,9782010091223,1, 28.0),
+	(283,1,9782021510805,1,10.41),
 	(284,1,9782226033277,1, 39.0),
 	(285,1,9782010098321,3, 9.0),
 	(286,1,9782070696628,1,9.7),

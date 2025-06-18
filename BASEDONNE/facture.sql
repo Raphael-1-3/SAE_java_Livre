@@ -6,5 +6,5 @@ natural join DETAILCOMMANDE
 natural join LIVRE
 where month(datecom) = 12
 and year(datecom) = 2023
-and idmag = 1
+and idcli = 444
 group by month(datecom), numcom, isbn
