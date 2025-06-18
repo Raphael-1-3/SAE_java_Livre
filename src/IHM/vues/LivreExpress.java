@@ -52,7 +52,7 @@ public class LivreExpress extends Application {
 
         try {
             connexion = new ConnexionMySQL();
-            connexion.connecter("laptop-robin", "LibrairieJava", "root",  "robin"); //"localhost", "LibrairieJava", "root", "raphe"
+            connexion.connecter("localhost", "LibrairieJava", "root",  "raphe"); //"localhost", "LibrairieJava", "root", "raphe"
             if (connexion.isConnecte()) 
             {
                 this.modele = new ActionBD(connexion);
@@ -74,7 +74,7 @@ public class LivreExpress extends Application {
         stage.setScene(scene);
         Image logo = new Image("file:./img/logo.jpg");
         stage.getIcons().add(logo);
-        this.root.setPrefSize(1300, 700);
+        //this.root.setPrefSize(1300, 700);
         this.root.setStyle("-fx-background-color : #d4d5d5;");
         scene.getStylesheets().add("file:./src/IHM/styles/globalCSS.css");
         Client client = new Client(0, "s", "s", "s", "s", "s", 0, "k", "s");

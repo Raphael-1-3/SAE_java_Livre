@@ -4,21 +4,25 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
+import IHM.vues.LivreExpress;
 import IHM.vues.VueAdmin;
 import main.BD.ActionBD;
 import main.app.Vendeur;
 
 public class ControleurCreerVendeur implements EventHandler<ActionEvent> {
-    private final ActionBD modele;
-    private final VueAdmin vue;
+    private  ActionBD modele;
+    private  VueAdmin vue;
+    private  LivreExpress app;
 
-    public ControleurCreerVendeur(ActionBD modele, VueAdmin vue) {
+    public ControleurCreerVendeur(ActionBD modele, LivreExpress app ) {
         this.modele = modele;
-        this.vue = vue;
+        this.app = app;
     }
 
     @Override
-    public void handle(ActionEvent event) {
+    public void handle(ActionEvent event) 
+    {
+        VueAdmin vue = this.app.getVueAdmin();
         try {
             String email = vue.getTfEmail().getText();
             String nom = vue.getTfNom().getText();
@@ -27,7 +31,8 @@ public class ControleurCreerVendeur implements EventHandler<ActionEvent> {
             int idMagasin = Integer.parseInt(vue.getTfIdMag().getText());
 
             // Création du vendeur
-            Vendeur vendeur = new Vendeur(null,email, nom, mdp, "VENDEUR",prenom,this.modele.magAPartirId(idMagasin));
+            int id = this.modele.getIdUserMax();
+            Vendeur vendeur = new Vendeur(id,email, nom, mdp, "VENDEUR",prenom,this.modele.magAPartirId(idMagasin));
 
             // Ajout à la base de données
             modele.AddVendeur(vendeur);

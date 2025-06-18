@@ -1,58 +1,61 @@
 package IHM.controleurs.ControleurAdmin;
+
+import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
-import javafx.scene.input.MouseEvent;
-import javafx.scene.control.Button;
+import javafx.scene.control.ComboBox;
+import IHM.vues.LivreExpress;
 import IHM.vues.VueAdmin;
 import main.BD.ActionBD;
 
-public class ControleurChangerPage implements EventHandler<MouseEvent> 
+public class ControleurChangerPage implements EventHandler<ActionEvent> 
 {
     private ActionBD modele;
-    private VueAdmin vue; // On utilise vueAdmin ici
+    private LivreExpress app;
+    private ComboBox<String> selectionAction;
 
-    public ControleurChangerPage(ActionBD m, VueAdmin vue){
+    public ControleurChangerPage(ActionBD m, LivreExpress app, ComboBox<String> selectionAction){
         this.modele = m;
-        this.vue = vue;
+        this.app = app;
+        this.selectionAction = selectionAction;
     }
 
     @Override
-    public void handle(MouseEvent event){
-        Object source = event.getSource();
-        if (source instanceof Button) {
-            Button bouton = (Button) source;
-            String texte = bouton.getText();
+    public void handle(ActionEvent event){
+        String action = selectionAction.getValue();
+        VueAdmin vue = this.app.getVueAdmin();
 
-            switch (texte) {
-                case "Creer un vendeur":
-                    vue.creerVendeur();
-                    break;
-                case "Ajouter une librairie":
-                    vue.ajouterLibrairie();
-                    break;
-                case "Panneau de Bord":
-                    vue.panneauDeBord();
-                    break;
-                case "Ajouter un livre":
-                    vue.ajouterLivre();
-                    break;
-                case "Regarder les disponibilités":
-                    vue.regarderDisponibilites();
-                    break;
-                case "Passer une commande pour un Client":
-                    vue.passerCommandeClient();
-                    break;
-                case "Tranferer un livre":
-                    vue.transfererLivre();
-                    break;
-                case "Obtenir les factures":
-                    vue.obtenirFactures();
-                    break;
-                case "Choisir Un magasin":
-                    vue.choisirMagasin();
-                    break;
-                default:
-                    // Rien
-            }
+        if (action == null) return;
+
+        switch (action) {
+            case "Créer un vendeur":
+                vue.creerVendeur();
+                break;
+            case "Ajouter une librairie":
+                vue.ajouterLibrairie();
+                break;
+            case "Panneau de Bord":
+                vue.panneauDeBord();
+                break;
+            case "Ajouter un livre":
+                vue.ajouterLivre();
+                break;
+            case "Regarder les disponibilités":
+                vue.regarderDisponibilites();
+                break;
+            case "Passer une commande pour un Client":
+                vue.passerCommandeClient();
+                break;
+            case "Transférer un livre":
+                vue.transfererLivre();
+                break;
+            case "Obtenir les factures":
+                vue.obtenirFactures();
+                break;
+            case "Choisir un magasin":
+                vue.choisirMagasin();
+                break;
+            default:
+                // Rien
         }
     }
 }

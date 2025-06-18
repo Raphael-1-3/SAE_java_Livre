@@ -24,6 +24,47 @@ public class VueVendeur extends Pane {
     private LivreExpress app;
     private ActionBD modele;
     private Vendeur vendeur;
+
+    public VueVendeur(LivreExpress app, ActionBD modele, Vendeur vendeur) {
+        super();
+        super.setStyle("-fx-background-color : #d4d5d5");
+        this.app = app;
+        this.modele = modele;
+        this.vendeur = vendeur;
+        Button boutonQuitter = new Button("Quitter");
+        VBox titre = createTitre(boutonQuitter);
+        BorderPane resultat = createResultat();
+
+      
+        resultat.setLayoutX((1200 - 500) / 2);
+        resultat.setLayoutY((800 - 340) / 2);
+
+        ComboBox<String> menuCombo = new ComboBox<>();
+        menuCombo.getItems().addAll(
+                "Ajouter un livre",
+                "Modifier le stock",
+                "Regarde dispo",
+                "Commande pour client",
+                "Transferer un Livre",
+                "Obtenir facture"
+        );
+        menuCombo.setPromptText("☰ Menu Vendeur");
+        menuCombo.setStyle("-fx-background-radius: 20; -fx-border-color: #df9d53; -fx-border-radius: 20;");
+        menuCombo.setLayoutX(10);
+        menuCombo.setLayoutY(170);
+        menuCombo.setPrefWidth(200);
+
+        
+        ControleurVendeur controleur = new ControleurVendeur(resultat, this);
+
+        menuCombo.setOnAction(controleur);
+
+        boutonQuitter.setOnAction(e -> Platform.exit());
+
+        super.getChildren().addAll(titre, menuCombo, resultat);
+    }
+
+    
     public VBox createTitre(Button boutonQuitter) {
         VBox vb = new VBox();
         HBox hb = new HBox();
@@ -253,42 +294,5 @@ public class VueVendeur extends Pane {
 
 
     
-    public VueVendeur(LivreExpress app, ActionBD modele, Vendeur vendeur) {
-        super();
-        super.setStyle("-fx-background-color : #d4d5d5");
-        this.app = app;
-        this.modele = modele;
-        this.vendeur = vendeur;
-        Button boutonQuitter = new Button("Quitter");
-        VBox titre = createTitre(boutonQuitter);
-        BorderPane resultat = createResultat();
-
-      
-        resultat.setLayoutX((1200 - 500) / 2);
-        resultat.setLayoutY((800 - 340) / 2);
-
-        ComboBox<String> menuCombo = new ComboBox<>();
-        menuCombo.getItems().addAll(
-                "Ajouter un livre",
-                "Modifier le stock",
-                "Regarde dispo",
-                "Commande pour client",
-                "Transferer un Livre",
-                "Obtenir facture"
-        );
-        menuCombo.setPromptText("☰ Menu Vendeur");
-        menuCombo.setStyle("-fx-background-radius: 20; -fx-border-color: #df9d53; -fx-border-radius: 20;");
-        menuCombo.setLayoutX(10);
-        menuCombo.setLayoutY(170);
-        menuCombo.setPrefWidth(200);
-
-        
-        ControleurVendeur controleur = new ControleurVendeur(resultat, this);
-
-        menuCombo.setOnAction(controleur);
-
-        boutonQuitter.setOnAction(e -> Platform.exit());
-
-        super.getChildren().addAll(titre, menuCombo, resultat);
-    }
+    
 }
