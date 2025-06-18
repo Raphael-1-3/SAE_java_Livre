@@ -41,15 +41,16 @@ public class controleurSelectionClient implements EventHandler<ActionEvent>
 
     public void handle(ActionEvent event) 
     {
+        this.app.getVueClient().reset();
         try 
         {
             VueClient vc = this.app.getVueClient(); 
             String filtre = vc.getSelectionRecherche().getValue();
             String mag = vc.getSelectionMagasin().getValue();
             Magasin magasin = this.modele.magAPartirNom(mag);
-            String recherche = vc.getScheachbar().getText();
+            String recherche = vc.getbarRecherche().getText();
 
-            if (filtre.equals(null) || mag.equals(null)) this.app.getVueConnexion().popUpChampsVides();
+            if (filtre.equals(null) || mag.equals(null) || filtre.equals("") || mag.equals("")) this.app.getVueConnexion().popUpChampsVides().showAndWait();
             else 
             {
             
@@ -62,7 +63,7 @@ public class controleurSelectionClient implements EventHandler<ActionEvent>
                     case "Rechercher par auteur":
                         List<Auteur> tousAuteurs = this.modele.rechercheAuteurApproximative(recherche);
                         List<Auteur> auteursDansMag = this.modele.getAuteursDansMagasin(magasin);
-                        if (tousAuteurs == null) {
+                        if (tousAuteurs.equals(new ArrayList<>())) {
                             vc.centerAfficheAuteur(auteursDansMag);
                         } else {
                             List<Auteur> afficheListeAuteurs = new ArrayList<>(tousAuteurs);
@@ -74,7 +75,7 @@ public class controleurSelectionClient implements EventHandler<ActionEvent>
                     case "Rechercher par classification":
                         List<Classification> toutesClassifications = this.modele.cherhcherClassificationApproximative(recherche);
                         List<Classification> classificationsDansMag = this.modele.getClassificationsDansMagasin(magasin);
-                        if (toutesClassifications == null) {
+                        if (toutesClassifications.equals(new ArrayList<>())) {
                             vc.centerAfficheClassification(classificationsDansMag);
                         } else {
                             List<Classification> afficheListeClassifications = new ArrayList<>(toutesClassifications);
@@ -87,7 +88,7 @@ public class controleurSelectionClient implements EventHandler<ActionEvent>
                     case "Rechercher par éditeur":
                         List<Editeur> tousEditeurs = this.modele.cherhcherEditeurApproximative(recherche);
                         List<Editeur> editeursDansMag = this.modele.getEditeursDansMagasin(magasin);
-                        if (tousEditeurs == null) {
+                        if (tousEditeurs.equals(new ArrayList<>())) {
                             vc.centerAfficheEditeur(editeursDansMag);
                         } else {
                             List<Editeur> afficheListeEditeurs = new ArrayList<>(tousEditeurs);
