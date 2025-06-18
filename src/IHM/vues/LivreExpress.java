@@ -69,6 +69,8 @@ public class LivreExpress extends Application {
         this.scene = new Scene(this.root);
         stage.setTitle("LivreExpress");
         stage.setScene(scene);
+        Image logo = new Image("file:./img/logo.jpg");
+        stage.getIcons().add(logo);
         this.root.setPrefSize(1300, 700);
         this.root.setStyle("-fx-background-color : #d4d5d5;");
         scene.getStylesheets().add("file:./src/IHM/styles/globalCSS.css");
