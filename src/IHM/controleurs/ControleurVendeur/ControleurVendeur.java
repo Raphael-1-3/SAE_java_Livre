@@ -8,8 +8,8 @@ import javafx.scene.layout.BorderPane;
 
 public class ControleurVendeur implements EventHandler<ActionEvent> {
 
-    private BorderPane resultat;
-    private VueVendeur vue;
+    private final BorderPane resultat;
+    private final VueVendeur vue;
 
     public ControleurVendeur(BorderPane resultat, VueVendeur vue) {
         this.resultat = resultat;
@@ -26,22 +26,23 @@ public class ControleurVendeur implements EventHandler<ActionEvent> {
                 vue.afficherFormulaireAjoutLivre(resultat);
                 break;
             case "Modifier le stock":
-                System.out.println("Modifier le stock");
+                vue.afficherRechercheParMagasin(resultat);
                 break;
             case "Regarde dispo":
-                System.out.println("Regarde dispo");
+                vue.afficherRechercheNomMagasinSeul(resultat);
                 break;
             case "Commande pour client":
-                System.out.println("Commande pour client");
+                System.out.println("Commande pour client (à implémenter)");
                 break;
             case "Transferer un Livre":
-                System.out.println("Transferer un Livre");
+                System.out.println("Transferer un Livre (à implémenter)");
                 break;
             case "Obtenir facture":
-                System.out.println("Obtenir facture");
+                System.out.println("Obtenir facture (à implémenter)");
                 break;
             default:
                 System.out.println("Action inconnue : " + choix);
         }
     }
 }
+

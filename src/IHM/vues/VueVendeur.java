@@ -1,6 +1,6 @@
 package IHM.vues;
 
-import IHM.controleurs.ControleurVendeur.*;
+import IHM.controleurs.ControleurVendeur.ControleurVendeur;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.geometry.Insets;
@@ -59,7 +59,6 @@ public class VueVendeur extends Application {
         return resultat;
     }
 
-    // Affiche le formulaire d'ajout de livre
     public void afficherFormulaireAjoutLivre(BorderPane resultat) {
         VBox formulaire = new VBox(10);
         formulaire.setPadding(new Insets(20));
@@ -81,7 +80,6 @@ public class VueVendeur extends Application {
         champPrix.setPromptText("Prix");
 
         Button boutonValider = new Button("Valider");
-       
         boutonValider.setOnAction(e -> {
             Alert alert = new Alert(Alert.AlertType.INFORMATION, "Formulaire soumis (sans BD) !");
             alert.showAndWait();
@@ -91,10 +89,88 @@ public class VueVendeur extends Application {
         resultat.setCenter(formulaire);
     }
 
-   
+    public void afficherRechercheParMagasin(BorderPane resultat) {
+        VBox vbox = new VBox(15);
+        vbox.setPadding(new Insets(20));
+
+        Label labelMag = new Label("Entrer le nom du magasin :");
+        TextField champMagasin = new TextField();
+        champMagasin.setPromptText("Nom du magasin");
+
+        Button validerMag = new Button("Valider");
+
+        vbox.getChildren().addAll(labelMag, champMagasin, validerMag);
+        resultat.setCenter(vbox);
+
+        validerMag.setOnAction(e -> {
+            String nomMagasin = champMagasin.getText().trim();
+            if (!nomMagasin.isEmpty()) {
+                afficherRechercheLivre(resultat, nomMagasin);
+            } else {
+                Alert alert = new Alert(Alert.AlertType.WARNING, "Veuillez entrer un nom de magasin.");
+                alert.showAndWait();
+            }
+        });
+    }
+
+    public void afficherRechercheLivre(BorderPane resultat, String magasin) {
+        VBox vbox = new VBox(15);
+        vbox.setPadding(new Insets(20));
+
+        Label labelLivre = new Label("Rechercher un livre dans : " + magasin);
+        TextField champRechercheLivre = new TextField();
+        champRechercheLivre.setPromptText("Nom du livre");
+
+        Button boutonRecherche = new Button("Rechercher");
+
+        boutonRecherche.setOnAction(e -> {
+            String livre = champRechercheLivre.getText().trim();
+            if (!livre.isEmpty()) {
+                Alert alert = new Alert(Alert.AlertType.INFORMATION,
+                        "Recherche du livre \"" + livre + "\" dans le magasin \"" + magasin + "\" (à connecter au modèle)");
+                alert.showAndWait();
+            } else {
+                Alert alert = new Alert(Alert.AlertType.WARNING, "Veuillez entrer un nom de livre.");
+                alert.showAndWait();
+            }
+        });
+
+        vbox.getChildren().addAll(labelLivre, champRechercheLivre, boutonRecherche);
+        resultat.setCenter(vbox);
+    }
+
+    
+
     public void clearResultat(BorderPane resultat) {
         resultat.setCenter(null);
     }
+
+    public void afficherRechercheNomMagasinSeul(BorderPane resultat) {
+    VBox vbox = new VBox(15);
+    vbox.setPadding(new Insets(20));
+
+    Label labelMag = new Label("Entrer le nom du magasin pour voir la disponibilité :");
+    TextField champMagasin = new TextField();
+    champMagasin.setPromptText("Nom du magasin");
+
+    Button boutonValider = new Button("Valider");
+
+    boutonValider.setOnAction(e -> {
+        String nomMagasin = champMagasin.getText().trim();
+        if (!nomMagasin.isEmpty()) {
+           
+            Alert alert = new Alert(Alert.AlertType.INFORMATION, "Magasin recherché : " + nomMagasin + " (à connecter à la BD)");
+            alert.showAndWait();
+        } else {
+            Alert alert = new Alert(Alert.AlertType.WARNING, "Veuillez entrer un nom de magasin.");
+            alert.showAndWait();
+        }
+    });
+
+    vbox.getChildren().addAll(labelMag, champMagasin, boutonValider);
+    resultat.setCenter(vbox);
+    }
+
 
     @Override
     public void start(Stage primaryStage) {
@@ -118,18 +194,8 @@ public class VueVendeur extends Application {
         menuCombo.setLayoutY(170);
         menuCombo.setPrefWidth(200);
 
-   
-        menuCombo.setOnAction(e -> {
-            String choix = menuCombo.getValue();
-            switch (choix) {
-                case "Ajouter un livre":
-                    afficherFormulaireAjoutLivre(resultat);
-                    break;
-                default:
-                    clearResultat(resultat);
-                    break;
-            }
-        });
+        ControleurVendeur controleur = new ControleurVendeur(resultat, this);
+        menuCombo.setOnAction(controleur);
 
         boutonquitter.setOnAction(e -> Platform.exit());
 
