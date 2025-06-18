@@ -94,10 +94,12 @@ public class VueClient extends BorderPane
         this.box2.setStyle("-fx-background-radius : 15px;" + 
         "-fx-background-color : #f9f9f9;" + 
         "-fx-background : #f9f9f9;" + 
-        "-fx-border-width : 0 2px 0 2px;" + 
+        "-fx-border-width : 0 0 0 2px;" + 
         "-fx-border-color : #df9f53");
         this.box3.setStyle("-fx-background-color: #f9f9f9;" + 
-        "-fx-background-radius : 15px;" + 
+        "-fx-background-radius : 15px;" +
+        "-fx-border-width : 0 0 0 2px;" +
+        "-fx-border-color : #df9f53;" + 
         "-fx-background : #f9f9f9;");
         this.contenantRLIL.setPrefSize(1000, 1000);
         this.contenantRLIL.getChildren().addAll(this.box1, this.box2, this.box3);
@@ -345,13 +347,17 @@ public class VueClient extends BorderPane
     {
         this.box3.getChildren().clear();
         VBox infoBox = new VBox(10);
+        infoBox.setPadding(new Insets(0, 0, 160, 0));
         if (livre == null) {
             infoBox.getChildren().add(new Text("Aucune information à afficher."));
         } else {
             try 
             {
                 Label titre = new Label("Titre : " + livre.getTitre());
+                titre.setStyle("-fx-font-weight : bold;");
+                titre.setFont(new Font(20));
                 Label prix = new Label("Prix : " + livre.getPrix() + " €");
+                prix.setFont(new Font(20));
 
                 List<Auteur> auteurs = this.modele.getAuteurParIdLivre(livre.getISBN());
                 StringBuilder auteursStr = new StringBuilder("Auteurs : ");
@@ -385,16 +391,20 @@ public class VueClient extends BorderPane
                 infoBox.getChildren().add(new Text("Erreur lors de l'affichage des informations du livre."));
             }
         }
-        this.box3.getChildren().add(infoBox);
-        this.boutouAjouterPanier();
+        VBox vb = new VBox();
+        vb.setPadding(new Insets(20));
+        vb.getChildren().addAll(infoBox, this.boutouAjouterPanier());
+        this.box3.getChildren().addAll(vb);
+        //this.boutouAjouterPanier();
     }
 
-    public void boutouAjouterPanier()
+    public Button boutouAjouterPanier()
     {
-        Button ajtpanier =new Button("ajouter ce livre au panier");
+        Button ajtpanier = new Button("ajouter ce livre au panier");
         ajtpanier.setOnAction(new ControleurAjouterPanier(this.modele, this.LEApp));
         ajtpanier.setPadding(new Insets(10, 10, 10, 10));
-        this.box3.getChildren().add(ajtpanier);
+        //this.box3.getChildren().add(ajtpanier);
+        return ajtpanier;
     } 
 
     public void centerAfficheEditeur(List<Editeur> editeurs) {
@@ -484,15 +494,25 @@ public class VueClient extends BorderPane
         }
         ScrollPane sp = new ScrollPane(panierBox);
         VBox droite = new VBox();
+        droite.setPadding(new Insets(20));
+
+        HBox boutons = new HBox(60);
+        boutons.setPadding(new Insets(300, 0, 0, 0));
 
         Integer nbArticle = this.client.getNbArticles();
         Double prix = this.client.getPrixTotal();
 
+        Label nombreArticles = new Label("Nombre total d'articles : " + nbArticle);
+        nombreArticles.setFont(new Font(20));
+        Label prixTotal = new Label("Prix total du panier : " + prix + "€");
+        prixTotal.setFont(new Font(20));
 
-        Button suppr = new Button("supprimer livre");
+        Button suppr = new Button("Supprimer livre");
         Button commander = new Button("Commander le panier");
 
-        droite.getChildren().addAll(new Button("supprimer livre"),new Button("Commader le panier"));
+        boutons.getChildren().addAll(suppr, commander);
+
+        droite.getChildren().addAll(nombreArticles, prixTotal, boutons);
         this.box3.getChildren().clear();
         this.box2.getChildren().add(droite);
         this.box1.getChildren().add(sp);
