@@ -386,14 +386,7 @@ public class VueClient extends BorderPane
         this.box1.getChildren().add(sp);
     }
 
-    public void reset()
-    {
-        this.box3.getChildren().clear();
-        this.box1.getChildren().clear();
-        this.box2.getChildren().clear();
-        this.barRecherche.clear();
-        this.TitrePage.getChildren().clear();
-    }
+    
 
     public void consulterPanier()
     {
@@ -431,4 +424,19 @@ public class VueClient extends BorderPane
         this.contenantRLIL.getChildren().clear();
         this.contenantRLIL.getChildren().addAll(this.box1, this.box3, this.box2);
     }
+
+    public void reset()
+    {
+        this.box3.getChildren().clear();
+        this.box1.getChildren().clear();
+        this.box2.getChildren().clear();
+        this.barRecherche.clear();
+        this.TitrePage.getChildren().clear();
+    }
+
+    public void majCatalogue()
+    {}
+
+    public void majPanier()
+    {}
 }
