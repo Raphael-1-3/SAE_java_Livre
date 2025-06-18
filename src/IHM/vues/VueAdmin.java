@@ -1,10 +1,10 @@
 package IHM.vues;
 
+import java.sql.SQLException;
+
 import javax.swing.Action;
 
 import IHM.controleurs.ControleurAdmin.*;
-
-import IHM.controleurs.ControleurAdmin.ControleurChangerPage;
 
 import javafx.geometry.Insets;
 
@@ -32,6 +32,7 @@ import javafx.scene.text.Font;
 
 import main.BD.ActionBD;
 import main.app.Administrateur;
+import main.app.Magasin;
 
 public class VueAdmin extends StackPane 
 {
@@ -675,10 +676,6 @@ public void ajouterLivre() {
 
     grid.add(tfEditeur, 1, 4);
 
-
-
-
-
     Label lblPrix = new Label("Prix :");
 
 
@@ -692,10 +689,6 @@ public void ajouterLivre() {
 
 
     grid.add(tfPrix, 1, 5);
-
-
-
-
 
     Label lblNbPages = new Label("Nombre de pages :");
 
@@ -729,36 +722,18 @@ public void ajouterLivre() {
 
     grid.add(dpDate, 1, 7);
 
-
-
-
-
     Button btnAjouter = new Button("Ajouter");
-
-
     btnAjouter.setPrefWidth(120);
-
-
     btnAjouter.setPrefHeight(40);
-
-
     HBox boutonBox = new HBox(btnAjouter);
-
 
     boutonBox.setAlignment(Pos.BOTTOM_RIGHT);
 
-
     boutonBox.setPadding(new Insets(30, 0, 0, 0));
-
 
     grid.add(boutonBox, 1, 8);
 
-
-
-
-
     this.carre.setCenter(grid);
-
 
     this.getChildren().setAll(carre, top);
 
@@ -787,13 +762,7 @@ public void regarderDisponibilites() {
     grid.setVgap(15);
 
 
-
-
-
     String labelStyle = "-fx-text-fill: white; -fx-font-size: 16px;";
-
-
-
 
 
     Label titreForm = new Label("Regarder les disponibilités");
@@ -806,9 +775,6 @@ public void regarderDisponibilites() {
 
 
     grid.add(titreForm, 0, 0, 2, 1);
-
-
-
 
 
     Label lblLivre = new Label("Titre du livre :");
@@ -844,9 +810,6 @@ public void regarderDisponibilites() {
     grid.add(tfMagasin, 1, 2);
 
 
-
-
-
     Button btnRechercher = new Button("Rechercher");
 
 
@@ -866,10 +829,6 @@ public void regarderDisponibilites() {
 
 
     grid.add(boutonBox, 1, 3);
-
-
-
-
 
     this.carre.setCenter(grid);
 
@@ -907,9 +866,6 @@ public void passerCommandeClient() {
     String labelStyle = "-fx-text-fill: white; -fx-font-size: 16px;";
 
 
-
-
-
     Label titreForm = new Label("Passer une commande pour un Client");
 
 
@@ -920,10 +876,6 @@ public void passerCommandeClient() {
 
 
     grid.add(titreForm, 0, 0, 2, 1);
-
-
-
-
 
     Label lblClient = new Label("Client :");
 
@@ -939,21 +891,13 @@ public void passerCommandeClient() {
 
     grid.add(tfClient, 1, 1);
 
-
-
-
-
     Label lblLivre = new Label("Livre :");
-
 
     lblLivre.setStyle(labelStyle);
 
-
     TextField tfLivre = new TextField();
 
-
     grid.add(lblLivre, 0, 2);
-
 
     grid.add(tfLivre, 1, 2);
 
@@ -1033,14 +977,7 @@ public void transfererLivre() {
     grid.setVgap(15);
 
 
-
-
-
     String labelStyle = "-fx-text-fill: white; -fx-font-size: 16px;";
-
-
-
-
 
     Label titreForm = new Label("Transférer un livre");
 
@@ -1052,9 +989,6 @@ public void transfererLivre() {
 
 
     grid.add(titreForm, 0, 0, 2, 1);
-
-
-
 
 
     Label lblISBN = new Label("ISBN :");
@@ -1072,9 +1006,6 @@ public void transfererLivre() {
     grid.add(tfISBN, 1, 1);
 
 
-
-
-
     Label lblMagasinDep = new Label("Magasin de départ :");
 
 
@@ -1087,9 +1018,7 @@ public void transfererLivre() {
     grid.add(lblMagasinDep, 0, 2);
 
 
-    grid.add(tfMagDep, 1, 2);
-
-
+    grid.add(tfMagDep, 1,2);
 
 
 
@@ -1124,9 +1053,6 @@ public void transfererLivre() {
 
 
     grid.add(tfQte, 1, 4);
-
-
-
 
 
     Button btnTransferer = new Button("Transférer");
@@ -1182,19 +1108,9 @@ public void obtenirFactures() {
 
     grid.setVgap(15);
 
-
-
-
-
     String labelStyle = "-fx-text-fill: white; -fx-font-size: 16px;";
 
-
-
-
-
     Label titreForm = new Label("Obtenir les factures");
-
-
     titreForm.setStyle("-fx-text-fill: white; -fx-font-size: 28px; -fx-font-weight: bold;");
 
 
@@ -1202,9 +1118,6 @@ public void obtenirFactures() {
 
 
     grid.add(titreForm, 0, 0, 2, 1);
-
-
-
 
 
     Label lblClient = new Label("Client :");
@@ -1240,9 +1153,6 @@ public void obtenirFactures() {
     grid.add(tfMagasin, 1, 2);
 
 
-
-
-
     Label lblMois = new Label("Mois :");
 
 
@@ -1258,9 +1168,6 @@ public void obtenirFactures() {
     grid.add(tfMois, 1, 3);
 
 
-
-
-
     Label lblAnnee = new Label("Année :");
 
 
@@ -1274,10 +1181,6 @@ public void obtenirFactures() {
 
 
     grid.add(tfAnnee, 1, 4);
-
-
-
-
 
     Button btnObtenir = new Button("Obtenir");
 
@@ -1300,9 +1203,6 @@ public void obtenirFactures() {
     grid.add(boutonBox, 1, 5);
 
 
-
-
-
     this.carre.setCenter(grid);
 
 
@@ -1315,20 +1215,12 @@ public void obtenirFactures() {
 
 
 
-public void choisirMagasin() {
-
-
+public void choisirMagasin() throws SQLException {
     this.carre = createCadre();
-
 
     VBox vbox = new VBox(20);
 
-
     vbox.setAlignment(Pos.CENTER);
-
-
-
-
 
     Label titre = new Label("Choisir un magasin");
 
@@ -1336,21 +1228,13 @@ public void choisirMagasin() {
     titre.setStyle("-fx-text-fill: white; -fx-font-size: 28px; -fx-font-weight: bold;");
 
 
-
-
-
     ComboBox<String> cbMagasins = new ComboBox<>();
 
 
     cbMagasins.setPromptText("Sélectionner un magasin");
-
-
-    // Remplis la ComboBox avec la liste des magasins depuis la BD si besoin
-
-
-
-
-
+    for (Magasin magasin : modele.getListMagasin()) {
+        cbMagasins.getItems().add(magasin.getNomMag());
+    }
     Button btnChoisir = new Button("Choisir");
 
 

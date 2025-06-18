@@ -38,7 +38,7 @@ public class ControleurCreerVendeur implements EventHandler<ActionEvent> {
             alert.setContentText("Vendeur créé avec succès !");
             alert.showAndWait();
 
-            // Optionnel : vider les champs après création
+            // vider les champs après création
             vue.getTfEmail().clear();
             vue.getTfNom().clear();
             vue.getTfPrenom().clear();

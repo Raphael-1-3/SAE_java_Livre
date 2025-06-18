@@ -2,13 +2,16 @@ package IHM.controleurs.ControleurAdmin;
 import javafx.event.EventHandler;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.control.Button;
+
+import java.sql.SQLException;
+
 import IHM.vues.VueAdmin;
 import main.BD.ActionBD;
 
 public class ControleurChangerPage implements EventHandler<MouseEvent> 
 {
     private ActionBD modele;
-    private VueAdmin vue; // On utilise vueAdmin ici
+    private VueAdmin vue;
 
     public ControleurChangerPage(ActionBD m, VueAdmin vue){
         this.modele = m;
@@ -48,7 +51,11 @@ public class ControleurChangerPage implements EventHandler<MouseEvent>
                     vue.obtenirFactures();
                     break;
                 case "Choisir Un magasin":
-                    vue.choisirMagasin();
+                    try {
+                        vue.choisirMagasin();
+                    } catch (SQLException e) {
+                        e.printStackTrace();
+                    }
                     break;
                 default:
                     // Rien
