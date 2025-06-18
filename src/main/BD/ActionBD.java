@@ -559,7 +559,34 @@ public class ActionBD{
      * @return
      * @throws SQLException
      */
-    public List<Livre> cherhcherLivreApproximative(String nomApproximativeLivre, Magasin mag) throws SQLException
+    public List<Livre> cherhcherLivreApproximative(String nomApproximativeLivre) throws SQLException
+    {
+        PreparedStatement ps = this.connexion.prepareStatement("SELECT isbn, titre, nbpages, datepubli, prix FROM LIVRE natural join POSSEDER  WHERE LOWER(titre) LIKE ?");
+        ps.setString(1, "%" + nomApproximativeLivre.toLowerCase() + "%");
+        ResultSet rs = ps.executeQuery();
+        List<Livre> livres = new ArrayList<>();
+        while (rs.next()) {
+            Livre l = new Livre(
+            rs.getLong("isbn"),
+            rs.getString("titre"),
+            rs.getInt("nbpages"),
+            rs.getInt("datepubli"),
+            rs.getDouble("prix")
+            );
+            livres.add(l);
+        }
+        rs.close();
+        ps.close();
+        return livres;
+    }
+
+    /**
+     * Permet de renvoyer une liste de livre a partir d un nom approximatife 
+     * @param nomApproximativeLivre
+     * @return
+     * @throws SQLException
+     */
+    public List<Livre> cherhcherLivreApproximativeParMag(String nomApproximativeLivre, Magasin mag) throws SQLException
     {
         PreparedStatement ps = this.connexion.prepareStatement("SELECT isbn, titre, nbpages, datepubli, prix FROM LIVRE natural join POSSEDER natural join MAGASIN WHERE LOWER(titre) LIKE ? and idmag = ?");
         ps.setString(1, "%" + nomApproximativeLivre.toLowerCase() + "%");
@@ -611,6 +638,247 @@ public class ActionBD{
 
     // ---------------------------- non classe pour l instant -------------------------------
 
+    // ------------------- methode ajouter pendant la semaine IHM ---------------------------
+    /**
+     * Récupère la liste des auteurs d'un livre à partir de son ISBN.
+     * @param isbn L'ISBN du livre
+     * @return Liste des auteurs du livre
+     * @throws SQLException
+     */
+    public List<Auteur> getAuteurParIdLivre(long isbn) throws SQLException {
+        List<Auteur> auteurs = new ArrayList<>();
+        PreparedStatement ps = this.connexion.prepareStatement(
+            "SELECT AUTEUR.idauteur, nomauteur, anneenais, anneedeces " +
+            "FROM AUTEUR " +
+            "NATURAL JOIN ECRIRE " +
+            "WHERE isbn = ?"
+        );
+        ps.setLong(1, isbn);
+        ResultSet rs = ps.executeQuery();
+        while (rs.next()) {
+            auteurs.add(new Auteur(
+                rs.getString("idauteur"),
+                rs.getString("nomauteur"),
+                rs.getInt("anneenais"),
+                rs.getInt("anneedeces")
+            ));
+        }
+        rs.close();
+        ps.close();
+        return auteurs;
+    }
+
+    /**
+     * Récupère la liste des classifications d'un livre à partir de son ISBN.
+     * @param isbn L'ISBN du livre
+     * @return Liste des classifications du livre
+     * @throws SQLException
+     */
+    public List<Classification> getClassificationParIdLivre(long isbn) throws SQLException {
+        List<Classification> classifications = new ArrayList<>();
+        PreparedStatement ps = this.connexion.prepareStatement(
+            "SELECT CLASSIFICATION.iddewey, nomclass " +
+            "FROM CLASSIFICATION " +
+            "NATURAL JOIN THEMES " +
+            "WHERE isbn = ?"
+        );
+        ps.setLong(1, isbn);
+        ResultSet rs = ps.executeQuery();
+        while (rs.next()) {
+            classifications.add(new Classification(
+                rs.getInt("iddewey"),
+                rs.getString("nomclass")
+            ));
+        }
+        rs.close();
+        ps.close();
+        return classifications;
+    }
+
+    /**
+     * Récupère la liste des éditeurs d'un livre à partir de son ISBN.
+     * @param isbn L'ISBN du livre
+     * @return Liste des éditeurs du livre
+     * @throws SQLException
+     */
+    public List<Editeur> getEditeurParIdLivre(long isbn) throws SQLException {
+        List<Editeur> editeurs = new ArrayList<>();
+        PreparedStatement ps = this.connexion.prepareStatement(
+            "SELECT EDITEUR.idedit, nomedit " +
+            "FROM EDITEUR " +
+            "NATURAL JOIN EDITER " +
+            "WHERE isbn = ?"
+        );
+        ps.setLong(1, isbn);
+        ResultSet rs = ps.executeQuery();
+        while (rs.next()) {
+            editeurs.add(new Editeur(
+                rs.getInt("idedit"),
+                rs.getString("nomedit")
+            ));
+        }
+        rs.close();
+        ps.close();
+        return editeurs;
+    }
+
+    public Classification geClassificationParNom(String nomclass) throws SQLException
+    {
+        Classification classification = null;
+        PreparedStatement ps = this.connexion.prepareStatement(
+                "SELECT iddewey, nomclass FROM CLASSIFICATION WHERE LOWER(nomclass) LIKE ?"
+        );
+        ps.setString(1, "%" + nomclass.toLowerCase() + "%");
+        ResultSet rs = ps.executeQuery();
+        if (rs.next()) {
+                classification =new Classification(
+                    rs.getInt("iddewey"),
+                rs.getString("nomclass")
+            );
+    }
+        rs.close();
+        ps.close();
+        
+        return classification;
+    }
+
+    /**
+     * Permet de récupérer un auteur à partir de son nom exact.
+     * @param nomAuteur Le nom exact de l'auteur à rechercher.
+     * @return L'objet Auteur correspondant, ou null si non trouvé.
+     * @throws SQLException
+     */
+    public Auteur getAuteurAPartirDeNom(String nomAuteur) throws SQLException {
+        PreparedStatement ps = this.connexion.prepareStatement(
+            "SELECT idauteur, nomauteur, anneenais, anneedeces FROM AUTEUR WHERE nomauteur = ?"
+        );
+        ps.setString(1, nomAuteur);
+        ResultSet rs = ps.executeQuery();
+        Auteur auteur = null;
+        if (rs.next()) {
+            auteur = new Auteur(
+                rs.getString("idauteur"),
+                rs.getString("nomauteur"),
+                rs.getInt("anneenais"),
+                rs.getInt("anneedeces")
+            );
+        }
+        rs.close();
+        ps.close();
+        return auteur;
+    }
+
+
+    /**
+     * Retourne la liste des auteurs ayant au moins un livre dans le magasin donné
+     * @param magasin Le magasin concerné
+     * @return Liste des auteurs présents dans le magasin
+     * @throws SQLException
+     */
+    public List<Auteur> getAuteursDansMagasin(Magasin magasin) throws SQLException {
+        List<Auteur> auteurs = new ArrayList<>();
+        PreparedStatement ps = this.connexion.prepareStatement(
+            "SELECT DISTINCT AUTEUR.idauteur, nomauteur, anneenais, anneedeces " +
+            "FROM MAGASIN " +
+            "NATURAL JOIN POSSEDER " +
+            "NATURAL JOIN LIVRE " +
+            "NATURAL JOIN ECRIRE " +
+            "NATURAL JOIN AUTEUR " +
+            "WHERE idmag = ?"
+        );
+        ps.setInt(1, magasin.getIdmag());
+        ResultSet rs = ps.executeQuery();
+        while (rs.next()) {
+            auteurs.add(new Auteur(
+                rs.getString("idauteur"),
+                rs.getString("nomauteur"),
+                rs.getInt("anneenais"),
+                rs.getInt("anneedeces")
+            ));
+        }
+        rs.close();
+        ps.close();
+        return auteurs;
+    }
+
+    /**
+     * Retourne la liste des classifications présentes dans un magasin donné
+     * @param magasin Le magasin concerné
+     * @return Liste des classifications présentes dans le magasin
+     * @throws SQLException
+     */
+    public List<Classification> getClassificationsDansMagasin(Magasin magasin) throws SQLException {
+        List<Classification> classifications = new ArrayList<>();
+        PreparedStatement ps = this.connexion.prepareStatement(
+            "SELECT DISTINCT CLASSIFICATION.iddewey, nomclass " +
+            "FROM MAGASIN " +
+            "NATURAL JOIN POSSEDER " +
+            "NATURAL JOIN LIVRE " +
+            "NATURAL JOIN THEMES " +
+            "NATURAL JOIN CLASSIFICATION " +
+            "WHERE idmag = ?"
+        );
+        ps.setInt(1, magasin.getIdmag());
+        ResultSet rs = ps.executeQuery();
+        while (rs.next()) {
+            classifications.add(new Classification(
+                rs.getInt("iddewey"),
+                rs.getString("nomclass")
+            ));
+        }
+        rs.close();
+        ps.close();
+        return classifications;
+    }
+
+    /**
+     * Retourne la liste des éditeurs présents dans un magasin donné
+     * @param magasin Le magasin concerné
+     * @return Liste des éditeurs présents dans le magasin
+     * @throws SQLException
+     */
+    public List<Editeur> getEditeursDansMagasin(Magasin magasin) throws SQLException {
+        List<Editeur> editeurs = new ArrayList<>();
+        PreparedStatement ps = this.connexion.prepareStatement("SELECT DISTINCT EDITEUR.idedit, nomedit FROM MAGASIN NATURAL JOIN POSSEDER NATURAL JOIN LIVRE NATURAL JOIN EDITER NATURAL JOIN EDITEUR WHERE idmag = ?");
+        ps.setInt(1, magasin.getIdmag());
+        ResultSet rs = ps.executeQuery();
+        while (rs.next()) {
+            editeurs.add(new Editeur(
+                rs.getInt("idedit"),
+                rs.getString("nomedit")
+            ));
+        }
+        rs.close();
+        ps.close();
+        return editeurs;
+    }
+
+    /**
+     * Permet de récupérer un éditeur à partir de son nom exact.
+     * @param nomEditeur Le nom exact de l'éditeur à rechercher.
+     * @return L'objet Editeur correspondant, ou null si non trouvé.
+     * @throws SQLException
+     */
+    public Editeur getEditeurAPartirDeNom(String nomEditeur) throws SQLException {
+        PreparedStatement ps = this.connexion.prepareStatement(
+            "SELECT idedit, nomedit FROM EDITEUR WHERE nomedit = ?"
+        );
+        ps.setString(1, nomEditeur);
+        ResultSet rs = ps.executeQuery();
+        Editeur editeur = null;
+        if (rs.next()) {
+            editeur = new Editeur(
+                rs.getInt("idedit"),
+                rs.getString("nomedit")
+            );
+        }
+        rs.close();
+        ps.close();
+        return editeur;
+    }
+
+
+    // ====================================== =============================================
 
     /**
      * Recupere tous les livres presents dans la base de donnees

@@ -1,4 +1,4 @@
-package IHM.controleurs;
+package IHM.controleurs.ControleurAcceuil;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
@@ -28,7 +28,7 @@ import java.util.EventListener;
 import java.util.List;
 
 import IHM.vues.LivreExpress;
-import IHM.vues.vueClient;
+import IHM.vues.VueClient;
 
 public class controleurConnexion implements EventHandler<ActionEvent> {
     public LivreExpress app;
@@ -57,8 +57,8 @@ public class controleurConnexion implements EventHandler<ActionEvent> {
                         {
                             case "Client":
                                 System.out.println("Bienvenue, client !");
-                                vueClient vc = new vueClient(this.app, (Client) user);
-                                this.app.getScene().setRoot(vc);
+                                this.app.setVueClient(new VueClient(this.app, (Client) user, modele));
+                                this.app.getScene().setRoot(this.app.getVueClient());
                                 break;
                             case "Vendeur":
                                 System.out.println("Bienvenue, vendeur !");
@@ -80,10 +80,8 @@ public class controleurConnexion implements EventHandler<ActionEvent> {
                 }
                 catch (PasDeTelUtilisateurException e)
                 {
-                    System.out.println("User existe pas");
+                    this.app.getVueConnexion().popUpUtilisateurExistePas().showAndWait();
                 }
-                break;
-            default:
                 break;
         }
     }
