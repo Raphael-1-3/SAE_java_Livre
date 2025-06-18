@@ -68,7 +68,7 @@ public class LivreExpress extends Application {
     @Override
     public void start(Stage stage) throws Exception{
         this.scene = new Scene(this.root);
-        vueAdmin vuead= new vueAdmin();
+        VueAdmin vuead= new VueAdmin();
         stage.setTitle("LivreExpress");
         stage.setScene(scene);
         Image logo = new Image("file:./img/logo.jpg");

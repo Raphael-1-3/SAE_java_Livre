@@ -11,7 +11,7 @@ import javafx.scene.shape.Line;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 
-public class vueAdmin extends StackPane {
+public class VueAdmin extends StackPane {
 
     // Boutons principaux
     private final Button boutonParametres = new Button();
@@ -28,7 +28,7 @@ public class vueAdmin extends StackPane {
     private TextField tfIdMag;
 
 
-    public vueAdmin() {
+    public VueAdmin() {
         this.carre = createCadre();
         this.top = createTop();
         boutonMaison.setGraphic(new ImageView("file:./img/deco.png"));

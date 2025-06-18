@@ -638,7 +638,7 @@ public class Client extends User {
         }
     }
 
-    public void choisirMagasin(ActionBD bd, Scanner scanner, Client client)
+    public void choisirMagasin(ActionBD bd, Scanner scanner, Client client) throws SQLException
     {
         List<Magasin> magasins = bd.getAllMagasins();
         if (magasins == null || magasins.isEmpty()) {
@@ -677,13 +677,6 @@ public class Client extends User {
         }
     }
 
-    /**
-     * A partir d une liste de livre et d un magasin, renvoie une liste en contenant que les livre disponible dans ce magasin
-     * @param tabL
-     * @param mag
-     * @return
-     */
-    public List<Livre> trieLivreEnMgasin(List<Livre> tabL, Magasin mag)
-    {}
+
 }
 
