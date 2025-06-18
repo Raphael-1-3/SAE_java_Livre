@@ -68,6 +68,7 @@ public class LivreExpress extends Application {
     @Override
     public void start(Stage stage) throws Exception{
         this.scene = new Scene(this.root);
+        vueAdmin vuead= new vueAdmin();
         stage.setTitle("LivreExpress");
         stage.setScene(scene);
         Image logo = new Image("file:./img/logo.jpg");
@@ -80,8 +81,15 @@ public class LivreExpress extends Application {
 
         vueCo.fenetreAccueil(root);
         //scene.setRoot(vueclient);
+        scene.setRoot(vuead);
+        stage.setScene(scene);
         stage.show();
         System.out.println("MARCHE");
+
+        
+
+
+
     }
 
     public VueConnexion getVueConnexion ()
