@@ -49,9 +49,9 @@ public class VueClient extends BorderPane
     private VBox centre;
     private HBox TitrePage;
     private HBox contenantRLIL;
-    private ScrollPane resultatRecherche2;
-    private VBox informationLivre;
-    private ScrollPane resultatRecherche1;
+    private VBox box1;
+    private VBox box2;
+    private VBox box3;
 
     /**
      * Instancie la fenetre liee au client
@@ -68,22 +68,19 @@ public class VueClient extends BorderPane
         this.selectionMagasin = new ComboBox<>();
         this.barRecherche = new TextField();
         this.contenantRLIL = new HBox();
-        this.resultatRecherche1 = new ScrollPane();
-        this.resultatRecherche1.setPrefSize(400, 400);
-        this.resultatRecherche2 = new ScrollPane();
-        this.resultatRecherche2.setPrefSize(400, 400);
-        this.informationLivre = new VBox();
-        this.informationLivre.setPrefSize(400, 400);
+        this.box1 = new VBox();
+        this.box1.setPrefSize(400, 400);
+        this.box2 = new VBox();
+        this.box2.setPrefSize(400, 400);
+        this.box3 = new VBox();
+        this.box3.setPrefSize(400, 400);
         this.centre = new VBox();
         this.TitrePage = new HBox();
         this.TitrePage.getChildren().add(titre);
         this.TitrePage.setPrefHeight(25);
         this.contenantRLIL.setPrefSize(1000, 1000);
         this.contenantRLIL.setStyle("-fx-background-color: blue;");
-        this.resultatRecherche2.setBackground(new Background(new BackgroundFill(Color.PINK, null, null)));
-        this.informationLivre.setStyle("-fx-background-color: green;");
-        this.resultatRecherche1.setStyle("-fx-background-color: orange;");
-        this.contenantRLIL.getChildren().addAll(this.resultatRecherche1, this.resultatRecherche2, this.informationLivre);
+        this.contenantRLIL.getChildren().addAll(this.box1, this.box2, this.box3);
         this.centre.getChildren().addAll(this.TitrePage, this.contenantRLIL);
         this.setCenter(this.centre);
         this.centerRecommandation(this.client);
@@ -264,7 +261,8 @@ public class VueClient extends BorderPane
         } catch (PasDHistoriqueException pdh) {
             livresBox.getChildren().add(new Text("Vous n'avez jamais rien commandé ou nous n'avons aucune recommandation à vous présenter"));
         }
-        this.resultatRecherche2.setContent(livresBox);
+        ScrollPane sp = new ScrollPane(livresBox);
+        this.box2.getChildren().add(sp);
     }
 
     /**
@@ -273,6 +271,7 @@ public class VueClient extends BorderPane
      */
     public void centerAfficherLivres(List<Livre> livres) 
     {
+        this.box2.getChildren().clear();
         VBox libresbox = new VBox();
         if (livres == null || livres.isEmpty()) {
             libresbox.getChildren().add(new Text("Aucun livre à afficher."));
@@ -284,43 +283,49 @@ public class VueClient extends BorderPane
                 libresbox.getChildren().add(affichageT);
             }
         }
-        this.resultatRecherche2.setContent(libresbox);
+        ScrollPane sp = new ScrollPane(libresbox);
+        this.box2.getChildren().add(sp);
     }
 
     public void afficheInfoLivre(Livre livre)
     {
-        this.informationLivre.getChildren().clear();
-        if (livre == null) this.informationLivre.getChildren().add(new Text("Aucune information à afficher."));
-        try 
-        {
-            Label titre = new Label("Titre : " + livre.getTitre());
-            Label prix = new Label("Prix : " + livre.getPrix() + " €");
+        this.box3.getChildren().clear();
+        VBox infoBox = new VBox(10);
+        if (livre == null) {
+            infoBox.getChildren().add(new Text("Aucune information à afficher."));
+        } else {
+            try 
+            {
+                Label titre = new Label("Titre : " + livre.getTitre());
+                Label prix = new Label("Prix : " + livre.getPrix() + " €");
 
-            List<Auteur> auteurs = this.modele.getAuteurParIdLivre(livre.getISBN());
-            StringBuilder auteursStr = new StringBuilder("Auteurs : ");
-            if (auteurs.isEmpty()) auteursStr.append("Aucun");
-            else for (Auteur a : auteurs) auteursStr.append(a.getNomAuteur());
+                List<Auteur> auteurs = this.modele.getAuteurParIdLivre(livre.getISBN());
+                StringBuilder auteursStr = new StringBuilder("Auteurs : ");
+                if (auteurs.isEmpty()) auteursStr.append("Aucun");
+                else for (Auteur a : auteurs) auteursStr.append(a.getNomAuteur());
 
-            Label auteursLabel = new Label(auteursStr.toString());
+                Label auteursLabel = new Label(auteursStr.toString());
 
-            List<Classification> classes = this.modele.getClassificationParIdLivre(livre.getISBN());
-            StringBuilder classStr = new StringBuilder("Classifications : ");
-            if (classes.isEmpty()) classStr.append("Aucune");
-            else for (Classification c : classes) classStr.append(c.getNomClass());
-            Label classLabel = new Label(classStr.toString());
+                List<Classification> classes = this.modele.getClassificationParIdLivre(livre.getISBN());
+                StringBuilder classStr = new StringBuilder("Classifications : ");
+                if (classes.isEmpty()) classStr.append("Aucune");
+                else for (Classification c : classes) classStr.append(c.getNomClass());
+                Label classLabel = new Label(classStr.toString());
 
-            List<Editeur> editeurs = this.modele.getEditeurParIdLivre(livre.getISBN());
-            StringBuilder editStr = new StringBuilder("Editeurs : ");
-            if (editeurs.isEmpty()) editStr.append("Aucun");
-            else for (Editeur e : editeurs) editStr.append(e.getNomEdit());
-            Label editLabel = new Label(editStr.toString());
+                List<Editeur> editeurs = this.modele.getEditeurParIdLivre(livre.getISBN());
+                StringBuilder editStr = new StringBuilder("Editeurs : ");
+                if (editeurs.isEmpty()) editStr.append("Aucun");
+                else for (Editeur e : editeurs) editStr.append(e.getNomEdit());
+                Label editLabel = new Label(editStr.toString());
 
-            this.informationLivre.getChildren().addAll(titre, prix, auteursLabel, classLabel, editLabel);
-        
-        } catch (Exception e) {
-            this.informationLivre.getChildren().clear();
-            this.informationLivre.getChildren().add(new Text("Erreur lors de l'affichage des informations du livre."));
+                infoBox.getChildren().addAll(titre, prix, auteursLabel, classLabel, editLabel);
+
+            } catch (Exception e) {
+                infoBox.getChildren().clear();
+                infoBox.getChildren().add(new Text("Erreur lors de l'affichage des informations du livre."));
+            }
         }
+        this.box3.getChildren().add(infoBox);
         this.boutouAjouterPanier();
     }
 
@@ -329,7 +334,7 @@ public class VueClient extends BorderPane
         Button ajtpanier =new Button("ajouter ce livre au panier");
         ajtpanier.setOnAction(new ControleurAjouterPanier(this.modele, this.LEApp));
         ajtpanier.setPadding(new Insets(10, 10, 10, 10));
-        this.informationLivre.getChildren().add(ajtpanier);
+        this.box3.getChildren().add(ajtpanier);
     } 
 
     public void centerAfficheEditeur(List<Editeur> editeurs) {
@@ -344,7 +349,8 @@ public class VueClient extends BorderPane
                 editeursBox.getChildren().add(affichageE);
             }
         }
-        this.resultatRecherche1.setContent(editeursBox);
+        ScrollPane sp = new ScrollPane(editeursBox);
+        this.box1.getChildren().add(sp);
     }
 
     public void centerAfficheClassification(List<Classification> classifications) {
@@ -359,8 +365,10 @@ public class VueClient extends BorderPane
                 classificationsBox.getChildren().add(affichageC);
             }
         }
-        this.resultatRecherche1.setContent(classificationsBox);
+        ScrollPane sp = new ScrollPane(classificationsBox);
+        this.box1.getChildren().add(sp);
     }
+    
 
     public void centerAfficheAuteur(List<Auteur> auteurs) {
         VBox auteursBox = new VBox();
@@ -374,14 +382,15 @@ public class VueClient extends BorderPane
                 auteursBox.getChildren().add(affichageA);
             }
         }
-        this.resultatRecherche1.setContent(auteursBox);
+        ScrollPane sp = new ScrollPane(auteursBox);
+        this.box1.getChildren().add(sp);
     }
 
     public void reset()
     {
-        this.informationLivre.getChildren().clear();
-        this.resultatRecherche1.setContent(null);
-        this.resultatRecherche2.setContent(null);
+        this.box3.getChildren().clear();
+        this.box1.getChildren().clear();
+        this.box2.getChildren().clear();
         this.barRecherche.clear();
         this.TitrePage.getChildren().clear();
     }
@@ -413,11 +422,13 @@ public class VueClient extends BorderPane
                 panierBox.getChildren().add(ligne);
             }
         }
-        this.resultatRecherche1.setContent(panierBox);
+        ScrollPane sp = new ScrollPane(panierBox);
         VBox boutons = new VBox();
         boutons.getChildren().addAll(new Button("supprimer livre"),new Button("Commader le panier"));
-        this.informationLivre.getChildren().clear();
+        this.box3.getChildren().clear();
+        this.box2.getChildren().add(boutons);
+        this.box1.getChildren().add(sp);
         this.contenantRLIL.getChildren().clear();
-        this.contenantRLIL.getChildren().addAll(this.informationLivre, this.resultatRecherche2);
+        this.contenantRLIL.getChildren().addAll(this.box1, this.box3, this.box2);
     }
 }
