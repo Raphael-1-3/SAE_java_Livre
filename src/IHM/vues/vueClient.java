@@ -8,9 +8,11 @@ import main.BD.*;
 import main.Exceptions.*;
 
 import javafx.application.Application;
+import javafx.concurrent.Task;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Insets;
 import javafx.scene.text.Font;
+import javafx.scene.text.FontWeight;
 import javafx.stage.Stage;
 import junit.framework.TestFailure;
 import javafx.geometry.Pos;
@@ -69,14 +71,26 @@ public class VueClient extends BorderPane
         this.resultatRecherche2.setPrefSize(400, 400);
         this.informationLivre = new VBox();
         this.informationLivre.setPrefSize(400, 400);
+        this.resultatRecherche1.setStyle("-fx-background-radius : 15px;" + 
+        "-fx-background-color : #f9f9f9;" + 
+        "-fx-background : #f9f9f9;");
         this.contenantRLIL.setPrefSize(1000, 1000);
-        this.contenantRLIL.setStyle("-fx-background-color: blue;");
-        this.resultatRecherche2.setBackground(new Background(new BackgroundFill(Color.PINK, null, null)));
-        this.informationLivre.setStyle("-fx-background-color: green;");
-        this.resultatRecherche1.setStyle("-fx-background-color: orange;");
+        this.contenantRLIL.setStyle("-fx-background-color: #f9f9f9;" + 
+        "-fx-border-radius : 10px;" + 
+        "-fx-border-width : 2px;" + 
+        "-fx-border-color : #df9f53;" + 
+        "-fx-background-radius : 150px;");
+        this.resultatRecherche2.setStyle("-fx-background-radius : 15px;" + 
+        "-fx-background-color : #f9f9f9;" + 
+        "-fx-background : #f9f9f9;" + 
+        "-fx-border-width : 0 2px 0 2px;" + 
+        "-fx-border-color : #df9f53");
+        this.informationLivre.setStyle("-fx-background-color: #f9f9f9;");
+        this.informationLivre.setPadding(new Insets(20));
         this.contenantRLIL.getChildren().addAll(this.resultatRecherche1, this.resultatRecherche2, this.informationLivre);
         this.setCenter(this.contenantRLIL);
-        this.centerRecommandation(this.client);
+        this.setCenterRecommandation(client);
+        //this.centerRecommandation(this.client);
         this.setMargin(this.contenantRLIL, new Insets(60, 60, 60, 60));
         this.setPrefSize(1300, 700);
         this.setTop(this.top(this.client));
@@ -222,9 +236,32 @@ public class VueClient extends BorderPane
         return top;
     }
 
-    public void centerRecommandation(Client client) throws SQLException
+    public void setCenterRecommandation(Client client) throws SQLException
+    {
+        ProgressIndicator loading = new ProgressIndicator();
+        VBox vb = new VBox();
+
+        Task<VBox> task = new Task<>() {
+            @Override
+            protected VBox call() throws Exception
+            {
+                return centerRecommandation(client);
+            }
+        };
+        loading.visibleProperty().bind(task.runningProperty());
+        task.setOnSucceeded(e -> {
+            this.resultatRecherche2.setContent(task.getValue());
+        });
+        
+        vb.getChildren().addAll(loading);
+        this.resultatRecherche2.setContent(vb);
+        new Thread(task).start();
+    }
+
+    public VBox centerRecommandation(Client client) throws SQLException
     {
         VBox livresBox = new VBox();
+        livresBox.setPadding(new Insets(15, 15, 15, 15));
         try
         {
             List<Livre> tabrecoC = this.modele.onVousRecommande(client);
@@ -235,6 +272,8 @@ public class VueClient extends BorderPane
                 {
                     Label affichageT = new Label(bouquin.getTitre());
                     affichageT.setPadding(new Insets(5));
+                    affichageT.setFont(new Font(10));
+                    affichageT.setStyle("-fx-underline : true;");
                     affichageT.setOnMouseClicked(new controleurSelectionLivre(this.modele, this.LEApp));
                     livresBox.getChildren().add(affichageT);
                 }
@@ -242,7 +281,7 @@ public class VueClient extends BorderPane
         } catch (PasDHistoriqueException pdh) {
             livresBox.getChildren().add(new Text("Vous n'avez jamais rien commandé ou nous n'avons aucune recommandation à vous présenter"));
         }
-        this.resultatRecherche2.setContent(livresBox);
+        return livresBox;
     }
 
     /**
@@ -258,6 +297,8 @@ public class VueClient extends BorderPane
             for (Livre livre : livres) {
                 Label affichageT = new Label(livre.getTitre());
                 affichageT.setPadding(new Insets(0, 0, 0, 10));
+                affichageT.setFont(new Font(15));
+                affichageT.setStyle("-fx-underline : true;");
                 affichageT.setOnMouseClicked(new controleurSelectionLivre(this.modele, this.LEApp));
                 libresbox.getChildren().add(affichageT);
             }
@@ -273,6 +314,13 @@ public class VueClient extends BorderPane
         {
             Label titre = new Label("Titre : " + livre.getTitre());
             Label prix = new Label("Prix : " + livre.getPrix() + " €");
+            prix.setFont(new Font(15));
+            prix.setPadding(new Insets(10, 0, 0, 0));
+            titre.setFont(Font.font("Times new Roman", FontWeight.BOLD,  20));
+            titre.setWrapText(true);
+            titre.setStyle("-fx-underline : true;" + 
+                            "fx-font-weight : bold;");
+    
 
             List<Auteur> auteurs = this.modele.getAuteurParIdLivre(livre.getISBN());
             StringBuilder auteursStr = new StringBuilder("Auteurs : ");
@@ -280,18 +328,24 @@ public class VueClient extends BorderPane
             else for (Auteur a : auteurs) auteursStr.append(a.getNomAuteur());
 
             Label auteursLabel = new Label(auteursStr.toString());
+            auteursLabel.setPadding(new Insets(10, 0, 0, 0));
+            auteursLabel.setFont(new Font(15));
 
             List<Classification> classes = this.modele.getClassificationParIdLivre(livre.getISBN());
             StringBuilder classStr = new StringBuilder("Classifications : ");
             if (classes.isEmpty()) classStr.append("Aucune");
             else for (Classification c : classes) classStr.append(c.getNomClass());
             Label classLabel = new Label(classStr.toString());
+            classLabel.setPadding(new Insets(10, 0, 0, 0));
+            classLabel.setFont(new Font(15));
 
             List<Editeur> editeurs = this.modele.getEditeurParIdLivre(livre.getISBN());
             StringBuilder editStr = new StringBuilder("Editeurs : ");
             if (editeurs.isEmpty()) editStr.append("Aucun");
             else for (Editeur e : editeurs) editStr.append(e.getNomEdit());
             Label editLabel = new Label(editStr.toString());
+            editLabel.setPadding(new Insets(10, 0, 0, 0));
+            editLabel.setFont(new Font(15));
 
             this.informationLivre.getChildren().addAll(titre, prix, auteursLabel, classLabel, editLabel);
         
@@ -309,6 +363,8 @@ public class VueClient extends BorderPane
             for (Editeur editeur : editeurs) {
                 Label affichageE = new Label(editeur.getNomEdit());
                 affichageE.setOnMouseClicked(new controleurSelectionEditeur(this.modele, this.LEApp));
+                affichageE.setStyle("-fx-underline = true;");
+                affichageE.setFont(new Font(15));
                 affichageE.setPadding(new Insets(0, 0, 0, 10));
                 editeursBox.getChildren().add(affichageE);
             }
@@ -324,6 +380,8 @@ public class VueClient extends BorderPane
             for (Classification classification : classifications) {
                 Label affichageC = new Label(classification.getNomClass());
                 affichageC.setOnMouseClicked(new controleurSelectionClassification(this.modele, this.LEApp));
+                affichageC.setStyle("-fx-underline = true;");
+                affichageC.setFont(new Font(15));
                 affichageC.setPadding(new Insets(0, 0, 0, 10));
                 classificationsBox.getChildren().add(affichageC);
             }
@@ -339,6 +397,8 @@ public class VueClient extends BorderPane
             for (Auteur auteur : auteurs) {
                 Label affichageA = new Label(auteur.getNomAuteur());
                 affichageA.setOnMouseClicked(new controleurSelectionAuteur(this.modele, this.LEApp));
+                affichageA.setStyle("-fx-underline = true;");
+                affichageA.setFont(new Font(15));
                 affichageA.setPadding(new Insets(0, 0, 0, 10));
                 auteursBox.getChildren().add(affichageA);
             }

@@ -25,3 +25,8 @@
 .combo-box {
     -fx-padding : 0px 0px 0px 15px;
 }
+
+.label {
+    -fx-font-family: "Times New Roman";
+    -fx-text-fill: #3f4353;
+}
