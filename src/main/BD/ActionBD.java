@@ -1431,7 +1431,7 @@ public class ActionBD{
      * @return Le magasin 
      * @throws SQLException
      */
-    public static Magasin magAPartirId(Integer idmag) throws SQLException
+    public  Magasin magAPartirId(Integer idmag) throws SQLException
     {
         ResultSet rs = this.connexion.createStatement().executeQuery("select * from MAGASIN where idmag = "+idmag);
         Magasin mag = null;
