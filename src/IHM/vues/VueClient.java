@@ -462,7 +462,8 @@ public class VueClient extends BorderPane
         VBox panierBox = new VBox();
         HashMap<Livre, Integer> panier = this.getclient().getPanier();
         if (panier == null || panier.isEmpty()) {
-            panierBox.getChildren().add(new Text("Votre panier est vide."));
+            Label pVide = new Label("Votre panier est vide.");
+            panierBox.getChildren().add(pVide);
         } else {
             for (Livre livre : panier.keySet()) {
                 HBox ligne = new HBox();
@@ -482,10 +483,18 @@ public class VueClient extends BorderPane
             }
         }
         ScrollPane sp = new ScrollPane(panierBox);
-        VBox boutons = new VBox();
-        boutons.getChildren().addAll(new Button("supprimer livre"),new Button("Commader le panier"));
+        VBox droite = new VBox();
+
+        Integer nbArticle = this.client.getNbArticles();
+        Double prix = this.client.getPrixTotal();
+
+
+        Button suppr = new Button("supprimer livre");
+        Button commander = new Button("Commander le panier");
+
+        droite.getChildren().addAll(new Button("supprimer livre"),new Button("Commader le panier"));
         this.box3.getChildren().clear();
-        this.box2.getChildren().add(boutons);
+        this.box2.getChildren().add(droite);
         this.box1.getChildren().add(sp);
         this.contenantRLIL.getChildren().clear();
         this.contenantRLIL.getChildren().addAll(this.box1, this.box3, this.box2);
