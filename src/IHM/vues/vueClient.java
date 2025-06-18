@@ -40,14 +40,18 @@ public class VueClient extends BorderPane
     private ActionBD modele;
     private Client client;
     private LivreExpress LEApp;
-    private TextField scheachbar;
+    private TextField barRecherche;
     private ComboBox<String> selectionRecherche;
     private ComboBox<String> selectionMagasin;
+    private Livre livreChoisi;
 
     private HBox contenantRLIL;
     private ScrollPane resultatRecherche2;
     private VBox informationLivre;
     private ScrollPane resultatRecherche1;
+    private VBox ajouterPanir;
+    private VBox box3;
+
 
     /**
      * Instancie la fenetre liee au client
@@ -61,14 +65,18 @@ public class VueClient extends BorderPane
         this.modele = modele;
         this.selectionRecherche = new ComboBox<>();
         this.selectionMagasin = new ComboBox<>();
-        this.scheachbar = new TextField();
+        this.barRecherche = new TextField();
         this.contenantRLIL = new HBox();
         this.resultatRecherche1 = new ScrollPane();
         this.resultatRecherche1.setPrefSize(400, 400);
         this.resultatRecherche2 = new ScrollPane();
         this.resultatRecherche2.setPrefSize(400, 400);
         this.informationLivre = new VBox();
-        this.informationLivre.setPrefSize(400, 400);
+        this.ajouterPanir = new VBox();
+        this.box3 = new VBox();
+        this.box3.setPrefSize(400, 400);
+        this.box3.getChildren().addAll(this.informationLivre, this.ajouterPanir);
+        this.boutouAjouterPanier();
         this.contenantRLIL.setPrefSize(1000, 1000);
         this.contenantRLIL.setStyle("-fx-background-color: blue;");
         this.resultatRecherche2.setBackground(new Background(new BackgroundFill(Color.PINK, null, null)));
@@ -95,8 +103,8 @@ public class VueClient extends BorderPane
         return this.LEApp;
     }
 
-    public TextField getScheachbar() {
-        return this.scheachbar;
+    public TextField getbarRecherche() {
+        return this.barRecherche;
     }
 
     public ComboBox<String> getSelectionRecherche() {
@@ -105,6 +113,17 @@ public class VueClient extends BorderPane
 
     public ComboBox<String> getSelectionMagasin() {
         return this.selectionMagasin;
+    }
+    public Livre getLivreChoisi() {
+        return this.livreChoisi;
+    }
+
+    public void setLivreChoisi(Livre livreChoisi) {
+        this.livreChoisi = livreChoisi;
+    }
+
+    public Client getclient() {
+        return this.client;
     }
 
     public Pane top(Client client)
@@ -199,11 +218,11 @@ public class VueClient extends BorderPane
         layout.setPadding(new Insets(10));
         layout.getChildren().addAll(this.selectionRecherche, this.selectionMagasin, executerAction);
 
-        this.scheachbar = new TextField();
-        this.scheachbar.setPrefWidth(600); // Largeur préférée
+        this.barRecherche = new TextField();
+        this.barRecherche.setPrefWidth(600); // Largeur préférée
         sstop2.setPadding(new Insets(10, 0, 10, 50));
         sstop2.setSpacing(15);
-        sstop2.getChildren().addAll(this.selectionRecherche, this.selectionMagasin, this.scheachbar, executerAction);
+        sstop2.getChildren().addAll(this.selectionRecherche, this.selectionMagasin, this.barRecherche, executerAction);
         //
         HBox boxLigne = new HBox();
         Line sep = new Line(0, 0, 1100, 0);
@@ -301,6 +320,14 @@ public class VueClient extends BorderPane
         }
     }
 
+    public void boutouAjouterPanier()
+    {
+        Button ajtpanier =new Button("ajouter ce livre au panier");
+        ajtpanier.setOnAction(new ControleurAjouterPanier(this.modele, this.LEApp));
+        ajtpanier.setPadding(new Insets(10, 10, 10, 10));
+        this.ajouterPanir.getChildren().add(ajtpanier);
+    } 
+
     public void centerAfficheEditeur(List<Editeur> editeurs) {
         VBox editeursBox = new VBox();
         if (editeurs == null || editeurs.isEmpty()) {
@@ -344,5 +371,13 @@ public class VueClient extends BorderPane
             }
         }
         this.resultatRecherche1.setContent(auteursBox);
+    }
+
+    public void reset()
+    {
+        this.informationLivre.getChildren().clear();
+        this.resultatRecherche1.setContent(null);
+        this.resultatRecherche2.setContent(null);
+        this.barRecherche.clear();
     }
 }
