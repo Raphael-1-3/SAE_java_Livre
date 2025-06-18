@@ -51,7 +51,7 @@ public class LivreExpress extends Application {
 
         try {
             connexion = new ConnexionMySQL();
-            connexion.connecter("laptop-robin", "LibrairieJava", "root",  "robin"); //"localhost", "LibrairieJava", "root", "raphe"
+            connexion.connecter("servinfo-maria", "DBlacoume", "lacoume",  "lacoume"); //"localhost", "LibrairieJava", "root", "raphe"
             if (connexion.isConnecte()) 
             {
                 this.modele = new ActionBD(connexion);
