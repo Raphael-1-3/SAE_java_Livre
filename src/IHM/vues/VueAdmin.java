@@ -10,17 +10,12 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
-<<<<<<< HEAD
 import main.BD.ActionBD;
 import main.app.Administrateur;
 
 public class VueAdmin extends StackPane {
     private Administrateur admin;
      private ActionBD modele;
-=======
-
-public class VueAdmin extends StackPane {
->>>>>>> devJojo2
 
     // Attributs pour tous les TextField et PasswordField
     private final TextField tfEmail = new TextField();
@@ -53,20 +48,10 @@ public class VueAdmin extends StackPane {
     private BorderPane carre;
     private VBox top;
 
-<<<<<<< HEAD
-    private TextField tfEmail;
-    private PasswordField pfMDP;
-    private TextField tfNom;
-    private TextField tfPrenom;
-    private TextField tfIdMag;
-
 
     public VueAdmin(LivreExpress app, ActionBD modele, Administrateur admin) {
         this.admin = admin;
         this.modele=modele;
-=======
-    public VueAdmin() {
->>>>>>> devJojo2
         this.carre = createCadre();
         this.top = createTop();
 
