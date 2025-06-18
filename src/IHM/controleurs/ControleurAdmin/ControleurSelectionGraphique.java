@@ -1,4 +1,4 @@
-/* package IHM.controleurs.ControleurAdmin;
+package IHM.controleurs.ControleurAdmin;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
@@ -40,26 +40,65 @@ public class ControleurSelectionGraphique implements EventHandler<ActionEvent>
         this.modele = modele;
     }
 
-    public void handle(ActionEvent event) 
-    {
-        
-        try 
-        {
-            VueAdmin va = this.app.getVueAdmin();
-            String choixGra = va.getSelectionGra().getValue();
-            String recherche = va.getParametreGraphique().getText();
-
-            if (choixGra.equals(null) || recherche.equals(null) || choixGra.equals("") || recherche.equals("")) this.app.getVueConnexion().popUpChampsVides().showAndWait();
-            else 
-            {
+    public void handle(ActionEvent event) {
+        try {
             
-                switch (choixGra) 
-                {
+            String choixGra = this.app.getVueAdmin().getSelectionStat().getValue();
+            String recherche = this.app.getVueAdmin().getTfAnnee().getText();
+
+            if (choixGra == null || choixGra.isEmpty() || (besoinDeParametre(choixGra) && (recherche == null || recherche.isEmpty()))) {
+                this.app.getVueConnexion().popUpChampsVides().showAndWait();
+            } else {
+                switch (choixGra) {
                     case "NombreDeLivreVendueParMagasinParAns":
-                        va.afficheGraphiqueNombreDeLivreVendueParMagasinParAns(this.modele.NombreDeLivreVendueParMagasinParAns());
+                        System.out.println("Appel de NombreDeLivreVendueParMagasinParAns");
+                        var donnees = this.modele.NombreDeLivreVendueParMagasinParAns();
+                        System.out.println(donnees);
+                        this.app.getVueAdmin().afficheGraphiqueNombreDeLivreVendueParMagasinParAns(donnees);
+                        break;
+                    case "chiffreAffaireParClassificationParAns":
+                        this.app.getVueAdmin().afficheGraphiqueChiffreAffaireParClassificationParAns(this.modele.chiffreAffaireParClassificationParAns(Integer.parseInt(recherche)));
+                        break;
+                    case "CAMagasinParMoisParAnnee":
+                        this.app.getVueAdmin().afficheGraphiqueCAMagasinParMoisParAnnee(this.modele.CAMagasinParMoisParAnnee(Integer.parseInt(recherche)));
+                        break;
+                    case "CAVenteEnLigneEnMagasinParAnnee":
+                        this.app.getVueAdmin().afficheGraphiqueCAVenteEnLigneEnMagasinParAnnee(this.modele.CAVenteEnLigneEnMagasinParAnnee(Integer.parseInt(recherche)));
+                        break;
+                    case "nombreAuteurParEditeur":
+                        this.app.getVueAdmin().afficheGraphiqueNombreAuteurParEditeur(this.modele.nombreAuteurParEditeur());
+                        break;
+                    case "nombreClientParVilleQuiOntAcheterAuteur":
+                        this.app.getVueAdmin().afficheGraphiqueNombreClientParVilleQuiOntAcheterAuteur(this.modele.nombreClientParVilleQuiOntAcheterAuteur(this.modele.getAuteurAPartirDeNom(recherche)));
+                        break;
+                    case "valeurStockMagasin":
+                        this.app.getVueAdmin().afficheGraphiqueValeurStockMagasin(this.modele.valeurStockMagasin());
+                        break;
+                    case "statsCAParClientParAnnee":
+                        this.app.getVueAdmin().afficheGraphiqueStatsCAParClientParAnnee(this.modele.statsCAParClientParAnnee());
+                        break;
+                    case "auteurLePlusVenduParAnnee":
+                        this.app.getVueAdmin().afficheGraphiqueAuteurLePlusVenduParAnnee(this.modele.auteurLePlusVenduParAnnee(Integer.parseInt(recherche)));
+                        break;
                 }
             }
-        } catch(SQLException sql) {System.out.println("probleme modele");}
+        } catch (NumberFormatException nfe) {
+            this.app.getVueConnexion().popUpPasUnNbr().showAndWait();
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
     }
+
+    // Méthode utilitaire pour déterminer si un paramètre est requis
+    private boolean besoinDeParametre(String choix) {
+        return switch (choix) {
+            case "chiffreAffaireParClassificationParAns",
+                 "CAMagasinParMoisParAnnee",
+                 "CAVenteEnLigneEnMagasinParAnnee",
+                 "nombreClientParVilleQuiOntAcheterAuteur",
+                 "auteurLePlusVenduParAnnee" -> true;
+            default -> false;
+        };
+    }
+
 }
-    */

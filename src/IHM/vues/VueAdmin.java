@@ -18,6 +18,10 @@ import javafx.stage.Stage;
 import junit.framework.TestFailure;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
+import javafx.scene.chart.BarChart;
+import javafx.scene.chart.CategoryAxis;
+import javafx.scene.chart.NumberAxis;
+import javafx.scene.chart.XYChart;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -34,6 +38,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.swing.plaf.basic.BasicInternalFrameTitlePane.TitlePaneLayout;
 
@@ -57,6 +62,7 @@ public class VueAdmin extends BorderPane
     private Magasin MagChoisi;
     private ComboBox<String> selectionAction;
     private ComboBox<String> selectionMagasin;
+    private ComboBox<String> selectionStat;
 
     private TextField tfEmail = new TextField();
     private PasswordField pfMDP = new PasswordField();
@@ -124,6 +130,8 @@ public class VueAdmin extends BorderPane
         "-fx-background : #f9f9f9;");
         this.setCenter(this.centre);
         BorderPane.setMargin(this.centre, new Insets(60, 120, 60, 60));
+        this.centre.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
+        BorderPane.setAlignment(this.centre, Pos.CENTER);
         this.setPrefSize(1300, 700);
         this.top();
         
@@ -344,7 +352,26 @@ public class VueAdmin extends BorderPane
 
     public void panneauDeBord() 
     {
-        // Code pour afficher le tableau de bord
+        // Création d'une ComboBox pour les statistiques du panneau de bord
+        this.selectionStat = new ComboBox<>();
+        this.selectionStat.getItems().addAll(
+            "NombreDeLivreVendueParMagasinParAns",
+            "chiffreAffaireParClassificationParAns",
+            "CAMagasinParMoisParAnnee",
+            "CAVenteEnLigneEnMagasinParAnnee",
+            "nombreAuteurParEditeur",
+            "nombreClientParVilleQuiOntAcheterAuteur",
+            "valeurStockMagasin",
+            "statsCAParClientParAnnee",
+            "auteurLePlusVenduParAnnee"
+        );
+        this.selectionStat.setPromptText("Choisissez une statistique");
+        HBox hboxCombo = new HBox(this.selectionStat);
+        hboxCombo.setAlignment(Pos.CENTER); 
+        hboxCombo.setPadding(new Insets(10)); 
+        this.centre.setTop(hboxCombo);
+        this.selectionStat.setOnAction(new ControleurSelectionGraphique(modele, LEApp));
+        
     }
 
     public void ajouterLivre() 
@@ -377,8 +404,52 @@ public class VueAdmin extends BorderPane
         // Code pour afficher la sélection de magasin
     }
 
+    public void afficheGraphiqueNombreDeLivreVendueParMagasinParAns(HashMap<Integer, HashMap<Magasin, Integer>> donnees) 
+    {
+        CategoryAxis xAxis = new CategoryAxis();
+        xAxis.setLabel("Magasin");
+
+        NumberAxis yAxis = new NumberAxis();
+        yAxis.setLabel("Nombre de livres vendus");
+
+        BarChart<String, Number> barChart = new BarChart<>(xAxis, yAxis);
+        barChart.setTitle("Nombre de livres vendus par magasin");
+
+        for (Map.Entry<Integer, HashMap<Magasin, Integer>> entreeAnnee : donnees.entrySet()) 
+        {
+            Integer annee = entreeAnnee.getKey();
+            XYChart.Series<String, Number> serie = new XYChart.Series<>();
+            serie.setName(annee.toString());
+
+            for (Map.Entry<Magasin, Integer> entreeMagasin : entreeAnnee.getValue().entrySet()) 
+            {
+                Magasin magasin = entreeMagasin.getKey();
+                Integer nbLivres = entreeMagasin.getValue();
+                serie.getData().add(new XYChart.Data<>(magasin.getNomMag(), nbLivres));
+            }
+
+            barChart.getData().add(serie);
+        }
+        barChart.setBackground(new Background(new BackgroundFill(Color.WHITE, CornerRadii.EMPTY, Insets.EMPTY)));
+
+
+        this.centre.setCenter(barChart);
+    }
+
+    
+    
+    public void afficheGraphiqueChiffreAffaireParClassificationParAns(HashMap<Classification, Integer> donnees) {}
+    public void afficheGraphiqueCAMagasinParMoisParAnnee(HashMap<Integer, HashMap<Magasin, Integer>> donnees) {}
+    public void afficheGraphiqueCAVenteEnLigneEnMagasinParAnnee(HashMap<Integer, HashMap<String, Integer>> donnees) {}
+    public void afficheGraphiqueNombreAuteurParEditeur(HashMap<Editeur, Integer> donnees) {}
+    public void afficheGraphiqueNombreClientParVilleQuiOntAcheterAuteur(HashMap<String, Integer> donnees) {}
+    public void afficheGraphiqueValeurStockMagasin(HashMap<Magasin, Integer> donnees) {}
+    public void afficheGraphiqueStatsCAParClientParAnnee(HashMap<Integer, HashMap<String, Double>> donnees) {}
+    public void afficheGraphiqueAuteurLePlusVenduParAnnee(HashMap<Integer, HashMap<Auteur, Integer>> donnees) {}
+
 
     public void setMagChoisi(Magasin magChoisi) { this.MagChoisi = magChoisi; }
+    public ComboBox<String> getSelectionStat() { return this.selectionStat; }
     public Magasin getMagChoisi() { return this.MagChoisi; }
     public ActionBD getModele() { return this.modele; }
     public LivreExpress getLEApp() { return this.LEApp; }
@@ -409,5 +480,5 @@ public class VueAdmin extends BorderPane
     public TextField getTfQte() { return tfQte; }
     public TextField getTfMois() { return tfMois; }
     public TextField getTfAnnee() { return tfAnnee; }
-
+    public ComboBox<String> getSelectionAction() { return this.selectionAction; }
 }

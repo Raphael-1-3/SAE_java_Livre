@@ -639,6 +639,43 @@ public class ActionBD{
     // ---------------------------- non classe pour l instant -------------------------------
 
     // ------------------- methode ajouter pendant la semaine IHM ---------------------------
+
+    /**
+     * Retourne la liste des vendeurs d'un magasin donné
+     * @param mag Le magasin concerné
+     * @return Liste des vendeurs présents dans le magasin
+     * @throws SQLException
+     */
+    public List<Vendeur> getVendeurMagasin(Magasin mag) throws SQLException
+    {
+        List<Vendeur> vendeurs = new ArrayList<>();
+        PreparedStatement ps = this.connexion.prepareStatement(
+            "SELECT VENDEUR.idve, email, nom, motDePasse, role, prenomven " +
+            "FROM VENDEUR " +
+            "JOIN USER ON idu = idve " +
+            "WHERE magasin = ?"
+        );
+        ps.setInt(1, mag.getIdmag());
+        ResultSet rs = ps.executeQuery();
+        while (rs.next())
+        {
+            Vendeur v = new Vendeur(
+                rs.getInt("idve"),
+                rs.getString("email"),
+                rs.getString("nom"),
+                rs.getString("motDePasse"),
+                rs.getString("role"),
+                rs.getString("prenomven"),
+                mag
+            );
+            vendeurs.add(v);
+        }
+        rs.close();
+        ps.close();
+        return vendeurs;
+    }
+
+
     /**
      * Récupère la liste des auteurs d'un livre à partir de son ISBN.
      * @param isbn L'ISBN du livre
