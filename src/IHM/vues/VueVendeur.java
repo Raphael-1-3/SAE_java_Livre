@@ -139,38 +139,75 @@ public class VueVendeur extends Application {
         resultat.setCenter(vbox);
     }
 
-    
-
     public void clearResultat(BorderPane resultat) {
         resultat.setCenter(null);
     }
 
     public void afficherRechercheNomMagasinSeul(BorderPane resultat) {
-    VBox vbox = new VBox(15);
-    vbox.setPadding(new Insets(20));
+        VBox vbox = new VBox(15);
+        vbox.setPadding(new Insets(20));
 
-    Label labelMag = new Label("Entrer le nom du magasin pour voir la disponibilité :");
-    TextField champMagasin = new TextField();
-    champMagasin.setPromptText("Nom du magasin");
+        Label labelMag = new Label("Entrer le nom du magasin pour voir la disponibilité :");
+        TextField champMagasin = new TextField();
+        champMagasin.setPromptText("Nom du magasin");
 
-    Button boutonValider = new Button("Valider");
+        Button boutonValider = new Button("Valider");
 
-    boutonValider.setOnAction(e -> {
-        String nomMagasin = champMagasin.getText().trim();
-        if (!nomMagasin.isEmpty()) {
-           
-            Alert alert = new Alert(Alert.AlertType.INFORMATION, "Magasin recherché : " + nomMagasin + " (à connecter à la BD)");
-            alert.showAndWait();
-        } else {
-            Alert alert = new Alert(Alert.AlertType.WARNING, "Veuillez entrer un nom de magasin.");
-            alert.showAndWait();
-        }
-    });
+        boutonValider.setOnAction(e -> {
+            String nomMagasin = champMagasin.getText().trim();
+            if (!nomMagasin.isEmpty()) {
 
-    vbox.getChildren().addAll(labelMag, champMagasin, boutonValider);
-    resultat.setCenter(vbox);
+                Alert alert = new Alert(Alert.AlertType.INFORMATION, "Magasin recherché : " + nomMagasin + " (à connecter à la BD)");
+                alert.showAndWait();
+            } else {
+                Alert alert = new Alert(Alert.AlertType.WARNING, "Veuillez entrer un nom de magasin.");
+                alert.showAndWait();
+            }
+        });
+
+        vbox.getChildren().addAll(labelMag, champMagasin, boutonValider);
+        resultat.setCenter(vbox);
     }
 
+
+    public void afficherPasserCommande(BorderPane resultat) {
+        VBox vbox = new VBox(15);
+        vbox.setPadding(new Insets(20));
+
+        Label labelClient = new Label("Nom du client :");
+        TextField champClient = new TextField();
+        champClient.setPromptText("Nom du client");
+
+        Label labelLivre = new Label("Nom du livre :");
+        TextField champLivre = new TextField();
+        champLivre.setPromptText("Nom du livre");
+
+        Label labelMagasin = new Label("Nom du magasin :");
+        TextField champMagasin = new TextField();
+        champMagasin.setPromptText("Nom du magasin");
+
+        Button boutonCommander = new Button("Commander");
+
+        boutonCommander.setOnAction(e -> {
+            String client = champClient.getText().trim();
+            String livre = champLivre.getText().trim();
+            String magasin = champMagasin.getText().trim();
+
+            if (client.isEmpty() || livre.isEmpty() || magasin.isEmpty()) {
+                Alert alert = new Alert(Alert.AlertType.WARNING, "Veuillez remplir tous les champs.");
+                alert.showAndWait();
+            } else {
+                Alert alert = new Alert(Alert.AlertType.INFORMATION,
+                        "Commande passée pour le client : " + client + "\n" +
+                                "Livre : " + livre + "\n" +
+                                "Magasin : " + magasin);
+                alert.showAndWait();
+            }
+        });
+
+        vbox.getChildren().addAll(labelClient, champClient, labelLivre, champLivre, labelMagasin, champMagasin, boutonCommander);
+        resultat.setCenter(vbox);
+    }
 
     @Override
     public void start(Stage primaryStage) {
@@ -181,12 +218,12 @@ public class VueVendeur extends Application {
 
         ComboBox<String> menuCombo = new ComboBox<>();
         menuCombo.getItems().addAll(
-            "Ajouter un livre",
-            "Modifier le stock",
-            "Regarde dispo",
-            "Commande pour client",
-            "Transferer un Livre",
-            "Obtenir facture"
+                "Ajouter un livre",
+                "Modifier le stock",
+                "Regarde dispo",
+                "Commande pour client",
+                "Transferer un Livre",
+                "Obtenir facture"
         );
         menuCombo.setPromptText("☰ Menu Vendeur");
         menuCombo.setStyle("-fx-background-radius: 20; -fx-border-color: #df9d53; -fx-border-radius: 20;");

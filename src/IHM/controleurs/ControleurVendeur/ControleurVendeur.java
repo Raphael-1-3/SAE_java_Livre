@@ -32,7 +32,7 @@ public class ControleurVendeur implements EventHandler<ActionEvent> {
                 vue.afficherRechercheNomMagasinSeul(resultat);
                 break;
             case "Commande pour client":
-                System.out.println("Commande pour client (à implémenter)");
+                vue.afficherPasserCommande(resultat);
                 break;
             case "Transferer un Livre":
                 System.out.println("Transferer un Livre (à implémenter)");
