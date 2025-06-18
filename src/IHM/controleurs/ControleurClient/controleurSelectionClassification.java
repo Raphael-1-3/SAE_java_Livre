@@ -43,6 +43,7 @@ public class controleurSelectionClassification implements EventHandler<MouseEven
     public void handle(MouseEvent event) 
     {
         Object source = event.getSource();
+        this.app.getVueClient().resetBox2();
 
         if (source instanceof Label) 
         {

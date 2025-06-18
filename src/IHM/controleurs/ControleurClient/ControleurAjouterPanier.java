@@ -43,5 +43,6 @@ public class ControleurAjouterPanier implements EventHandler<ActionEvent>
     {
         Livre choisi = this.app.getVueClient().getLivreChoisi();
         this.app.getVueClient().getclient().ajoutePanier(choisi);
+        System.out.println("livre ajoute au panier" + choisi);
     }
 }
