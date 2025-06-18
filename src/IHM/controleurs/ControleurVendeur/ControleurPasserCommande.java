@@ -37,7 +37,7 @@ public class ControleurPasserCommande implements EventHandler<ActionEvent> {
             alert.showAndWait();
 
         } catch (NumberFormatException ex) {
-            Alert alert = new Alert(Alert.AlertType.WARNING, "La quantité doit être un entier.");
+            Alert alert = new Alert(Alert.AlertType.WARNING, "Les infos sont invalides.");
             alert.showAndWait();
         }
     }

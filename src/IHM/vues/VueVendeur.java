@@ -1,5 +1,8 @@
 package IHM.vues;
 
+import IHM.controleurs.ControleurVendeur.ControleurFacture;
+import IHM.controleurs.ControleurVendeur.ControleurPasserCommande;
+import IHM.controleurs.ControleurVendeur.ControleurTransfertLivre;
 import IHM.controleurs.ControleurVendeur.ControleurVendeur;
 import javafx.application.Application;
 import javafx.application.Platform;
@@ -155,9 +158,11 @@ public class VueVendeur extends Pane {
                 labelLivre, champLivre,
                 labelMagasin, champMagasin,
                 boutonCommander);
+        ControleurPasserCommande controleur = new ControleurPasserCommande(champClient, champLivre, champMagasin);
 
+        boutonCommander.setOnAction(controleur);
         resultat.setCenter(vbox);
-    }
+        }
 
     public void afficherTransfererUnLivre(BorderPane resultat) {
         VBox vbox = new VBox(15);
@@ -194,6 +199,10 @@ public class VueVendeur extends Pane {
                 labelQte, champQte,
                 boutonTransferer);
 
+        ControleurTransfertLivre controleur = new ControleurTransfertLivre(champISBN, champMagasinDepart, champMagasinArrivee, champQte);
+
+        boutonTransferer.setOnAction(controleur);
+
         resultat.setCenter(vbox);
     }
 
@@ -226,6 +235,12 @@ public class VueVendeur extends Pane {
         Button boutonAfficher = new Button("Afficher la facture");
         boutonAfficher.setPrefWidth(150);
 
+        
+        ControleurFacture controleur = new ControleurFacture(champClient, champMois, champAnnee);
+
+        
+        boutonAfficher.setOnAction(controleur);
+
         vbox.getChildren().addAll(
                 labelClient, champClient,
                 labelMois, champMois,
@@ -234,7 +249,8 @@ public class VueVendeur extends Pane {
         );
 
         resultat.setCenter(vbox);
-    }
+}
+
 
     
     public VueVendeur(LivreExpress app, ActionBD modele, Vendeur vendeur) {

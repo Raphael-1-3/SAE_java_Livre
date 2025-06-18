@@ -76,6 +76,26 @@ public class Client extends User {
         return this.panier;
     }
 
+    public Integer getNbArticles()
+    {
+        Integer nb = 0;
+        for (Livre l : this.panier.keySet())
+        {
+            nb += this.panier.get(l);
+        }
+        return nb;
+    }
+
+    public Double getPrixTotal()
+    {
+        Double prix = 0.0;
+        for (Livre l : this.panier.keySet())
+        {
+            prix += this.panier.get(l) * l.getPrix();
+        }
+        return prix;
+    }
+
 
     @Override
     public boolean equals(Object o) {

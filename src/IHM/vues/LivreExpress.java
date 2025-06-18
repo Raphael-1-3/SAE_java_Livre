@@ -28,6 +28,7 @@ public class LivreExpress extends Application {
     private VueConnexion vueCo;
     private VueClient vueclient;
     private VueVendeur vueVendeur;
+    private VueAdmin vueAdmin;
     private ActionBD modele;
     private BorderPane root;
     private Scene scene;
@@ -69,7 +70,6 @@ public class LivreExpress extends Application {
     @Override
     public void start(Stage stage) throws Exception{
         this.scene = new Scene(this.root);
-        VueAdmin vuead= new VueAdmin(this, this.modele);
         stage.setTitle("LivreExpress");
         stage.setScene(scene);
         Image logo = new Image("file:./img/logo.jpg");
@@ -107,6 +107,11 @@ public class LivreExpress extends Application {
         return this.vueclient;
     }
 
+    public VueAdmin getVueAdmin()
+    {
+        return this.vueAdmin;
+    }
+
     public void setVueClient(VueClient vueclient) {
         this.vueclient = vueclient;
     }
@@ -114,6 +119,11 @@ public class LivreExpress extends Application {
     public void setVueVendeur(VueVendeur vueVendeur)
     {
         this.vueVendeur = vueVendeur;
+    }
+
+    public void setVueAdmin(VueAdmin vue)
+    {
+        this.vueAdmin = vue;
     }
 
     public Scene getScene()
