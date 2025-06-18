@@ -302,8 +302,7 @@ public class VueClient extends BorderPane
         } catch (PasDHistoriqueException pdh) {
             livresBox.getChildren().add(new Text("Vous n'avez jamais rien commandé ou nous n'avons aucune recommandation à vous présenter"));
         }
-        ScrollPane sp = new ScrollPane(livresBox);
-        this.box2.getChildren().add(sp);
+        return livresBox;
     }
 
     /**
