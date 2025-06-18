@@ -13,7 +13,8 @@ import javafx.scene.text.Font;
 import main.BD.ActionBD;
 import main.app.Administrateur;
 
-public class VueAdmin extends StackPane {
+public class VueAdmin extends StackPane 
+{
     private Administrateur admin;
      private ActionBD modele;
 
@@ -49,12 +50,10 @@ public class VueAdmin extends StackPane {
     private VBox top;
 
 
-<<<<<<< HEAD
-    public VueAdmin(LivreExpress app, ActionBD modele) {
-=======
+
     public VueAdmin(LivreExpress app, ActionBD modele, Administrateur admin) {
         this.admin = admin;
->>>>>>> main
+
         this.modele=modele;
         this.carre = createCadre();
         this.top = createTop();
