@@ -49,15 +49,28 @@ public class ControleurPasserCommandeCli implements EventHandler<ActionEvent>
 
     public void handle(ActionEvent event)
     {
-        String nomCli = this.app.getVueAdmin().getTfNomClient().getText();
-        String prenomCli = this.app.getVueAdmin().getTfPrenomClient().getText();
-        Integer codePostalCli = Integer.parseInt(this.app.getVueAdmin().getTfCodePostalClient().getText());
-        try {
-            this.client = this.modele.getClientAPartirNomPrenomCodePostal(nomCli, prenomCli, codePostalCli);
-            System.out.println(client);
-            this.app.getVueAdmin().vueCommandeClient(client);
-        } catch (SQLException | PasDeTelUtilisateurException e) {
-            System.out.println("pb modele");
+        String nomCli = this.app.getVueAdmin().getTfNom().getText();
+        String prenomCli = this.app.getVueAdmin().getTfPrenom().getText();
+        Integer codePostalCli = null;
+        try{
+            codePostalCli = Integer.parseInt(this.app.getVueAdmin().getTfCodePostal().getText());
         }
+        catch (NumberFormatException e)
+        {
+            this.app.getVueAdmin().popUpPasUnNbr().show();
+        }
+        if (nomCli.isEmpty() || prenomCli.isEmpty() || codePostalCli == null) {
+            this.app.getVueAdmin().popUpChampsVides().show();;
+        }
+        else{
+            try {
+                this.client = this.modele.getClientAPartirNomPrenomCodePostal(nomCli, prenomCli, codePostalCli);
+                System.out.println(client);
+                this.app.getVueAdmin().vueCommandeClient(client);
+            } catch (SQLException | PasDeTelUtilisateurException e) {
+                this.app.getVueAdmin().popUpClientInexistant().show();
+            }
+        }
+        
     }
 }

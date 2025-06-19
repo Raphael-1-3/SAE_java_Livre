@@ -196,6 +196,15 @@ public class VueAdmin extends BorderPane
         return alert;
     }
 
+    public Alert popUpClientInexistant()
+    {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle("Alerte");
+        alert.setHeaderText(null);
+        alert.setContentText("Le client n'existe pas !");
+        return alert;
+    }
+
     public Alert popUpActionEffectuee()
     {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
@@ -514,27 +523,27 @@ public class VueAdmin extends BorderPane
         grid.setVgap(10);
 
         Label lblNom = new Label("Nom du client :");
-        this.tfNomClient = new TextField();
-        tfNomClient.setPromptText("Nom");
+        this.tfNom = new TextField();
+        this.tfNom.setPromptText("Nom");
 
         Label lblPrenom = new Label("Prénom du client :");
-        this.tfPrenomClient = new TextField();
-        tfPrenomClient.setPromptText("Prénom");
+        this.tfPrenom = new TextField();
+        tfPrenom.setPromptText("Prénom");
 
         Label lblCodePostal = new Label("Code postal :");
-        this.tfCodePostalClient = new TextField();
-        tfCodePostalClient.setPromptText("Code postal");
+        this.tfCodePostal = new TextField();
+        this.tfCodePostal.setPromptText("Code postal");
         Button btnValider = new Button("Valider");
         ControleurPasserCommandeCli control = new ControleurPasserCommandeCli(this.LEApp,this.modele);
         btnValider.setOnAction(control);
         grid.add(btnValider, 1, 3);
 
         grid.add(lblNom, 0, 0);
-        grid.add(tfNomClient, 1, 0);
+        grid.add(this.tfNom, 1, 0);
         grid.add(lblPrenom, 0, 1);
-        grid.add(tfPrenomClient, 1, 1);
+        grid.add(this.tfPrenom, 1, 1);
         grid.add(lblCodePostal, 0, 2);
-        grid.add(tfCodePostalClient, 1, 2);
+        grid.add(this.tfCodePostal, 1, 2);
 
         this.centre.setCenter(grid);
         
@@ -544,7 +553,8 @@ public class VueAdmin extends BorderPane
         Stage stage = new Stage();
         VueClient root = new VueClient(LEApp, client, modele);
         this.LEApp.setVueClient(root);
-        Scene scene = new Scene(root, 800, 600);
+        Scene scene = new Scene(root, 1300, 700);
+        scene.getStylesheets().add("file:./src/IHM/styles/globalCSS.css");
         stage.setScene(scene);
         stage.setTitle("Passer Commande Pour un client");
         stage.show();
