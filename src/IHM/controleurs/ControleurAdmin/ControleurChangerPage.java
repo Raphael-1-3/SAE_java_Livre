@@ -3,6 +3,9 @@ package IHM.controleurs.ControleurAdmin;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.control.ComboBox;
+
+import java.sql.SQLException;
+
 import IHM.vues.LivreExpress;
 import IHM.vues.VueAdmin;
 import main.BD.ActionBD;
@@ -13,49 +16,51 @@ public class ControleurChangerPage implements EventHandler<ActionEvent>
     private LivreExpress app;
     private ComboBox<String> selectionAction;
 
-    public ControleurChangerPage(ActionBD m, LivreExpress app, ComboBox<String> selectionAction){
+    public ControleurChangerPage(ActionBD m, LivreExpress app, ComboBox<String> selectionAction) 
+    {
         this.modele = m;
         this.app = app;
         this.selectionAction = selectionAction;
     }
 
     @Override
-    public void handle(ActionEvent event){
+    public void handle(ActionEvent event) {
         String action = selectionAction.getValue();
-        VueAdmin vue = this.app.getVueAdmin();
 
         if (action == null) return;
 
-        switch (action) {
-            case "Créer un vendeur":
-                vue.creerVendeur();
-                break;
-            case "Ajouter une librairie":
-                vue.ajouterLibrairie();
-                break;
-            case "Panneau de Bord":
-                vue.panneauDeBord();
-                break;
-            case "Ajouter un livre":
-                vue.ajouterLivre();
-                break;
-            case "Regarder les disponibilités":
-                vue.regarderDisponibilites();
-                break;
-            case "Passer une commande pour un Client":
-                vue.passerCommandeClient();
-                break;
-            case "Transférer un livre":
-                vue.transfererLivre();
-                break;
-            case "Obtenir les factures":
-                vue.obtenirFactures();
-                break;
-            case "Choisir un magasin":
-                vue.choisirMagasin();
-                break;
-            default:
-                // Rien
+        try {
+            switch (action) {
+                case "Créer un vendeur":
+                    this.app.getVueAdmin().creerVendeur();
+                    break;
+                case "Ajouter une librairie":
+                    this.app.getVueAdmin().ajouterLibrairie();
+                    break;
+                case "Panneau de Bord":
+                    this.app.getVueAdmin().panneauDeBord();
+                    break;
+                case "Ajouter un livre":
+                    this.app.getVueAdmin().ajouterLivre();
+                    break;
+                case "Regarder les disponibilités":
+                    this.app.getVueAdmin().regarderDisponibilites();
+                    break;
+                case "Passer une commande pour un Client":
+                    this.app.getVueAdmin().passerCommandeClient();
+                    break;
+                case "Transférer un livre":
+                    this.app.getVueAdmin().transfererLivre();
+                    break;
+                case "Obtenir les factures":
+                    this.app.getVueAdmin().obtenirFactures();
+                    break;
+                default:
+                    // Rien
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            // Vous pouvez ajouter une gestion d'erreur utilisateur ici si besoin
         }
     }
 }

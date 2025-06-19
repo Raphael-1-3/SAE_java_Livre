@@ -70,7 +70,10 @@ public class ControleurSelectionGraphique implements EventHandler<ActionEvent>
                         this.app.getVueAdmin().afficheGraphiqueCAMagasinParMoisParAnnee(donneesCAMagasinParMoisParAnnee);
                         break;
                     case "CAVenteEnLigneEnMagasinParAnnee":
-                        this.app.getVueAdmin().afficheGraphiqueCAVenteEnLigneEnMagasinParAnnee(this.modele.CAVenteEnLigneEnMagasinParAnnee(Integer.parseInt(recherche)));
+                        System.out.println("Appel de CAVenteEnLigneEnMagasinParAnnee");
+                        var donneesCAVenteEnLigneEnMagasinParAnnee = this.modele.CAVenteEnLigneEnMagasinParAnnee();
+                        System.out.println(donneesCAVenteEnLigneEnMagasinParAnnee);
+                        this.app.getVueAdmin().afficheGraphiqueCAVenteEnLigneEnMagasinParAnnee(donneesCAVenteEnLigneEnMagasinParAnnee);
                         break;
                     case "nombreAuteurParEditeur":
                         this.app.getVueAdmin().afficheGraphiqueNombreAuteurParEditeur(this.modele.nombreAuteurParEditeur());
@@ -101,7 +104,6 @@ public class ControleurSelectionGraphique implements EventHandler<ActionEvent>
         return switch (choix) {
             case "chiffreAffaireParClassificationParAns",
                  "CAMagasinParMoisParAnnee",
-                 "CAVenteEnLigneEnMagasinParAnnee",
                  "nombreClientParVilleQuiOntAcheterAuteur",
                  "auteurLePlusVenduParAnnee" -> true;
             default -> false;

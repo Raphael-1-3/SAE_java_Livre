@@ -1800,15 +1800,14 @@ public class ActionBD{
      * @return
      * @throws SQLException
      */
-    public HashMap<Integer, HashMap<String, Integer>> CAVenteEnLigneEnMagasinParAnnee(int anneeAExclure) throws SQLException
+    public HashMap<Integer, HashMap<String, Integer>> CAVenteEnLigneEnMagasinParAnnee() throws SQLException
     {
         PreparedStatement ps = this.connexion.prepareStatement("select year(datecom) as annee, enligne as typevente, sum(prixvente * qte) as CAL\r\n" + //
                         "from COMMANDE \r\n" + //
                         "natural join DETAILCOMMANDE \r\n" + //
                         "natural join LIVRE\r\n" + //
-                        "where year(datecom) <> ?\r\n" + //
                         "group by enligne, annee;");
-        ps.setInt(1, anneeAExclure);
+        
         HashMap<Integer, HashMap<String, Integer>> res = new HashMap<>();
         ResultSet rs = ps.executeQuery();
         while (rs.next())
@@ -1824,6 +1823,30 @@ public class ActionBD{
         ps.close();
 
         return res;
+    }
+
+    /**
+     * Récupère la liste de tous les livres présents dans la base de données.
+     * @return Liste de tous les livres
+     * @throws SQLException
+     */
+    public List<Livre> getAllLivre() throws SQLException {
+        List<Livre> livres = new ArrayList<>();
+        PreparedStatement ps = this.connexion.prepareStatement("SELECT isbn, titre, nbpages, datepubli, prix FROM LIVRE");
+        ResultSet rs = ps.executeQuery();
+        while (rs.next()) {
+            Livre livre = new Livre(
+                rs.getLong("isbn"),
+                rs.getString("titre"),
+                rs.getInt("nbpages"),
+                rs.getInt("datepubli"),
+                rs.getDouble("prix")
+            );
+            livres.add(livre);
+        }
+        rs.close();
+        ps.close();
+        return livres;
     }
 
     /**

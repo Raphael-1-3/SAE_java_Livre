@@ -2,7 +2,7 @@ package IHM.vues;
 
 import main.*;
 import IHM.controleurs.ControleurAdmin.*;
-import IHM.controleurs.ControleurClient.*;
+
 import main.BD.ActionBD;
 import main.app.*;
 import main.BD.*;
@@ -35,9 +35,14 @@ import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
 import javafx.scene.control.ButtonBar.ButtonData ;
+import javafx.scene.Scene;
+import javafx.scene.chart.LineChart;
+import javafx.scene.chart.NumberAxis;
+import javafx.scene.chart.XYChart;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -53,7 +58,7 @@ public class VueAdmin extends BorderPane
     private TextField barRecherche;
     private BorderPane centre;
     private HBox TitrePage;
-    private HBox contenantRLIL;
+    private HBox contenaBox;
     private VBox box1;
     private VBox box2;
     private VBox box3;
@@ -66,6 +71,9 @@ public class VueAdmin extends BorderPane
     private ComboBox<String> selectionMagasin;
     private ComboBox<String> selectionStat;
     private TextField recherchStat;
+    private ComboBox<String> selectionRecherche;
+    private Livre livreChoisi;
+    private List<Livre> listeSuggestions;
 
     private TextField tfEmail = new TextField();
     private PasswordField pfMDP = new PasswordField();
@@ -96,6 +104,8 @@ public class VueAdmin extends BorderPane
     public VueAdmin(LivreExpress LEApp, ActionBD modele, Administrateur admin) throws SQLException
     {
         super();
+        this.listeSuggestions = new ArrayList<>();
+        this.selectionRecherche = new ComboBox<>();
         this.selectionMagasin = new ComboBox<>();
         this.selectionAction = new ComboBox<>();
         this.recherchStat = new TextField();
@@ -103,7 +113,7 @@ public class VueAdmin extends BorderPane
         this.admin = admin;
         this.modele = modele;
         this.barRecherche = new TextField();
-        this.contenantRLIL = new HBox();
+        this.contenaBox = new HBox();
         this.box1 = new VBox();
         this.box1.setPrefSize(400, 400);
         this.box2 = new VBox();
@@ -116,7 +126,7 @@ public class VueAdmin extends BorderPane
         this.box1.setStyle("-fx-background-radius : 15px;" + 
         "-fx-background-color : #f9f9f9;" + 
         "-fx-background : #f9f9f9;");
-        this.contenantRLIL.setStyle("-fx-background-radius : 15px;" + 
+        this.contenaBox.setStyle("-fx-background-radius : 15px;" + 
         "-fx-background-color : #f9f9f9;" + 
         "-fx-background : #f9f9f9;" + 
         "-fx-border-width : 2px;" + 
@@ -349,9 +359,48 @@ public class VueAdmin extends BorderPane
         this.centre.setCenter(form);
     }
 
-    public void ajouterLibrairie() 
+    public void ajouterLibrairie() throws SQLException
     {
-            // Code pour afficher la vue d'ajout de librairie
+        HBox topcenter = new HBox();
+        this.selectionRecherche.getItems().addAll(
+            "Rechercher par nom de livre",
+            "Rechercher par auteur",
+            "Rechercher par classification",
+            "Rechercher par éditeur", 
+            "Rechecher par magasin"
+        );
+        this.selectionRecherche.setPadding(new Insets(0, 0, 0, 15));
+
+        this.selectionMagasin.getItems().addAll(
+            "La librairie parisienne",
+            "Cap au Sud",
+            "Ty Li-Breizh-rie",
+            "L'européenne",
+            "Le Ch'ti livre",
+            "Rhône à lire",
+            "Loire et livres"
+        );
+        
+        Button executerAction = new Button("Exécuter");
+        executerAction.setPrefWidth(100);
+        executerAction.setOnAction(new controleurSelectionFiltreRecherche(this.modele, this.LEApp));
+        this.selectionRecherche.setPromptText("Choisissez une action"); 
+        this.selectionMagasin.setPromptText("Choissiser un magasin");
+        VBox layout = new VBox(10); 
+        layout.setPadding(new Insets(10));
+        layout.getChildren().addAll(this.selectionRecherche, this.selectionMagasin, executerAction);
+
+        this.barRecherche = new TextField();
+        this.barRecherche.setPromptText("Rechercher...");
+
+        ControleurRechercheDynamique controleurRecherche = new ControleurRechercheDynamique(this.LEApp, this.modele);
+        this.centre.setCenter(controleurRecherche.getListeSuggestions());
+
+        this.barRecherche.setPrefWidth(600); // Largeur préférée
+        topcenter.setPadding(new Insets(10, 0, 10, 50));
+        topcenter.setSpacing(15);
+        topcenter.getChildren().addAll(this.selectionRecherche, this.selectionMagasin, this.barRecherche);
+        this.centre.setTop(topcenter);
     }
 
     public void panneauDeBord() 
@@ -371,16 +420,19 @@ public class VueAdmin extends BorderPane
         );
         this.selectionStat.setPromptText("Choisissez une statistique");
         HBox hboxCombo = new HBox(this.selectionStat, this.recherchStat);
+        this.recherchStat.setPromptText("entre une annee ou un auteur en fonction");
         hboxCombo.setAlignment(Pos.CENTER); 
         hboxCombo.setPadding(new Insets(10)); 
         this.centre.setTop(hboxCombo);
         this.selectionStat.setOnAction(new ControleurSelectionGraphique(modele, LEApp));
+        this.contenaBox.getChildren().addAll(box1, box2, box3);
+        this.centre.setCenter(contenaBox);
         
     }
 
     public void ajouterLivre() 
     {
-        // Code pour afficher la vue d'ajout de livre
+        
     }
 
     public void regarderDisponibilites() 
@@ -403,10 +455,6 @@ public class VueAdmin extends BorderPane
         // Code pour afficher les factures
     }
 
-    public void choisirMagasin() 
-    {
-        // Code pour afficher la sélection de magasin
-    }
 
     public void afficheGraphiqueNombreDeLivreVendueParMagasinParAns(HashMap<Integer, HashMap<Magasin, Integer>> donnees) 
     {
@@ -509,7 +557,10 @@ public class VueAdmin extends BorderPane
         stage.setTitle("Graphique CA des Magasins");
         stage.show();
     }
-    public void afficheGraphiqueCAVenteEnLigneEnMagasinParAnnee(HashMap<Integer, HashMap<String, Integer>> donnees) {}
+    
+    public void afficheGraphiqueCAVenteEnLigneEnMagasinParAnnee(HashMap<Integer, HashMap<String, Integer>> donnees) 
+    {}
+
     public void afficheGraphiqueNombreAuteurParEditeur(HashMap<Editeur, Integer> donnees) {}
     public void afficheGraphiqueNombreClientParVilleQuiOntAcheterAuteur(HashMap<String, Integer> donnees) {}
     public void afficheGraphiqueValeurStockMagasin(HashMap<Magasin, Integer> donnees) {}
@@ -551,4 +602,5 @@ public class VueAdmin extends BorderPane
     public TextField getTfMois() { return tfMois; }
     public TextField getTfAnnee() { return tfAnnee; }
     public ComboBox<String> getSelectionAction() { return this.selectionAction; }
+
 }

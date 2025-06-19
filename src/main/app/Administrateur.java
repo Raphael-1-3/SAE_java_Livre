@@ -269,7 +269,7 @@ public class Administrateur extends Vendeur {
                     }
                 
                     // 4. CA vente en ligne/en magasin par an (hors année 2024)
-                    HashMap<Integer, HashMap<String, Integer>> caVente = bd.CAVenteEnLigneEnMagasinParAnnee(2025);
+                    HashMap<Integer, HashMap<String, Integer>> caVente = bd.CAVenteEnLigneEnMagasinParAnnee();
                     System.out.println("\n=== CA vente en ligne/en magasin par an (hors 2025) ===");
                     for (Integer annee : caVente.keySet()) {
                         System.out.println("Année : " + annee);
