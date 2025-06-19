@@ -359,49 +359,9 @@ public class VueAdmin extends BorderPane
         this.centre.setCenter(form);
     }
 
-    public void ajouterLibrairie() throws SQLException
-    {
-        HBox topcenter = new HBox();
-        this.selectionRecherche.getItems().addAll(
-            "Rechercher par nom de livre",
-            "Rechercher par auteur",
-            "Rechercher par classification",
-            "Rechercher par éditeur", 
-            "Rechecher par magasin"
-        );
-        this.selectionRecherche.setPadding(new Insets(0, 0, 0, 15));
-
-        this.selectionMagasin.getItems().addAll(
-            "La librairie parisienne",
-            "Cap au Sud",
-            "Ty Li-Breizh-rie",
-            "L'européenne",
-            "Le Ch'ti livre",
-            "Rhône à lire",
-            "Loire et livres"
-        );
+    public void ajouterLibrairie() 
+    {}
         
-        Button executerAction = new Button("Exécuter");
-        executerAction.setPrefWidth(100);
-        executerAction.setOnAction(new controleurSelectionFiltreRecherche(this.modele, this.LEApp));
-        this.selectionRecherche.setPromptText("Choisissez une action"); 
-        this.selectionMagasin.setPromptText("Choissiser un magasin");
-        VBox layout = new VBox(10); 
-        layout.setPadding(new Insets(10));
-        layout.getChildren().addAll(this.selectionRecherche, this.selectionMagasin, executerAction);
-
-        this.barRecherche = new TextField();
-        this.barRecherche.setPromptText("Rechercher...");
-
-        ControleurRechercheDynamique controleurRecherche = new ControleurRechercheDynamique(this.LEApp, this.modele);
-        this.centre.setCenter(controleurRecherche.getListeSuggestions());
-
-        this.barRecherche.setPrefWidth(600); // Largeur préférée
-        topcenter.setPadding(new Insets(10, 0, 10, 50));
-        topcenter.setSpacing(15);
-        topcenter.getChildren().addAll(this.selectionRecherche, this.selectionMagasin, this.barRecherche);
-        this.centre.setTop(topcenter);
-    }
 
     public void panneauDeBord() 
     {
@@ -430,9 +390,48 @@ public class VueAdmin extends BorderPane
         
     }
 
-    public void ajouterLivre() 
+    public void ajouterLivre() throws SQLException
     {
+        HBox topcenter = new HBox();
+        this.selectionRecherche.getItems().addAll(
+            "Rechercher par nom de livre",
+            "Rechercher par auteur",
+            "Rechercher par classification",
+            "Rechercher par éditeur", 
+            "Rechecher par magasin"
+        );
+        this.selectionRecherche.setPadding(new Insets(0, 0, 0, 15));
+
+        this.selectionMagasin.getItems().addAll(
+            "La librairie parisienne",
+            "Cap au Sud",
+            "Ty Li-Breizh-rie",
+            "L'européenne",
+            "Le Ch'ti livre",
+            "Rhône à lire",
+            "Loire et livres"
+        );
         
+        Button executerAction = new Button("Exécuter");
+        executerAction.setPrefWidth(100);;
+        this.selectionRecherche.setPromptText("Choisissez une action"); 
+        this.selectionMagasin.setPromptText("Choissiser un magasin");
+        VBox layout = new VBox(10); 
+        layout.setPadding(new Insets(10));
+        layout.getChildren().addAll(this.selectionRecherche, this.selectionMagasin, executerAction);
+
+        this.barRecherche = new TextField();
+        this.barRecherche.setPromptText("Rechercher...");
+
+        ControleurRechercheDynamique controleurRecherche = new ControleurRechercheDynamique(this.LEApp, this.modele);
+        this.centre.setCenter(controleurRecherche.getListeSuggestions());
+
+        this.barRecherche.setPrefWidth(600); // Largeur préférée
+        topcenter.setPadding(new Insets(10, 0, 10, 50));
+        topcenter.setSpacing(15);
+        topcenter.getChildren().addAll(this.selectionRecherche, this.selectionMagasin, this.barRecherche);
+        this.centre.setTop(topcenter);
+    
     }
 
     public void regarderDisponibilites() 
