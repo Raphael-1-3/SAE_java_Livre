@@ -18,6 +18,9 @@ import javafx.scene.text.FontWeight;
 import javafx.stage.Stage;
 import junit.framework.TestFailure;
 import javafx.geometry.Pos;
+
+import javafx.scene.Node;
+
 import javafx.scene.Scene;
 import javafx.scene.chart.AreaChart;
 import javafx.scene.chart.BarChart;
@@ -28,10 +31,15 @@ import javafx.scene.chart.XYChart;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+
+import javafx.scene.input.MouseEvent;
+
 import javafx.scene.layout.*;
+
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Line;
+
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
@@ -363,6 +371,7 @@ public class VueAdmin extends BorderPane
         tfNom.setPromptText("Nom");
         tfPrenom.setPromptText("Prénom");
         tfEmail.setPromptText("Email");
+        pfMDP = new PasswordField();
         pfMDP.setPromptText("Mot de passe");
 
         Button btnCreer = new Button("Créer");
