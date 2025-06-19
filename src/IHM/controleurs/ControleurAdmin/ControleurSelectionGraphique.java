@@ -52,6 +52,8 @@ public class ControleurSelectionGraphique implements EventHandler<ActionEvent>
 
                 switch (choixGra) {
                     case "NombreDeLivreVendueParMagasinParAns":
+                        this.app.getVueAdmin().getbarRecherche().setPromptText("aucune recherche a effectuer");
+                        this.app.getVueAdmin().getbarRecherche().setDisable(true);
                         System.out.println("Appel de NombreDeLivreVendueParMagasinParAns");
                         var donneesNDELVPMPA = this.modele.NombreDeLivreVendueParMagasinParAns();
                         System.out.println(donneesNDELVPMPA);
@@ -59,35 +61,51 @@ public class ControleurSelectionGraphique implements EventHandler<ActionEvent>
                         break;
                     case "chiffreAffaireParClassificationParAns":
                         System.out.println("Appel de chiffreAffaireParClassificationParAns");
+                        this.app.getVueAdmin().getbarRecherche().setPromptText("entrer une annee");
+                        this.app.getVueAdmin().getbarRecherche().setDisable(false);
                         var donneesCAPCPA = this.modele.chiffreAffaireParClassificationParAns(Integer.parseInt(recherche));
                         System.out.println(donneesCAPCPA);
                         this.app.getVueAdmin().afficheGraphiqueChiffreAffaireParClassificationParAns(donneesCAPCPA);
                         break;
                     case "CAMagasinParMoisParAnnee":
                         System.out.println("Appel de CAMagasinParMoisParAnnee");
+                        this.app.getVueAdmin().getbarRecherche().setPromptText("entrer une annee");
+                        this.app.getVueAdmin().getbarRecherche().setDisable(false);
                         var donneesCAMagasinParMoisParAnnee = this.modele.CAMagasinParMoisParAnnee(Integer.parseInt(recherche));
                         System.out.println(donneesCAMagasinParMoisParAnnee);
                         this.app.getVueAdmin().afficheGraphiqueCAMagasinParMoisParAnnee(donneesCAMagasinParMoisParAnnee);
                         break;
                     case "CAVenteEnLigneEnMagasinParAnnee":
                         System.out.println("Appel de CAVenteEnLigneEnMagasinParAnnee");
+                        this.app.getVueAdmin().getbarRecherche().setPromptText("aucune recherche a effectuer");
+                        this.app.getVueAdmin().getbarRecherche().setDisable(true);
                         var donneesCAVenteEnLigneEnMagasinParAnnee = this.modele.CAVenteEnLigneEnMagasinParAnnee();
                         System.out.println(donneesCAVenteEnLigneEnMagasinParAnnee);
                         this.app.getVueAdmin().afficheGraphiqueCAVenteEnLigneEnMagasinParAnnee(donneesCAVenteEnLigneEnMagasinParAnnee);
                         break;
                     case "nombreAuteurParEditeur":
+                    this.app.getVueAdmin().getbarRecherche().setPromptText("aucune recherche a effectuer");
+                        this.app.getVueAdmin().getbarRecherche().setDisable(true);
                         this.app.getVueAdmin().afficheGraphiqueNombreAuteurParEditeur(this.modele.nombreAuteurParEditeur());
                         break;
                     case "nombreClientParVilleQuiOntAcheterAuteur":
+                    this.app.getVueAdmin().getbarRecherche().setPromptText("entre un nom d auteur");
+                        this.app.getVueAdmin().getbarRecherche().setDisable(false);
                         this.app.getVueAdmin().afficheGraphiqueNombreClientParVilleQuiOntAcheterAuteur(this.modele.nombreClientParVilleQuiOntAcheterAuteur(this.modele.getAuteurAPartirDeNom(recherche)));
                         break;
                     case "valeurStockMagasin":
+                    this.app.getVueAdmin().getbarRecherche().setPromptText("aucune recherche a effectuer");
+                        this.app.getVueAdmin().getbarRecherche().setDisable(true);
                         this.app.getVueAdmin().afficheGraphiqueValeurStockMagasin(this.modele.valeurStockMagasin());
                         break;
                     case "statsCAParClientParAnnee":
+                    this.app.getVueAdmin().getbarRecherche().setPromptText("aucune recherche a effectuer");
+                        this.app.getVueAdmin().getbarRecherche().setDisable(true);
                         this.app.getVueAdmin().afficheGraphiqueStatsCAParClientParAnnee(this.modele.statsCAParClientParAnnee());
                         break;
                     case "auteurLePlusVenduParAnnee":
+                    this.app.getVueAdmin().getbarRecherche().setPromptText("aucune recherche a effectuer");
+                        this.app.getVueAdmin().getbarRecherche().setDisable(true);
                         this.app.getVueAdmin().afficheGraphiqueAuteurLePlusVenduParAnnee(this.modele.auteurLePlusVenduParAnnee(Integer.parseInt(recherche)));
                         break;
                 }
