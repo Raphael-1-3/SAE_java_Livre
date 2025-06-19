@@ -28,6 +28,9 @@ public class ControleurSelectionMag implements EventHandler<MouseEvent>
     {
         this.app.getVueAdmin().setMagChoisi(m);
         this.app.getVueAdmin().activer();
+        try
+        {
         this.app.getVueAdmin().panneauDeBord();
+        }catch (SQLException e) {System.out.println("Probleme appli");}
     }
 }

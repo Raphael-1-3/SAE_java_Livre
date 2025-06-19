@@ -42,9 +42,10 @@ public class ControleurSelectionGraphique implements EventHandler<ActionEvent>
 
     public void handle(ActionEvent event) {
         try {
-            
+    
             String choixGra = this.app.getVueAdmin().getSelectionStat().getValue();
-            String recherche = this.app.getVueAdmin().getRecherchStat().getText();
+            String recherche = this.app.getVueAdmin().getbarRecherche().getText();
+            this.barActive(choixGra);
 
             if (choixGra == null || choixGra.isEmpty() || (besoinDeParametre(choixGra) && (recherche == null || recherche.isEmpty()))) {
                 this.app.getVueConnexion().popUpChampsVides().showAndWait();
@@ -53,7 +54,7 @@ public class ControleurSelectionGraphique implements EventHandler<ActionEvent>
                 switch (choixGra) {
                     case "NombreDeLivreVendueParMagasinParAns":
                         this.app.getVueAdmin().getbarRecherche().setPromptText("aucune recherche a effectuer");
-                        this.app.getVueAdmin().getbarRecherche().setDisable(true);
+                        ;
                         System.out.println("Appel de NombreDeLivreVendueParMagasinParAns");
                         var donneesNDELVPMPA = this.modele.NombreDeLivreVendueParMagasinParAns();
                         System.out.println(donneesNDELVPMPA);
@@ -62,7 +63,7 @@ public class ControleurSelectionGraphique implements EventHandler<ActionEvent>
                     case "chiffreAffaireParClassificationParAns":
                         System.out.println("Appel de chiffreAffaireParClassificationParAns");
                         this.app.getVueAdmin().getbarRecherche().setPromptText("entrer une annee");
-                        this.app.getVueAdmin().getbarRecherche().setDisable(false);
+           
                         var donneesCAPCPA = this.modele.chiffreAffaireParClassificationParAns(Integer.parseInt(recherche));
                         System.out.println(donneesCAPCPA);
                         this.app.getVueAdmin().afficheGraphiqueChiffreAffaireParClassificationParAns(donneesCAPCPA);
@@ -70,7 +71,7 @@ public class ControleurSelectionGraphique implements EventHandler<ActionEvent>
                     case "CAMagasinParMoisParAnnee":
                         System.out.println("Appel de CAMagasinParMoisParAnnee");
                         this.app.getVueAdmin().getbarRecherche().setPromptText("entrer une annee");
-                        this.app.getVueAdmin().getbarRecherche().setDisable(false);
+                        
                         var donneesCAMagasinParMoisParAnnee = this.modele.CAMagasinParMoisParAnnee(Integer.parseInt(recherche));
                         System.out.println(donneesCAMagasinParMoisParAnnee);
                         this.app.getVueAdmin().afficheGraphiqueCAMagasinParMoisParAnnee(donneesCAMagasinParMoisParAnnee);
@@ -78,34 +79,33 @@ public class ControleurSelectionGraphique implements EventHandler<ActionEvent>
                     case "CAVenteEnLigneEnMagasinParAnnee":
                         System.out.println("Appel de CAVenteEnLigneEnMagasinParAnnee");
                         this.app.getVueAdmin().getbarRecherche().setPromptText("aucune recherche a effectuer");
-                        this.app.getVueAdmin().getbarRecherche().setDisable(true);
+                        
                         var donneesCAVenteEnLigneEnMagasinParAnnee = this.modele.CAVenteEnLigneEnMagasinParAnnee();
                         System.out.println(donneesCAVenteEnLigneEnMagasinParAnnee);
                         this.app.getVueAdmin().afficheGraphiqueCAVenteEnLigneEnMagasinParAnnee(donneesCAVenteEnLigneEnMagasinParAnnee);
                         break;
                     case "nombreAuteurParEditeur":
                     this.app.getVueAdmin().getbarRecherche().setPromptText("aucune recherche a effectuer");
-                        this.app.getVueAdmin().getbarRecherche().setDisable(true);
+                        
                         this.app.getVueAdmin().afficheGraphiqueNombreAuteurParEditeur(this.modele.nombreAuteurParEditeur());
                         break;
                     case "nombreClientParVilleQuiOntAcheterAuteur":
-                    this.app.getVueAdmin().getbarRecherche().setPromptText("entre un nom d auteur");
-                        this.app.getVueAdmin().getbarRecherche().setDisable(false);
+                        this.app.getVueAdmin().getbarRecherche().setPromptText("entre un nom d auteur");
                         this.app.getVueAdmin().afficheGraphiqueNombreClientParVilleQuiOntAcheterAuteur(this.modele.nombreClientParVilleQuiOntAcheterAuteur(this.modele.getAuteurAPartirDeNom(recherche)));
                         break;
                     case "valeurStockMagasin":
                     this.app.getVueAdmin().getbarRecherche().setPromptText("aucune recherche a effectuer");
-                        this.app.getVueAdmin().getbarRecherche().setDisable(true);
+                        
                         this.app.getVueAdmin().afficheGraphiqueValeurStockMagasin(this.modele.valeurStockMagasin());
                         break;
                     case "statsCAParClientParAnnee":
                     this.app.getVueAdmin().getbarRecherche().setPromptText("aucune recherche a effectuer");
-                        this.app.getVueAdmin().getbarRecherche().setDisable(true);
+                        
                         this.app.getVueAdmin().afficheGraphiqueStatsCAParClientParAnnee(this.modele.statsCAParClientParAnnee());
                         break;
                     case "auteurLePlusVenduParAnnee":
                     this.app.getVueAdmin().getbarRecherche().setPromptText("aucune recherche a effectuer");
-                        this.app.getVueAdmin().getbarRecherche().setDisable(true);
+                        
                         this.app.getVueAdmin().afficheGraphiqueAuteurLePlusVenduParAnnee(this.modele.auteurLePlusVenduParAnnee(Integer.parseInt(recherche)));
                         break;
                 }
@@ -125,6 +125,17 @@ public class ControleurSelectionGraphique implements EventHandler<ActionEvent>
                  "nombreClientParVilleQuiOntAcheterAuteur",
                  "auteurLePlusVenduParAnnee" -> true;
             default -> false;
+        };
+    }
+
+    // Méthode utilitaire pour déterminer si un paramètre est requis
+    private void barActive(String choix) {
+        switch (choix) {
+            case "chiffreAffaireParClassificationParAns",
+                 "CAMagasinParMoisParAnnee",
+                 "nombreClientParVilleQuiOntAcheterAuteur",
+                 "auteurLePlusVenduParAnnee" -> this.app.getVueAdmin().activer();
+            default -> this.app.getVueAdmin().getbarRecherche().setDisable(true);
         };
     }
 

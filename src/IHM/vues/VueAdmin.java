@@ -70,9 +70,6 @@ public class VueAdmin extends BorderPane
     private BorderPane centre;
     private HBox TitrePage;
     private HBox contenaBox;
-    private VBox box1;
-    private VBox box2;
-    private VBox box3;
     private PasswordField pwField;
     private TextField tfAdresse;
     private TextField tfVille;
@@ -127,34 +124,7 @@ public class VueAdmin extends BorderPane
         this.modele = modele;
         this.barRecherche = new TextField();
         this.contenaBox = new HBox();
-        this.box1 = new VBox();
-        this.box1.setPrefSize(400, 400);
-        this.box2 = new VBox();
-        this.box2.setPrefSize(400, 400);
-        this.box3 = new VBox();
-        this.box3.setPrefSize(400, 400);
-        this.centre = new BorderPane();
-        this.TitrePage = new HBox();
-        this.TitrePage.setPrefHeight(25);
-        this.box1.setStyle("-fx-background-radius : 15px;" + 
-        "-fx-background-color : #f9f9f9;" + 
-        "-fx-background : #f9f9f9;");
-        this.contenaBox.setStyle("-fx-background-radius : 15px;" + 
-        "-fx-background-color : #f9f9f9;" + 
-        "-fx-background : #f9f9f9;" + 
-        "-fx-border-width : 2px;" + 
-        "-fx-border-color : #df9f53;" + 
-        "-fx-border-radius : 15px;");
-        this.box2.setStyle("-fx-background-radius : 15px;" + 
-        "-fx-background-color : #f9f9f9;" + 
-        "-fx-background : #f9f9f9;" + 
-        "-fx-border-width : 0 0 0 2px;" + 
-        "-fx-border-color : #df9f53");
-        this.box3.setStyle("-fx-background-color: #f9f9f9;" + 
-        "-fx-background-radius : 15px;" +
-        "-fx-border-width : 0 0 0 2px;" +
-        "-fx-border-color : #df9f53;" + 
-        "-fx-background : #f9f9f9;");
+        this.centre= new BorderPane();
         this.setCenter(this.centre);
         BorderPane.setMargin(this.centre, new Insets(60, 120, 60, 60));
         this.centre.setMaxSize(1200, 450);
@@ -442,14 +412,17 @@ public class VueAdmin extends BorderPane
             "statsCAParClientParAnnee",
             "auteurLePlusVenduParAnnee"
         );
+        this.barRecherche = new TextField("...");
+        this.barRecherche.setPromptText("Rechercher...");
         this.selectionStat.setPromptText("Choisissez une statistique");
-        HBox hboxCombo = new HBox(this.selectionStat, this.barRecherche);
+        Button executerrecherche = new Button("Recherche");
+        HBox hboxCombo = new HBox(this.selectionStat, this.barRecherche, executerrecherche);
         hboxCombo.setAlignment(Pos.CENTER); 
         hboxCombo.setPadding(new Insets(10)); 
         this.centre.setTop(hboxCombo);
-        Button executerrecherche = new Button("Recherche");
-        this.barRecherche = new TextField();
-        this.barRecherche.setPromptText("Rechercher...");
+        this.barRecherche.setDisable(true);
+        
+        
 
         ControleurRechercheDynamiqueAuteur controleurRechercheAuteur = new ControleurRechercheDynamiqueAuteur(this.LEApp, this.modele); 
         executerrecherche.setOnAction(new ControleurSelectionGraphique(this.modele, this.LEApp));
@@ -854,7 +827,23 @@ public class VueAdmin extends BorderPane
     
     public void afficheGraphiqueNombreClientParVilleQuiOntAcheterAuteur(HashMap<String, Integer> donnees) 
     {
-        //TODO plus tard avec recherche dynamique auteur 
+        PieChart pieChart = new PieChart();
+
+        for (String ville : donnees.keySet()) {
+            int nbclient = donnees.get(ville);
+            String label = ville + " : " + nbclient;
+            pieChart.getData().add(new PieChart.Data(label, nbclient));
+        }
+
+        pieChart.setTitle("Nombre Client Par Ville Qui Ont Acheter Auteur");
+
+        VBox chart = new VBox(pieChart);
+        Stage stage = new Stage();
+        BorderPane root = new BorderPane(chart);
+        Scene scene = new Scene(root, 800, 600);
+        stage.setScene(scene);
+        stage.setTitle("Nombre Client Par Ville Qui Ont AcheterAuteur");
+        stage.show();
     }
     public void afficheGraphiqueValeurStockMagasin(HashMap<Magasin, Integer> donnees) 
     {
@@ -916,7 +905,10 @@ public class VueAdmin extends BorderPane
         stage.setTitle("Graphique 8");
         stage.show(); 
     }
-    public void afficheGraphiqueAuteurLePlusVenduParAnnee(HashMap<Integer, HashMap<Auteur, Integer>> donnees) {}
+    public void afficheGraphiqueAuteurLePlusVenduParAnnee(HashMap<Integer, HashMap<Auteur, Integer>> donnees) 
+    {
+        
+    }
 
 
     public void setMagChoisi(Magasin magChoisi) { this.MagChoisi = magChoisi; }
