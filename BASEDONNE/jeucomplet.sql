@@ -116,6 +116,7 @@ insert into CLASSIFICATION(iddewey, nomclass) values
 -- ajout des user pour chaque client
 INSERT INTO USER (idu, nom, email, motDePasse, role) VALUES
 	-- insert de l admin de base
+	(750, 'Admin', 'admin@a.fr', 'mdp', 'ADMIN'),
 	(501, 'Brousseau', 'supreme.leader.66@StarWars.fr', 'Ordre66', "ADMIN"),
 	-- insert des user de type client
 	(1, 'Rodriguez', 'Rodriguez.Fatima.1@ex.fr', 'mdp1', 'CLIENT'),
@@ -624,7 +625,8 @@ INSERT INTO USER (idu, nom, email, motDePasse, role) VALUES
 -- insert de l admin
 
 INSERT INTO ADMIN (idad,prenomad) VALUES (501, 'Jango'),
-	(1000, 'Robin');
+	(1000, 'Robin'),
+	(750, 'Admin');
 
 INSERT INTO VENDEUR (prenomven, magasin, idve) VALUES 
 	('Vendeur', 1, 1001);

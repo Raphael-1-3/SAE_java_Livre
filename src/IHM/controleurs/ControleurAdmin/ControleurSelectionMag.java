@@ -3,6 +3,7 @@ package IHM.controleurs.ControleurAdmin;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.control.ComboBox;
+import javafx.scene.input.MouseEvent;
 import main.BD.ActionBD;
 import IHM.vues.*;
 import main.app.*;
@@ -10,35 +11,23 @@ import main.app.Magasin;
 
 import java.sql.SQLException;
 
-public class ControleurSelectionMag implements EventHandler<ActionEvent> 
+public class ControleurSelectionMag implements EventHandler<MouseEvent> 
 {
     private LivreExpress app;
     private ActionBD modele;
-    private ComboBox<String> comboBox;
+    private Magasin m;
 
-    public ControleurSelectionMag(ActionBD modele, LivreExpress app, ComboBox<String> comboBox)
+    public ControleurSelectionMag(ActionBD modele, LivreExpress app, Magasin m)
     {
         this.app = app;
         this.modele = modele;
-        this.comboBox = comboBox;
+        this.m = m;
     }
 
-    public void handle(ActionEvent event) 
+    public void handle(MouseEvent event) 
     {
-        String nomMag = comboBox.getValue();
-
-        if (nomMag != null && !nomMag.equals("Aucun magasin à afficher.")) 
-        {
-            try
-            {
-                Magasin mag = this.modele.magAPartirNom(nomMag);
-                this.app.getVueAdmin().setMagChoisi(mag);
-                this.app.getVueAdmin().afficheInfoMag();
-            } 
-            catch(SQLException sql) 
-            {
-                System.out.println("Erreur SQL : " + sql.getMessage());
-            }
-        }
+        this.app.getVueAdmin().setMagChoisi(m);
+        this.app.getVueAdmin().activer();
+        this.app.getVueAdmin().panneauDeBord();
     }
 }

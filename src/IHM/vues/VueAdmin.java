@@ -2,7 +2,7 @@ package IHM.vues;
 
 import main.*;
 import IHM.controleurs.ControleurAdmin.*;
-
+import IHM.controleurs.ControleurClient.ControleurChosirMagasin;
 import main.BD.ActionBD;
 import main.app.*;
 import main.BD.*;
@@ -68,7 +68,6 @@ public class VueAdmin extends BorderPane
     private TextField tfCodePostal;
     private Magasin MagChoisi;
     private ComboBox<String> selectionAction;
-    private ComboBox<String> selectionMagasin;
     private ComboBox<String> selectionStat;
     private TextField recherchStat;
     private ComboBox<String> selectionRecherche;
@@ -106,7 +105,6 @@ public class VueAdmin extends BorderPane
         super();
         this.listeSuggestions = new ArrayList<>();
         this.selectionRecherche = new ComboBox<>();
-        this.selectionMagasin = new ComboBox<>();
         this.selectionAction = new ComboBox<>();
         this.recherchStat = new TextField();
         this.LEApp = LEApp;
@@ -144,10 +142,12 @@ public class VueAdmin extends BorderPane
         "-fx-background : #f9f9f9;");
         this.setCenter(this.centre);
         BorderPane.setMargin(this.centre, new Insets(60, 120, 60, 60));
-        this.centre.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
+        this.centre.setMaxSize(1200, 450);
+        this.centre.setMinSize(1200, 450);
         BorderPane.setAlignment(this.centre, Pos.CENTER);
         this.setPrefSize(1300, 700);
         this.top();
+        this.pannelSelectionMag();
         
 
         this.pwField = new PasswordField();
@@ -159,8 +159,18 @@ public class VueAdmin extends BorderPane
         this.tfVille = new TextField();
         this.tfVille.setMaxWidth(380);
         //this.setBottom(this.bottom());
+
+        this.barRecherche.setDisable(true);
+        this.selectionAction.setDisable(true);
+
+
     }
     
+    public void activer()
+    {
+        this.barRecherche.setDisable(false);
+        this.selectionAction.setDisable(false);
+    }
 
     public Alert popUpChampsVides()
     {
@@ -196,9 +206,11 @@ public class VueAdmin extends BorderPane
         HBox sstop2 = new HBox();
 
         // ssHbox 1 ----
-        Label titre = new Label("Livre Expresse - Admistrateur");
+        Label titre = new Label("Admistrateur");
         titre.setFont(new Font("Times new Roman", 50));
         titre.setPadding(new Insets(15, 15, 0, 0));
+        titre.setMinWidth(350);
+        titre.setMaxWidth(350);
         ImageView logo = new ImageView(new Image("file:./img/logo.jpg"));
         logo.setFitHeight(100);
         logo.setFitWidth(100);
@@ -211,7 +223,15 @@ public class VueAdmin extends BorderPane
         nomUtil.setPadding(new Insets(35, 0, 0, 0));
         nomUtil.setMaxWidth(400);
         nomUtil.setPrefWidth(400);
+        nomUtil.setMinWidth(400);
         HBox boutonsDroite = new HBox(10);
+        Button store = new Button("");
+        ImageView storeIcon = new ImageView(new Image("file:./img/store.png"));
+        storeIcon.setFitHeight(40);
+        storeIcon.setFitWidth(40);
+        store.setGraphic(storeIcon);
+        store.setPrefSize(50, 50);
+        store.setOnAction(new ControleurAllerChoisirMag(this.LEApp, this.modele));
         Button param = new Button("");
         ImageView paramIcon = new ImageView(new Image("file:./img/param.png"));
         paramIcon.setFitHeight(40);
@@ -219,6 +239,7 @@ public class VueAdmin extends BorderPane
         param.setGraphic(paramIcon);
         param.setPadding(new Insets(0, 0, 0, 0));
         param.setPrefSize(50, 50);
+        
         //param.setOnAction(new ControleurAllerParametres(this.modele, this.LEApp));
         Button deconnexion = new Button();
         ImageView decoIcon = new ImageView(new Image("file:./img/deco.png"));
@@ -235,7 +256,7 @@ public class VueAdmin extends BorderPane
         boutonsDroite.setPadding(new Insets(30, 0, 0, 105));
         boutonsDroite.setAlignment(Pos.TOP_RIGHT);
         
-        boutonsDroite.getChildren().addAll(deconnexion, param);
+        boutonsDroite.getChildren().addAll(store, deconnexion, param);
 
         sstop1.setPadding(new Insets(3, 3, 3, 3));
         sstop1.setSpacing(10);
@@ -258,14 +279,12 @@ public class VueAdmin extends BorderPane
         this.selectionAction.setPromptText("Choisissez une action");
         this.selectionAction.setPadding(new Insets(0, 0, 0, 15));
 
-        this.choixMag();
-        this.selectionMagasin.setPromptText("Selectionner un Magasin");
         this.selectionAction.setPromptText("Selectionner un magasin");
 
     
         sstop2.setPadding(new Insets(10, 0, 10, 50));
         sstop2.setSpacing(15);
-        sstop2.getChildren().addAll(this.selectionAction, this.selectionMagasin);
+        sstop2.getChildren().addAll(this.selectionAction);
         //
         HBox boxLigne = new HBox();
         Line sep = new Line(0, 0, 1100, 0);
@@ -283,21 +302,6 @@ public class VueAdmin extends BorderPane
         this.setTop(top);
     }
 
-    public void choixMag() throws SQLException 
-    {
-        List<Magasin> mags = this.modele.getAllMagasins();
-        this.selectionMagasin.getItems().clear();
-
-        if (mags == null || mags.isEmpty()) 
-        {
-            this.selectionMagasin.getItems().add("Aucun magasin à afficher.");
-        } 
-        else for (Magasin mag : mags) this.selectionMagasin.getItems().add(mag.getNomMag());
-        
-
-        // Ajoute le contrôleur pour gérer la sélection
-        this.selectionMagasin.setOnAction(new ControleurSelectionMag(this.modele, this.LEApp, this.selectionMagasin));
-    }
 
 
 
@@ -359,9 +363,38 @@ public class VueAdmin extends BorderPane
         this.centre.setCenter(form);
     }
 
-    public void ajouterLibrairie() 
-    {}
+    public void ajouterLibrairie() throws SQLException
+    {
+        HBox topcenter = new HBox();
+        this.selectionRecherche.getItems().addAll(
+            "Rechercher par nom de livre",
+            "Rechercher par auteur",
+            "Rechercher par classification",
+            "Rechercher par éditeur", 
+            "Rechecher par magasin"
+        );
+        this.selectionRecherche.setPadding(new Insets(0, 0, 0, 15));
         
+        Button executerAction = new Button("Exécuter");
+        executerAction.setPrefWidth(100);
+        executerAction.setOnAction(new controleurSelectionFiltreRecherche(this.modele, this.LEApp));
+        this.selectionRecherche.setPromptText("Choisissez une action"); 
+        VBox layout = new VBox(10); 
+        layout.setPadding(new Insets(10));
+        layout.getChildren().addAll(this.selectionRecherche, executerAction);
+
+        this.barRecherche = new TextField();
+        this.barRecherche.setPromptText("Rechercher...");
+
+        ControleurRechercheDynamique controleurRecherche = new ControleurRechercheDynamique(this.LEApp, this.modele);
+        this.centre.setCenter(controleurRecherche.getListeSuggestions());
+
+        this.barRecherche.setPrefWidth(600); // Largeur préférée
+        topcenter.setPadding(new Insets(10, 0, 10, 50));
+        topcenter.setSpacing(15);
+        topcenter.getChildren().addAll(this.selectionRecherche, this.barRecherche);
+        this.centre.setTop(topcenter);
+    }
 
     public void panneauDeBord() 
     {
@@ -390,48 +423,9 @@ public class VueAdmin extends BorderPane
         
     }
 
-    public void ajouterLivre() throws SQLException
+    public void ajouterLivre() 
     {
-        HBox topcenter = new HBox();
-        this.selectionRecherche.getItems().addAll(
-            "Rechercher par nom de livre",
-            "Rechercher par auteur",
-            "Rechercher par classification",
-            "Rechercher par éditeur", 
-            "Rechecher par magasin"
-        );
-        this.selectionRecherche.setPadding(new Insets(0, 0, 0, 15));
-
-        this.selectionMagasin.getItems().addAll(
-            "La librairie parisienne",
-            "Cap au Sud",
-            "Ty Li-Breizh-rie",
-            "L'européenne",
-            "Le Ch'ti livre",
-            "Rhône à lire",
-            "Loire et livres"
-        );
         
-        Button executerAction = new Button("Exécuter");
-        executerAction.setPrefWidth(100);;
-        this.selectionRecherche.setPromptText("Choisissez une action"); 
-        this.selectionMagasin.setPromptText("Choissiser un magasin");
-        VBox layout = new VBox(10); 
-        layout.setPadding(new Insets(10));
-        layout.getChildren().addAll(this.selectionRecherche, this.selectionMagasin, executerAction);
-
-        this.barRecherche = new TextField();
-        this.barRecherche.setPromptText("Rechercher...");
-
-        ControleurRechercheDynamique controleurRecherche = new ControleurRechercheDynamique(this.LEApp, this.modele);
-        this.centre.setCenter(controleurRecherche.getListeSuggestions());
-
-        this.barRecherche.setPrefWidth(600); // Largeur préférée
-        topcenter.setPadding(new Insets(10, 0, 10, 50));
-        topcenter.setSpacing(15);
-        topcenter.getChildren().addAll(this.selectionRecherche, this.selectionMagasin, this.barRecherche);
-        this.centre.setTop(topcenter);
-    
     }
 
     public void regarderDisponibilites() 
@@ -557,6 +551,72 @@ public class VueAdmin extends BorderPane
         stage.show();
     }
     
+    public void pannelSelectionMag()
+    {
+        try
+        {   
+            this.centre.getChildren().clear();
+            ScrollPane sp = new ScrollPane();
+            sp.setMaxSize(1200, 450);
+            sp.setMinSize(1200, 450);
+            TilePane contenu = new TilePane();
+            contenu.setPadding(new Insets(5));
+            contenu.setMaxSize(1180, 450);
+            contenu.setMaxSize(1180, 450);
+            contenu.setHgap(60);
+            contenu.setVgap(30);
+            for (Magasin m : this.modele.getAllMagasins())
+            {
+                VBox vb = new VBox();
+                vb.setStyle("-fx-border-color : black;" + 
+                "-fx-border-width : 2px;" + 
+                "-fx-border-radius : 10px;" + 
+                "-fx-background-color : #fcfcfc;" + 
+                "-fx-background-radius : 10px;");
+                HBox.setMargin(vb, new Insets(10));
+                vb.setPrefSize(350, 100);
+                vb.setMaxSize(350, 100);
+                vb.setMinSize(350, 100);
+                Label nom = new Label(m.getNomMag());
+                nom.setFont(new Font(20));
+                nom.setPadding(new Insets(20, 0, 0, 75));
+                nom.setStyle("-fx-font-weight : bold;");
+                Label ville = new Label(m.getVilleMag());
+                ville.setFont(new Font(20));
+                ville.setPadding(new Insets(10, 0, 20, 75));
+                vb.getChildren().addAll(nom, ville);
+                vb.setOnMouseClicked(new ControleurSelectionMag(this.modele, this.LEApp, m));
+                contenu.getChildren().add(vb);
+            }
+                HBox hb = new HBox();
+                hb.setStyle("-fx-border-color : black;" + 
+                "-fx-border-width : 2px;" + 
+                "-fx-border-radius : 10px;" + 
+                "-fx-background-color : #fcfcfc;" + 
+                "-fx-background-radius : 10px;");
+                HBox.setMargin(hb, new Insets(10));
+                hb.setPrefSize(350, 100);
+                hb.setMaxSize(350, 100);
+                hb.setMinSize(350, 100);
+                ImageView icone = new ImageView(new Image("file:./img/add.png"));
+                icone.setFitHeight(80);
+                icone.setFitWidth(80);
+                Label aj = new Label("Ajouter un Magasin");
+                aj.setFont(new Font(20));
+                aj.setPadding(new Insets(20, 0, 0, 15));
+                aj.setStyle("-fx-font-weight : bold;");
+                hb.getChildren().addAll(icone, aj);
+                hb.setOnMouseClicked(new ControleurAllerCreerMag(this.LEApp, this.modele));
+                contenu.getChildren().add(hb);
+            sp.setContent(contenu);
+            this.centre.setCenter(sp);
+        }
+        catch (SQLException e)
+        {
+            System.out.println("Erreur SQL");
+        }
+    }
+
     public void afficheGraphiqueCAVenteEnLigneEnMagasinParAnnee(HashMap<Integer, HashMap<String, Integer>> donnees) 
     {}
 
