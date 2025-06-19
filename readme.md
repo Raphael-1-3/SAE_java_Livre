@@ -34,7 +34,7 @@ https://github.com/Raphael-1-3/SAE_java_Livre
 ## Creation de la base de Donnee 
 - executer creationLivreExpress.sql pour creer les tables
 - executer jeucomplet.sql pour avoir obtenir le jeu de donnees## Modification apporte a la bd
-- ajout d'un attribut motDePasse (par defaut 1234)
+- ajout d'un attribut motDePasse (par defaut mdp+id)
 - ajout de la table user
 - ajout de l entite faible vendeur et admin
 - passage de la table client en entite faible

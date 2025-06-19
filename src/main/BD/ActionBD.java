@@ -915,6 +915,32 @@ public class ActionBD{
     }
 
 
+    /**
+     * Récupère la liste de tous les auteurs présents dans la base de données.
+     * @return Liste de tous les auteurs
+     * @throws SQLException
+     */
+    public List<Auteur> getAllAuteur() throws SQLException {
+        List<Auteur> auteurs = new ArrayList<>();
+        PreparedStatement ps = this.connexion.prepareStatement(
+            "SELECT idauteur, nomauteur, anneenais, anneedeces FROM AUTEUR"
+        );
+        ResultSet rs = ps.executeQuery();
+        while (rs.next()) {
+            Auteur auteur = new Auteur(
+                rs.getString("idauteur"),
+                rs.getString("nomauteur"),
+                rs.getInt("anneenais"),
+                rs.getInt("anneedeces")
+            );
+            auteurs.add(auteur);
+        }
+        rs.close();
+        ps.close();
+        return auteurs;
+    }
+
+
     // ====================================== =============================================
 
     /**

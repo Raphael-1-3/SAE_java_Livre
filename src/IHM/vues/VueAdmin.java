@@ -427,7 +427,7 @@ public class VueAdmin extends BorderPane
 
     }
 
-    public void panneauDeBord() 
+    public void panneauDeBord() throws SQLException
     {
         // Création d'une ComboBox pour les statistiques du panneau de bord
         this.selectionStat = new ComboBox<>();
@@ -443,13 +443,17 @@ public class VueAdmin extends BorderPane
             "auteurLePlusVenduParAnnee"
         );
         this.selectionStat.setPromptText("Choisissez une statistique");
-        HBox hboxCombo = new HBox(this.selectionStat, this.recherchStat);
-        this.recherchStat.setPromptText("entre une annee ou un auteur en fonction");
+        HBox hboxCombo = new HBox(this.selectionStat, this.barRecherche);
         hboxCombo.setAlignment(Pos.CENTER); 
         hboxCombo.setPadding(new Insets(10)); 
         this.centre.setTop(hboxCombo);
-        this.selectionStat.setOnAction(new ControleurSelectionGraphique(modele, LEApp));
-        this.contenaBox.getChildren().addAll(box1, box2, box3);
+        Button executerrecherche = new Button("Recherche");
+        this.barRecherche = new TextField();
+        this.barRecherche.setPromptText("Rechercher...");
+
+        ControleurRechercheDynamiqueAuteur controleurRechercheAuteur = new ControleurRechercheDynamiqueAuteur(this.LEApp, this.modele); 
+        executerrecherche.setOnAction(new ControleurSelectionGraphique(this.modele, this.LEApp));
+        this.contenaBox.getChildren().addAll(controleurRechercheAuteur.getListeSuggestions());
         this.centre.setCenter(contenaBox);
         
     }
@@ -662,14 +666,14 @@ public class VueAdmin extends BorderPane
             pieChart.getData().add(new PieChart.Data(nom, montant));
         }
 
-        pieChart.setTitle("Chiffre d'affaire 2025 par thème");
+        pieChart.setTitle("Chiffre d'affaire  par thème");
 
         VBox chart = new VBox(pieChart);
         Stage stage = new Stage();
         BorderPane root = new BorderPane(chart);
         Scene scene = new Scene(root, 800, 600);
         stage.setScene(scene);
-        stage.setTitle("Chiffre d'affaire 2025 par thème");
+        stage.setTitle("Chiffre d'affaire  par thème");
         stage.show();
     }
     
