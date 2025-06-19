@@ -28,19 +28,31 @@ import java.util.concurrent.ArrayBlockingQueue;
 
 import IHM.vues.*;
 import main.app.*;
-public class ControleurConsulterPanier implements EventHandler<ActionEvent> 
-{
+public class ControleurLivraison implements EventHandler<ActionEvent>{
     private LivreExpress app;
     private ActionBD modele;
+    private ComboBox<String> cb;
 
-    public ControleurConsulterPanier(ActionBD modele, LivreExpress app)
+    public ControleurLivraison(LivreExpress app, ActionBD modele, ComboBox<String> cb)
     {
         this.app = app;
         this.modele = modele;
+        this.cb = cb;
     }
 
-    public void handle(ActionEvent event)
+    public void handle (ActionEvent event)
     {
-        this.app.getVueClient().afficherPopUpPanier();
+        String liv = this.cb.getSelectionModel().getSelectedItem();
+        switch (liv) {
+            case "A Domicile":
+                this.app.getVueClient().setLiv("C");
+                break;
+            case "En magasin":
+                this.app.getVueClient().setLiv("M");
+                break;
+            default:
+                break;
+        }
     }
+    
 }

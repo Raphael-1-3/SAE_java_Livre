@@ -43,6 +43,21 @@ public class Commande{
         this.enligne = enligne;
     }
 
+    public void setDate(Date d)
+    {
+        this.datecom = d;
+    }
+
+    public void setLivraison(String livraison)
+    {
+        this.livraison = livraison;
+    }
+
+    public void setPanier(HashMap<Livre, Integer> panier)
+    {
+        this.panier = panier;
+    }
+
     public int getIdCommande() {return this.idcommande;}
 
     public String getLivraison()

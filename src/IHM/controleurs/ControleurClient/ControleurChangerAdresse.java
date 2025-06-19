@@ -8,36 +8,36 @@ import IHM.vues.*;
 public class ControleurChangerAdresse implements EventHandler<ActionEvent>{
     
     private ActionBD modele;
-    private VueClient vue;
+    private LivreExpress app;
 
-    public ControleurChangerAdresse(ActionBD modele, VueClient vue)
+    public ControleurChangerAdresse(ActionBD modele, LivreExpress app)
     {
         this.modele = modele;
-        this.vue = vue;
+        this.app = app;
     }
 
     public void handle(ActionEvent event)
     {
-        String ville = this.vue.getTfVille().getText();
-        String adresse = this.vue.getTfAdresse().getText();
+        String ville = this.app.getVueClient().getTfVille().getText();
+        String adresse = this.app.getVueClient().getTfAdresse().getText();
         Integer codePo = null;
         try {
-            codePo = Integer.parseInt(this.vue.getTfCodePostal().getText());
+            codePo = Integer.parseInt(this.app.getVueClient().getTfCodePostal().getText());
         }
         catch (NumberFormatException e)
         {
-            this.vue.popUpPasUnNbr().showAndWait();
+            this.app.getVueClient().popUpPasUnNbr().showAndWait();
         }
-        if (ville.isEmpty() || adresse.isEmpty() || codePo == null || this.vue.getTfCodePostal().getText().isEmpty())
+        if (ville.isEmpty() || adresse.isEmpty() || codePo == null || this.app.getVueClient().getTfCodePostal().getText().isEmpty())
         {
-            this.vue.popUpChampsVides().show();
+            this.app.getVueClient().popUpChampsVides().show();
         }
         else
         {
             try 
             {
-                this.modele.changerAdresse(this.vue.getClient(), adresse, codePo, ville);
-                this.vue.popUpActionEffectuee().show();
+                this.modele.changerAdresse(this.app.getVueClient().getClient(), adresse, codePo, ville);
+                this.app.getVueClient().popUpActionEffectuee().show();
             }
             catch (SQLException e )
             {

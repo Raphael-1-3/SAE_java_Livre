@@ -28,19 +28,22 @@ import java.util.concurrent.ArrayBlockingQueue;
 
 import IHM.vues.*;
 import main.app.*;
-public class ControleurConsulterPanier implements EventHandler<ActionEvent> 
+public class ControleurSupprimerPanier implements EventHandler<ActionEvent> 
 {
     private LivreExpress app;
     private ActionBD modele;
+    private Livre l;
 
-    public ControleurConsulterPanier(ActionBD modele, LivreExpress app)
+    public ControleurSupprimerPanier(ActionBD modele, LivreExpress app, Livre l)
     {
         this.app = app;
         this.modele = modele;
+        this.l = l;
     }
 
     public void handle(ActionEvent event)
     {
-        this.app.getVueClient().afficherPopUpPanier();
+        this.app.getVueClient().getClient().suppPanier(l);
+        this.app.getVueClient().popUpActionEffectuee().show();
     }
 }

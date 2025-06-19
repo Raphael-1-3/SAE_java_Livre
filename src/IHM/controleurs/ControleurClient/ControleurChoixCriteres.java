@@ -1,4 +1,6 @@
 package IHM.controleurs.ControleurClient;
+
+
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
@@ -28,19 +30,40 @@ import java.util.concurrent.ArrayBlockingQueue;
 
 import IHM.vues.*;
 import main.app.*;
-public class ControleurConsulterPanier implements EventHandler<ActionEvent> 
-{
-    private LivreExpress app;
-    private ActionBD modele;
 
-    public ControleurConsulterPanier(ActionBD modele, LivreExpress app)
+public class ControleurChoixCriteres implements EventHandler<ActionEvent>{
+    private ActionBD modele;
+    private LivreExpress app;
+    private ComboBox<String> cb;
+
+    public ControleurChoixCriteres(LivreExpress app, ActionBD modele, ComboBox<String> cb)
     {
         this.app = app;
         this.modele = modele;
+        this.cb = cb;
     }
 
     public void handle(ActionEvent event)
     {
-        this.app.getVueClient().afficherPopUpPanier();
+        String s = this.cb.getSelectionModel().getSelectedItem();
+        if (s != null)
+        {
+            try {
+                switch (s) {
+                    case "Rechecher par magasin":
+                        this.app.getVueClient().panelAfficherLivres(this.modele.getLivresDispoDansMagasin(this.app.getVueClient().getMag()), "");
+                        break;
+                    case "Recommandations":
+                        this.app.getVueClient().setupRecommandations();
+                        break;
+                    default:
+                        break;
+                }
+            }
+            catch (SQLException e )
+            {
+                System.out.println("Erreur");
+            }
+        }
     }
 }

@@ -41,6 +41,11 @@ public class Client extends User {
         this.panier = new HashMap<>();
     }
 
+    public void resetPanier()
+    {
+        this.panier = new HashMap<>();
+    }
+
     public int getCodePostal() {
         return codePostal;
     }
@@ -95,6 +100,7 @@ public class Client extends User {
         }
         return prix;
     }
+
 
 
     @Override
