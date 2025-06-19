@@ -1158,12 +1158,20 @@ public class ActionBD{
      */
     public int getMaxIdMag() throws SQLException
     {
-        ResultSet rs = this.connexion.createStatement().executeQuery("select max(idmag) from MAGASIN");
-        rs.next();
-        int maxIdMag = rs.getInt("max(idmag)");
+        ResultSet rs = this.connexion.createStatement().executeQuery("select idmag from MAGASIN");
+        Integer max = null;
+        while(rs.next())
+        {
+            int idMag = rs.getInt("idmag");
+            if (max == null || idMag > max)
+            {
+                max = idMag;
+            }
+        }
+        
         rs.close();
 
-        return maxIdMag;
+        return max;
     }
 
     /**
@@ -1506,9 +1514,15 @@ public class ActionBD{
      */
     public Long getMaxISBN() throws SQLException
     {
-        ResultSet rs = this.connexion.createStatement().executeQuery("select max(isbn) from LIVRE");
-        rs.next();
-        return rs.getLong(1);
+        ResultSet rs = this.connexion.createStatement().executeQuery("select isbn from LIVRE");
+        Long max = 0l;
+        while(rs.next())
+        {  
+            Long isbn = rs.getLong(1);
+            if (isbn > max) { max = isbn;}
+        }
+        rs.close();
+        return max;
     }
 
     

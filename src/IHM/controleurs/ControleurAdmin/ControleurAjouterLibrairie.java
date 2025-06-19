@@ -46,11 +46,11 @@ public class ControleurAjouterLibrairie implements EventHandler<ActionEvent>{
         Magasin m = new Magasin(null, this.app.getVueAdmin().getTfNom().getText(), this.app.getVueAdmin().getTfVille().getText());
         try {
             this.modele.AddLibrairie(m);
-            this.app.getVueAdmin().popUpActionEffectuee();
+            this.app.getVueAdmin().popUpActionEffectuee().show();
         }
         catch (SQLException e )
         {
-            System.out.println("Erreur SQL");
+            System.out.println("Erreur SQL : " + e);
         }
 }
 }
