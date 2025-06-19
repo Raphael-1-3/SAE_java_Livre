@@ -53,6 +53,7 @@ import javafx.scene.chart.XYChart;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -393,7 +394,16 @@ public class VueAdmin extends BorderPane
         Stage popup = new Stage();
         popup.setTitle("Ajouter Librairie");
         
+
         BorderPane root = new BorderPane();
+
+        Button executerAction = new Button("Exécuter");
+        executerAction.setPrefWidth(100);
+        this.selectionRecherche.setPromptText("Choisissez une action"); 
+        VBox layout = new VBox(10); 
+        layout.setPadding(new Insets(10));
+        layout.getChildren().addAll(this.selectionRecherche, executerAction);
+
 
         VBox vb = new VBox(20);
         vb.setAlignment(Pos.CENTER);
@@ -673,7 +683,7 @@ public class VueAdmin extends BorderPane
         yAxis.setLabel("Chiffre d'affaires (€)");
         
         AreaChart<String, Number> areaChart = new AreaChart<>(xAxis, yAxis);
-        areaChart.setTitle("Évolution CA des magasins par mois en 2024");
+        areaChart.setTitle("Évolution CA des magasins par mois");
         
         Map<String, XYChart.Series<String, Number>> seriesMap = new HashMap<>();
         
@@ -773,12 +783,135 @@ public class VueAdmin extends BorderPane
     }
 
     public void afficheGraphiqueCAVenteEnLigneEnMagasinParAnnee(HashMap<Integer, HashMap<String, Integer>> donnees) 
-    {}
+    {
+        CategoryAxis xAxis = new CategoryAxis();
+        xAxis.setLabel("Annee");
+    
+        NumberAxis yAxis = new NumberAxis();
+        yAxis.setLabel("Chiffre d'affaires (€)");
+        
+        AreaChart<String, Number> areaChart = new AreaChart<>(xAxis, yAxis);
+        areaChart.setTitle("Évolution CA des ventes en lignes et magasin");
+        
+        Map<String, XYChart.Series<String, Number>> seriesMap = new HashMap<>();
+        
+        for (int annee = 2000; annee <= 2025;  ++annee) {
+            String anneeStr = String.valueOf(annee);
+            HashMap<String, Integer> caParVent = donnees.get(annee);
+            if (caParVent != null) {
+                for (Map.Entry<String, Integer> entry : caParVent.entrySet()) {
+                    String typeVente = entry.getKey();
+                    int ca = entry.getValue();
+                
+                    
+                    XYChart.Series<String, Number> serie = seriesMap.computeIfAbsent(typeVente, k -> {
+                        XYChart.Series<String, Number> s = new XYChart.Series<>();
+                        s.setName(k);
+                        return s;
+                    });
+                
+                    serie.getData().add(new XYChart.Data<>(anneeStr, ca));
+                }
+            }
+        }
+    
+        areaChart.getData().addAll(seriesMap.values());
+        Stage stage = new Stage();
+        BorderPane root = new BorderPane(areaChart);
+        Scene scene = new Scene(root, 800, 600);
+        stage.setScene(scene);
+        stage.setTitle("Graphique CA des Magasins");
+        stage.show();
+    }
 
-    public void afficheGraphiqueNombreAuteurParEditeur(HashMap<Editeur, Integer> donnees) {}
-    public void afficheGraphiqueNombreClientParVilleQuiOntAcheterAuteur(HashMap<String, Integer> donnees) {}
-    public void afficheGraphiqueValeurStockMagasin(HashMap<Magasin, Integer> donnees) {}
-    public void afficheGraphiqueStatsCAParClientParAnnee(HashMap<Integer, HashMap<String, Double>> donnees) {}
+    public void afficheGraphiqueNombreAuteurParEditeur(HashMap<Editeur, Integer> donnees) 
+    {
+        NumberAxis xAxis = new NumberAxis();
+        xAxis.setLabel("Nombre d'auteurs");
+        CategoryAxis yAxis = new CategoryAxis();
+        yAxis.setLabel("Éditeur");
+
+        BarChart<Number, String> barChart = new BarChart<>(xAxis, yAxis);
+        barChart.setTitle("Dix éditeurs les plus importants en nombre d'auteurs");
+
+        XYChart.Series<Number, String> series = new XYChart.Series<>();
+        for (Map.Entry<Editeur, Integer> entry : donnees.entrySet()) {
+            series.getData().add(new XYChart.Data<>(entry.getValue(), entry.getKey().getNomEdit()));
+        }
+        barChart.getData().add(series);
+        barChart.setLegendVisible(false);
+
+        Stage stage = new Stage();
+        Scene scene = new Scene(barChart, 600, 400);
+        stage.setScene(scene);
+        stage.setTitle("Graphique 5");
+        stage.show();
+    }
+    
+    public void afficheGraphiqueNombreClientParVilleQuiOntAcheterAuteur(HashMap<String, Integer> donnees) 
+    {
+        //TODO plus tard avec recherche dynamique auteur 
+    }
+    public void afficheGraphiqueValeurStockMagasin(HashMap<Magasin, Integer> donnees) 
+    {
+        PieChart pieChart = new PieChart();
+
+        for (Map.Entry<Magasin, Integer> entry : donnees.entrySet()) {
+            Magasin magasin = entry.getKey();
+            int montant = entry.getValue();
+            String label = magasin.getNomMag() + " : " + montant;
+            pieChart.getData().add(new PieChart.Data(label, montant));
+        }
+
+        pieChart.setTitle("Valeur du stock par magasin");
+
+        VBox chart = new VBox(pieChart);
+        Stage stage = new Stage();
+        BorderPane root = new BorderPane(chart);
+        Scene scene = new Scene(root, 800, 600);
+        stage.setScene(scene);
+        stage.setTitle("Valeur stock magasin");
+        stage.show();
+    }
+    public void afficheGraphiqueStatsCAParClientParAnnee(HashMap<Integer, HashMap<String, Double>> donnees) 
+    {
+        // Axes
+        CategoryAxis xAxis = new CategoryAxis();
+        xAxis.setLabel("Année");
+        NumberAxis yAxis = new NumberAxis();
+        yAxis.setLabel("CA par client");
+
+        // LineChart
+        LineChart<String, Number> lineChart = new LineChart<>(xAxis, yAxis);
+        lineChart.setTitle("Evolution CA Total par client");
+
+        // Séries
+        XYChart.Series<String, Number> serieMax = new XYChart.Series<>();
+        serieMax.setName("Max - maximum");
+        XYChart.Series<String, Number> serieMin = new XYChart.Series<>();
+        serieMin.setName("Min - minimum");
+        XYChart.Series<String, Number> serieMoy = new XYChart.Series<>();
+        serieMoy.setName("Moyenne - moyenne");
+
+        // Remplir les séries
+        List<Integer> annees = new ArrayList<>(donnees.keySet());
+        Collections.sort(annees);
+        for (Integer annee : annees) {
+            HashMap<String, Double> stats = donnees.get(annee);
+            serieMax.getData().add(new XYChart.Data<>(annee.toString(), stats.get("max")));
+            serieMin.getData().add(new XYChart.Data<>(annee.toString(), stats.get("min")));
+            serieMoy.getData().add(new XYChart.Data<>(annee.toString(), stats.get("avg")));
+        }
+
+        lineChart.getData().addAll(serieMax, serieMin, serieMoy);
+
+        // Affichage dans une nouvelle fenêtre
+        Stage stage = new Stage();
+        Scene scene = new Scene(lineChart, 700, 400);
+        stage.setScene(scene);
+        stage.setTitle("Graphique 8");
+        stage.show(); 
+    }
     public void afficheGraphiqueAuteurLePlusVenduParAnnee(HashMap<Integer, HashMap<Auteur, Integer>> donnees) {}
 
 
