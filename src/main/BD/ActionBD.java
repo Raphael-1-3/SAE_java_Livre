@@ -940,13 +940,14 @@ public class ActionBD{
      * @param l L'objet du livre que l'on desire ajouter
      * @throws SQLException
      */
-    public void AddLivre(Livre l) throws SQLException
+    public void AddLivre(Livre l, String ida, Integer idc, Integer ide) throws SQLException
     {
         PreparedStatement recupLiv = this.connexion.prepareStatement("select * from LIVRE where isbn = ?");
         recupLiv.setLong(1, l.getISBN());
         ResultSet rs = recupLiv.executeQuery();
         if (!rs.next())
         {
+            //table livre
             PreparedStatement ps = this.connexion.prepareStatement("insert into LIVRE values (?, ?, ?, ?, ?)");
             ps.setLong(1, l.getISBN());
             ps.setString(2, l.getTitre());
@@ -954,6 +955,29 @@ public class ActionBD{
             ps.setInt(4, l.getDatepubli());
             ps.setDouble(5, l.getPrix());
 
+            ps.executeUpdate();
+            ps.close();
+
+            //table classification
+            ps = this.connexion.prepareStatement("insert into THEMES(isbn, iddewey) values (?, ?)");
+            ps.setLong(1, l.getISBN());
+            ps.setInt(2, idc);
+
+            ps.executeUpdate();
+            ps.close();
+
+            //table Auteur
+            ps = this.connexion.prepareStatement("insert into ECRIRE(isbn, idauteur) values (?, ?)");
+            ps.setLong(1, l.getISBN());
+            ps.setInt(2, Integer.parseInt(ida));
+
+            ps.executeUpdate();
+            ps.close();
+
+            //table Editeur
+            ps = this.connexion.prepareStatement("insert into EDITER(isbn, idedit) values (?, ?)");
+            ps.setLong(1, l.getISBN());
+            ps.setInt(2, ide);
             ps.executeUpdate();
             ps.close();
         }

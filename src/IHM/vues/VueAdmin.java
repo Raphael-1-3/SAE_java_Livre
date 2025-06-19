@@ -3,6 +3,7 @@ package IHM.vues;
 import main.*;
 import IHM.controleurs.ControleurAdmin.*;
 import IHM.controleurs.ControleurClient.ControleurChosirMagasin;
+import IHM.controleurs.ControleurClient.ControleurSupprimerPanier;
 import main.BD.ActionBD;
 import main.app.*;
 import main.BD.*;
@@ -95,6 +96,8 @@ public class VueAdmin extends BorderPane
     private TextField tfQte = new TextField();
     private TextField tfMois = new TextField();
     private TextField tfAnnee = new TextField();
+    private TextField tfClassificiation = new TextField(); 
+
 
     /**
      * Instancie la fenetre liee admin
@@ -157,7 +160,8 @@ public class VueAdmin extends BorderPane
         this.tfCodePostal = new TextField();
         this.tfCodePostal.setMaxWidth(380);
         this.tfVille = new TextField();
-        this.tfVille.setMaxWidth(380);
+        this.tfVille.setMaxWidth(350);
+        this.tfNom.setMaxWidth(350);
         //this.setBottom(this.bottom());
 
         this.barRecherche.setDisable(true);
@@ -195,7 +199,7 @@ public class VueAdmin extends BorderPane
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle("Alerte");
         alert.setHeaderText(null);
-        alert.setContentText("Veuillez entrer un nombre dans le code postal");
+        alert.setContentText("Veuillez entrer un nombre dans les champs appropries");
         return alert;
     }
 
@@ -365,35 +369,31 @@ public class VueAdmin extends BorderPane
 
     public void ajouterLibrairie() throws SQLException
     {
-        HBox topcenter = new HBox();
-        this.selectionRecherche.getItems().addAll(
-            "Rechercher par nom de livre",
-            "Rechercher par auteur",
-            "Rechercher par classification",
-            "Rechercher par éditeur", 
-            "Rechecher par magasin"
-        );
-        this.selectionRecherche.setPadding(new Insets(0, 0, 0, 15));
+        Stage popup = new Stage();
+        popup.setTitle("Ajouter Librairie");
         
-        Button executerAction = new Button("Exécuter");
-        executerAction.setPrefWidth(100);
-        executerAction.setOnAction(new controleurSelectionFiltreRecherche(this.modele, this.LEApp));
-        this.selectionRecherche.setPromptText("Choisissez une action"); 
-        VBox layout = new VBox(10); 
-        layout.setPadding(new Insets(10));
-        layout.getChildren().addAll(this.selectionRecherche, executerAction);
+        BorderPane root = new BorderPane();
 
-        this.barRecherche = new TextField();
-        this.barRecherche.setPromptText("Rechercher...");
+        VBox vb = new VBox(20);
+        vb.setAlignment(Pos.CENTER);
+        Label lbTitre = new Label("Ajouter une Libraire");
+        lbTitre.setFont(new Font(30));
+        Label lbNom = new Label("Nom du Magasin");
+        Label lbVille = new Label("Ville");
 
-        ControleurRechercheDynamique controleurRecherche = new ControleurRechercheDynamique(this.LEApp, this.modele);
-        this.centre.setCenter(controleurRecherche.getListeSuggestions());
+        Button bAjouter = new Button("Ajouter");
+        bAjouter.setOnAction(new ControleurAjouterLibrairie(this.LEApp, this.modele));
 
-        this.barRecherche.setPrefWidth(600); // Largeur préférée
-        topcenter.setPadding(new Insets(10, 0, 10, 50));
-        topcenter.setSpacing(15);
-        topcenter.getChildren().addAll(this.selectionRecherche, this.barRecherche);
-        this.centre.setTop(topcenter);
+        vb.getChildren().addAll(lbTitre, lbNom, this.tfNom, lbVille, this.tfVille, bAjouter);
+        root.setCenter(vb);
+        root.setPrefSize(400, 400);
+        Scene sc = new Scene(root);
+        sc.getStylesheets().add("file:./src/IHM/styles/globalCSS.css");
+        Image logo = new Image("file:./img/logo.jpg");
+        popup.getIcons().add(logo);
+        popup.setScene(sc);
+        popup.show();
+
     }
 
     public void panneauDeBord() 
@@ -425,7 +425,35 @@ public class VueAdmin extends BorderPane
 
     public void ajouterLivre() 
     {
+        Stage popup = new Stage();
+        popup.setTitle("Ajouter un Livre");
         
+        BorderPane root = new BorderPane();
+
+        VBox vb = new VBox(20);
+        vb.setAlignment(Pos.CENTER);
+        Label lbTitre = new Label("Ajouter un Livre");
+        lbTitre.setFont(new Font(30));
+        Label lbNom = new Label("Nom du Livre");
+        Label lbPages = new Label("Nombre de pages");
+        Label lbDatePub = new Label("Date de publication");
+        Label lbPrix = new Label("prix");
+        Label lbClass = new Label("id classification");
+        Label lbAuteur = new Label("id auteur");
+        Label lbEdit = new Label("id editeur");
+        Button bAjouter = new Button("Ajouter");
+        bAjouter.setOnAction(new ControleurAjouterLivre(this.LEApp, this.modele));
+
+
+        vb.getChildren().addAll(lbTitre, lbNom, this.tfNom, lbPages, this.tfNbPages, lbDatePub, this.tfAnnee, lbPrix, this.tfPrix, lbClass, this.tfClassificiation, lbAuteur, this.tfAuteur, lbEdit, this.tfEditeur, bAjouter);
+        root.setCenter(vb);
+        root.setPrefSize(400, 400);
+        Scene sc = new Scene(root);
+        sc.getStylesheets().add("file:./src/IHM/styles/globalCSS.css");
+        Image logo = new Image("file:./img/logo.jpg");
+        popup.getIcons().add(logo);
+        popup.setScene(sc);
+        popup.show();
     }
 
     public void regarderDisponibilites() 
@@ -660,6 +688,7 @@ public class VueAdmin extends BorderPane
     public TextField getTfQte() { return tfQte; }
     public TextField getTfMois() { return tfMois; }
     public TextField getTfAnnee() { return tfAnnee; }
+    public TextField getTfClassification() { return this.tfClassificiation; }
     public ComboBox<String> getSelectionAction() { return this.selectionAction; }
 
 }

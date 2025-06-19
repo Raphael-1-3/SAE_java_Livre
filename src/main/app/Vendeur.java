@@ -109,7 +109,7 @@ public class Vendeur extends User{
                 }
             }
             Livre l = new Livre(isbn, titre, nbPages, datepubli, prix);
-            bd.AddLivre(l);
+            //bd.AddLivre(l);
         }
         catch (SQLException e)
         {
