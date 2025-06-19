@@ -2,6 +2,7 @@ package IHM.vues;
 
 import main.*;
 import IHM.controleurs.ControleurClient.*;
+import IHM.controleurs.ControleurVendeur.ControleurPasserCommande;
 import main.BD.ActionBD;
 import main.app.*;
 import main.BD.*;
@@ -34,133 +35,116 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-
-
-
-
 public class VueClient extends BorderPane
 {
     private ActionBD modele;
     private Client client;
-    private LivreExpress LEApp;
-    private TextField barRecherche;
-    private ComboBox<String> selectionRecherche;
-    private ComboBox<String> selectionMagasin;
-    private Livre livreChoisi;
-
-    private VBox centre;
-    private HBox TitrePage;
-    private HBox contenantRLIL;
-    private VBox box1;
-    private VBox box2;
-    private VBox box3;
+    private LivreExpress app;
+    private Magasin mag;
+    private ComboBox<String> criteres;
+    private TextField recherche;
+    private VBox vbCentre;
+    private ScrollPane spCentre;
+    private TilePane centre;
+    private Label titreCentre;
 
     private PasswordField pwField;
     private TextField tfAdresse;
     private TextField tfVille;
     private TextField tfCodePostal;
 
+    private ComboBox<String> livraison;
+    private String liv;
     /**
      * Instancie la fenetre liee au client
      * @param LEApp
      */
-    public VueClient(LivreExpress LEApp, Client client, ActionBD modele) throws SQLException
+    public VueClient(LivreExpress app, Client client, ActionBD modele) throws SQLException
     {
         super();
-        Label titre = new Label("Catalogue");
-        titre.setFont(new Font("Times new Roman", 30));
-        titre.setPadding(new Insets(0, 0, 0, 500));
-        this.LEApp = LEApp;
-        this.client = client;
         this.modele = modele;
-        this.selectionRecherche = new ComboBox<>();
-        this.selectionMagasin = new ComboBox<>();
-        this.barRecherche = new TextField();
-        this.contenantRLIL = new HBox();
-        this.box1 = new VBox();
-        this.box1.setPrefSize(400, 400);
-        this.box2 = new VBox();
-        this.box2.setPrefSize(400, 400);
-        this.box3 = new VBox();
-        this.box3.setPrefSize(400, 400);
-        this.centre = new VBox();
-        this.TitrePage = new HBox();
-        this.TitrePage.getChildren().add(titre);
-        this.TitrePage.setPrefHeight(25);
-        this.box1.setStyle("-fx-background-radius : 15px;" + 
-        "-fx-background-color : #f9f9f9;" + 
-        "-fx-background : #f9f9f9;");
-        this.contenantRLIL.setStyle("-fx-background-radius : 15px;" + 
-        "-fx-background-color : #f9f9f9;" + 
-        "-fx-background : #f9f9f9;" + 
-        "-fx-border-width : 2px;" + 
-        "-fx-border-color : #df9f53;" + 
-        "-fx-border-radius : 15px;");
-        this.box2.setStyle("-fx-background-radius : 15px;" + 
-        "-fx-background-color : #f9f9f9;" + 
-        "-fx-background : #f9f9f9;" + 
-        "-fx-border-width : 0 0 0 2px;" + 
-        "-fx-border-color : #df9f53");
-        this.box3.setStyle("-fx-background-color: #f9f9f9;" + 
-        "-fx-background-radius : 15px;" +
-        "-fx-border-width : 0 0 0 2px;" +
-        "-fx-border-color : #df9f53;" + 
-        "-fx-background : #f9f9f9;");
-        this.contenantRLIL.setPrefSize(1000, 1000);
-        this.contenantRLIL.getChildren().addAll(this.box1, this.box2, this.box3);
-        this.centre.getChildren().addAll(this.TitrePage, this.contenantRLIL);
-        this.setCenter(this.centre);
-        this.setCenterRecommandation(this.client);
-        this.setMargin(this.centre, new Insets(60, 120, 60, 60));
-        this.setPrefSize(1300, 700);
-        this.setTop(this.top(this.client));
+        this.client = client;
+        this.vbCentre = new VBox();
+        this.app = app;
+        this.spCentre = new ScrollPane();
+        this.criteres = new ComboBox<>();
+        this.criteres.setMaxWidth(200);
+        this.criteres.setMinWidth(200);
+        this.recherche = new TextField();
+        this.recherche.setPromptText("Recherche...");
+        this.setStyle("-fx-background-color : #d4d5d5;");
+        this.spCentre.setStyle("-fx-background-color : #e7e7e7;" + 
+        "-fx-background-radius : 15px;");
+        this.spCentre.setMaxSize(1260, 350);
+        this.spCentre.setPrefSize(1260, 350);
+        this.centre = new TilePane();
+        this.centre.setStyle("-fx-background-color : #e7e7e7;" + 
+        "-fx-background-radius : 15px;");
+        this.centre.setPrefSize(1240, 350);
+        this.centre.setMaxSize(1240, 350);
+        this.centre.setPadding(new Insets(20));
+        this.centre.setHgap(75);
+        this.centre.setVgap(30);
+        this.vbCentre.setPadding(new Insets(20));
+        this.vbCentre.setAlignment(Pos.CENTER);
+        this.titreCentre = new Label("TEXTE");
+        this.titreCentre.setFont(new Font(30));
+        this.titreCentre.setPadding(new Insets(10, 0, 10, 0));
+        this.spCentre.setContent(centre);
+        this.vbCentre.getChildren().addAll(titreCentre, spCentre);
         
-
         this.pwField = new PasswordField();
-        this.pwField.setMaxWidth(380);
+        this.pwField.setMaxWidth(550);
+        this.pwField.setMinWidth(550);
         this.tfAdresse = new TextField();
-        this.tfAdresse.setMaxWidth(380);
+        this.tfAdresse.setMaxWidth(550);
+        this.tfAdresse.setMinWidth(550);
         this.tfCodePostal = new TextField();
-        this.tfCodePostal.setMaxWidth(380);
+        this.tfCodePostal.setMaxWidth(550);
+        this.tfCodePostal.setMinWidth(550);
         this.tfVille = new TextField();
-        this.tfVille.setMaxWidth(380);
-        //this.setBottom(this.bottom());
+        this.tfVille.setMaxWidth(550);
+        this.tfVille.setMinWidth(550);
+        
+        this.livraison = new ComboBox<>();
+        this.liv = "M";
+
+        this.Top();
+        this.setCenter(vbCentre);
+        this.panelChoixMag();
+        this.criteres.setDisable(true);
+        this.recherche.setDisable(true);
+        
+        //System.out.println(this.app.getVueClient());
+        ControleurCritere controleurC = new ControleurCritere(this, this.modele);
+        
     }
 
-    public ActionBD getModele() {
-        return this.modele;
+    public TextField getRecherche()
+    {
+        return this.recherche;
     }
 
-    public Client getClient() {
+    public Client getClient()
+    {
         return this.client;
     }
 
-    public LivreExpress getLEApp() {
-        return this.LEApp;
+    public Magasin getMag()
+    {
+        return this.mag;
     }
 
-    public TextField getbarRecherche() {
-        return this.barRecherche;
+    public void setMag(Magasin m)
+    {
+        this.mag = m;
     }
 
-    public ComboBox<String> getSelectionRecherche() {
-        return this.selectionRecherche;
+    public ComboBox<String> getCriteres()
+    {
+        return this.criteres;
     }
 
-    public ComboBox<String> getSelectionMagasin() {
-        return this.selectionMagasin;
-    }
-    public Livre getLivreChoisi() {
-        return this.livreChoisi;
-    }
-
-    public void setLivreChoisi(Livre livreChoisi) {
-        this.livreChoisi = livreChoisi;
-    }
-
-    public Client getclient() {
-        return this.client;
-    }
     public PasswordField getPwField() {
         return this.pwField;
     }
@@ -176,14 +160,117 @@ public class VueClient extends BorderPane
     public TextField getTfCodePostal() {
         return this.tfCodePostal;
     }
-
-    public Alert popUpChampsVides()
+    
+    public void setLiv(String s)
     {
-        Alert alert = new Alert(Alert.AlertType.INFORMATION);
-        alert.setTitle("Alerte");
-        alert.setHeaderText(null);
-        alert.setContentText("Veuillez remplir tous les champs");
-        return alert;
+        this.liv = s;
+    }
+
+    public void activer()
+    {
+        this.criteres.setDisable(false);
+        this.recherche.setDisable(false);
+    }
+
+    public void Top()
+    {
+        VBox pannelTop = new VBox(10);
+        HBox boxTop = new HBox();
+        
+        ImageView logo = new ImageView(new Image("file:./img/logo.jpg"));
+        logo.setFitHeight(100);
+        logo.setFitWidth(100);
+        Label titre = new Label("Client");
+        titre.setFont(new Font("Times new Roman", 50));
+        titre.setPadding(new Insets(15, 15, 0, 0));
+        Rectangle bordure = new Rectangle(logo.getFitWidth(), logo.getFitHeight());
+        bordure.setArcWidth(30);
+        bordure.setArcHeight(30);
+        logo.setClip(bordure);
+        Label nomUtil = new Label("Connecté en tant que " + client.getNom() + " " + client.getPrenom());
+        nomUtil.setFont(new Font("Times new Roman", 25));
+        nomUtil.setPadding(new Insets(35, 0, 0, 0));
+        nomUtil.setMaxWidth(400);
+        nomUtil.setPrefWidth(400);
+        HBox boutonsDroite = new HBox(10);
+
+        Button store = new Button("");
+        ImageView storeIcon = new ImageView(new Image("file:./img/store.png"));
+        storeIcon.setFitHeight(40);
+        storeIcon.setFitHeight(40);
+        store.setGraphic(storeIcon);
+        store.setPadding(new Insets(0));
+        store.setPrefSize(50, 50);
+        store.setOnAction(new ControleurChangerStore(this.app, this.modele));
+
+        Button param = new Button("");
+        ImageView paramIcon = new ImageView(new Image("file:./img/param.png"));
+        paramIcon.setFitHeight(40);
+        paramIcon.setFitWidth(40);
+        param.setGraphic(paramIcon);
+        param.setPadding(new Insets(0, 0, 0, 0));
+        param.setPrefSize(50, 50);
+        param.setOnAction(new ControleurAllerParametres(this.modele, this.app));
+        Button deconnexion = new Button();
+        ImageView decoIcon = new ImageView(new Image("file:./img/deco.png"));
+        decoIcon.setFitWidth(40);
+        decoIcon.setFitHeight(40);
+        deconnexion.setGraphic(decoIcon);
+        deconnexion.setText(""); // Optionally remove text if you want only the image
+        deconnexion.setFont(new Font("Times new Roman", 20));
+        deconnexion.setPadding(new Insets(0, 0, 0, 0));
+        deconnexion.setPrefWidth(50);
+        deconnexion.setPrefHeight(50);
+        deconnexion.setOnAction(new ControleurRetourAccueil(this.modele, this.app));
+
+        Button panier = new Button();
+        ImageView panierIcon = new ImageView(new Image("file:./img/panier.png"));
+        panierIcon.setFitHeight(40);
+        panierIcon.setFitWidth(40);
+        panier.setGraphic(panierIcon);
+        panier.setPadding(new Insets(0, 0, 0, 0));
+        panier.setPrefWidth(50);
+        panier.setPrefHeight(50);
+        panier.setOnAction(new ControleurConsulterPanier(this.modele, this.app));
+        
+
+        boutonsDroite.setPadding(new Insets(30, 0, 0, 355));
+        boutonsDroite.setAlignment(Pos.TOP_RIGHT);
+        
+        boutonsDroite.getChildren().addAll(store, deconnexion, param, panier);
+
+        boxTop.setPadding(new Insets(3, 3, 3, 3));
+        boxTop.setSpacing(10);
+        boxTop.getChildren().addAll(logo, titre, nomUtil, boutonsDroite);
+
+        HBox boxLigne = new HBox();
+        Line sep = new Line(0, 0, 1100, 0);
+        boxLigne.setPadding(new Insets(5, 0, 5, 100));
+        boxLigne.getChildren().addAll(sep);
+
+        HBox boxBot = new HBox(225);
+        boxBot.setPadding(new Insets(0, 0, 0, 100));
+
+        this.criteres.getItems().addAll(
+            "Rechercher par nom de livre",
+            "Rechercher par auteur",
+            "Rechercher par classification",
+            "Rechercher par éditeur", 
+            "Rechecher par magasin",
+            "Recommandations"
+        );
+        this.criteres.setOnAction(new ControleurChoixCriteres(this.app, this.modele, this.criteres));
+        this.criteres.setPadding(new Insets(0, 0, 0, 15));
+        this.criteres.setPromptText("Choisissez une action"); 
+
+        this.recherche.setPadding(new Insets(5, 10, 5, 10));
+        this.recherche.setMinWidth(300);
+        this.recherche.setMaxWidth(300);
+        boxBot.getChildren().addAll(this.criteres, this.recherche);
+
+        pannelTop.getChildren().addAll(boxTop, boxLigne, boxBot);
+
+        this.setTop(pannelTop);
     }
 
     public Alert popUpActionEffectuee()
@@ -192,6 +279,15 @@ public class VueClient extends BorderPane
         alert.setTitle("Confirmation");
         alert.setHeaderText(null);
         alert.setContentText("Action effectuee !");
+        return alert;
+    }
+
+    public Alert popUpChampsVides()
+    {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle("Alerte");
+        alert.setHeaderText(null);
+        alert.setContentText("Veuillez remplir tous les champs");
         return alert;
     }
 
@@ -204,125 +300,173 @@ public class VueClient extends BorderPane
         return alert;
     }
 
-    public Pane top(Client client)
+    public void afficherPopUpLivre(Livre l)
     {
-        VBox top = new VBox();
-        HBox sstop1 = new HBox();
-        HBox sstop2 = new HBox();
+        Stage popup = new Stage();
+        popup.setTitle(l.getTitre());
+        
+        BorderPane root = new BorderPane();
 
-        // ssHbox 1 ----
-        Label titre = new Label("Livre Expresse - Client");
-        titre.setFont(new Font("Times new Roman", 50));
-        titre.setPadding(new Insets(15, 15, 0, 0));
-        ImageView logo = new ImageView(new Image("file:./img/logo.jpg"));
-        logo.setFitHeight(100);
-        logo.setFitWidth(100);
-        Rectangle bordure = new Rectangle(logo.getFitWidth(), logo.getFitHeight());
-        bordure.setArcWidth(30);
-        bordure.setArcHeight(30);
-        logo.setClip(bordure);
-        Label nomUtil = new Label("Connecté en tant que " + client.getNom() + " " + client.getPrenom());
-        nomUtil.setFont(new Font("Times new Roman", 25));
-        nomUtil.setPadding(new Insets(35, 0, 0, 0));
-        nomUtil.setMaxWidth(400);
-        nomUtil.setPrefWidth(400);
-        HBox boutonsDroite = new HBox(10);
-        Button param = new Button("");
-        ImageView paramIcon = new ImageView(new Image("file:./img/param.png"));
-        paramIcon.setFitHeight(40);
-        paramIcon.setFitWidth(40);
-        param.setGraphic(paramIcon);
-        param.setPadding(new Insets(0, 0, 0, 0));
-        param.setPrefSize(50, 50);
-        param.setOnAction(new ControleurAllerParametres(this.modele, this.LEApp));
-        Button deconnexion = new Button();
-        ImageView decoIcon = new ImageView(new Image("file:./img/deco.png"));
-        decoIcon.setFitWidth(40);
-        decoIcon.setFitHeight(40);
-        deconnexion.setGraphic(decoIcon);
-        deconnexion.setText(""); // Optionally remove text if you want only the image
-        deconnexion.setFont(new Font("Times new Roman", 20));
-        deconnexion.setPadding(new Insets(0, 0, 0, 0));
-        deconnexion.setPrefWidth(50);
-        deconnexion.setPrefHeight(50);
-        deconnexion.setOnAction(new ControleurRetourAccueil(this.modele, this.LEApp));
+        Image imgBrut = null;
+        try {
+            imgBrut = new Image("https://covers.openlibrary.org/b/isbn/" + l.getISBN() + "-M.jpg", 200, 300, true, true, true);
+            
+            if (imgBrut.isError())
+            {
+                imgBrut = new Image("file:./img/coverBase.png", 200, 300, true, true, true);
+            }
+        }
+        catch (Exception e)
+        {
+            imgBrut = new Image("file:./img/coverBase.png", 200, 300, true, true, true);   
+        }
+        ImageView img = new ImageView(imgBrut);
+        img.setFitWidth(200);
+        img.setFitHeight(300);
+        
+        img.setPreserveRatio(true);
 
-        Button panier = new Button();
-        ImageView panierIcon = new ImageView(new Image("file:./img/panier.png"));
-        panierIcon.setFitHeight(40);
-        panierIcon.setFitWidth(40);
-        panier.setGraphic(panierIcon);
-        panier.setPadding(new Insets(0, 0, 0, 0));
-        panier.setPrefWidth(50);
-        panier.setPrefHeight(50);
-        panier.setOnAction(new ControleurConsulterPanier(this.modele, this.LEApp));
+        root.setLeft(img);
+
+        VBox right = new VBox(10);
+        right.setPadding(new Insets(20));
+        Label titre = new Label(l.getTitre());
+        titre.setStyle("-fx-font-weight : bold;" + 
+        "-fx-font-size : 30px;");
+    
+        Label isbn = new Label("" + l.getISBN());
+        titre.setStyle("-fx-font-size : 15px;");
+
+        Label nbPages = new Label("Nombre de pages : " + l.getNbpages());
+        nbPages.setStyle("-fx-font-size : 15px;");
+
+        Label publi = new Label("Date de publication : " + l.getDatepubli());
+        publi.setStyle("-fx-font-size : 15px;");
+
+        Label prix = new Label("Prix : " + l.getPrix() + "€");
+        prix.setStyle("-fx-font-size : 15px;");
+        prix.setPadding(new Insets(0, 0, 100, 0));
+        
+        Button boutonAjouter = new Button("Ajouter au panier");
+        boutonAjouter.setOnAction(new ControleurAjouterPanier(this.modele, this.app, l));
+        right.getChildren().addAll(titre, isbn, nbPages, publi, prix, boutonAjouter);
+
+        
         
 
-        boutonsDroite.setPadding(new Insets(30, 0, 0, 105));
-        boutonsDroite.setAlignment(Pos.TOP_RIGHT);
-        
-        boutonsDroite.getChildren().addAll(deconnexion, param, panier);
+        root.setRight(right);
 
+        Scene sc = new Scene(root);
+        sc.getStylesheets().add("file:./src/IHM/styles/globalCSS.css");
+        Image logo = new Image("file:./img/logo.jpg");
+        popup.getIcons().add(logo);
+        popup.setScene(sc);
+        popup.show();
 
-        sstop1.setPadding(new Insets(3, 3, 3, 3));
-        sstop1.setSpacing(10);
-        sstop1.getChildren().addAll(logo, titre, nomUtil, boutonsDroite);
-
-
-
-        // ssHBox 2 
-        this.selectionRecherche.getItems().addAll(
-            "Rechercher par nom de livre",
-            "Rechercher par auteur",
-            "Rechercher par classification",
-            "Rechercher par éditeur", 
-            "Rechecher par magasin"
-        );
-        this.selectionRecherche.setPadding(new Insets(0, 0, 0, 15));
-
-        this.selectionMagasin.getItems().addAll(
-            "La librairie parisienne",
-            "Cap au Sud",
-            "Ty Li-Breizh-rie",
-            "L'européenne",
-            "Le Ch'ti livre",
-            "Rhône à lire",
-            "Loire et livres"
-        );
-        
-        Button executerAction = new Button("Exécuter");
-        executerAction.setPrefWidth(100);
-        executerAction.setOnAction(new controleurSelectionClient(this.modele, this.LEApp));
-        this.selectionRecherche.setPromptText("Choisissez une action"); 
-        this.selectionMagasin.setPromptText("Choissiser un magasin");
-        VBox layout = new VBox(10); 
-        layout.setPadding(new Insets(10));
-        layout.getChildren().addAll(this.selectionRecherche, this.selectionMagasin, executerAction);
-
-        this.barRecherche = new TextField();
-        this.barRecherche.setPrefWidth(600); // Largeur préférée
-        sstop2.setPadding(new Insets(10, 0, 10, 50));
-        sstop2.setSpacing(15);
-        sstop2.getChildren().addAll(this.selectionRecherche, this.selectionMagasin, this.barRecherche, executerAction);
-        //
-        HBox boxLigne = new HBox();
-        Line sep = new Line(0, 0, 1100, 0);
-        boxLigne.setPadding(new Insets(5, 0, 5, 100));
-        boxLigne.getChildren().addAll(sep);
-
-        this.setStyle("-fx-background-color : #d4d5d5;");
-        //
-        //sstop1.setStyle("-fx-background-color: blue;");
-        //sstop2.setStyle("-fx-background-color: lightblue;");
-        //boxLigne.setStyle("-fx-background-color: lightgreen;");
-        //
-
-        top.getChildren().addAll(sstop1, boxLigne, sstop2);
-
-        return top;
     }
 
-    public void setCenterRecommandation(Client client) throws SQLException
+    public void afficherPopUpLivrePanier(Livre l)
+    {
+        Stage popup = new Stage();
+        popup.setTitle(l.getTitre());
+        
+        BorderPane root = new BorderPane();
+
+        Image imgBrut = null;
+        try {
+            imgBrut = new Image("https://covers.openlibrary.org/b/isbn/" + l.getISBN() + "-M.jpg", 200, 300, true, true, true);
+            
+            if (imgBrut.isError())
+            {
+                imgBrut = new Image("file:./img/coverBase.png", 200, 300, true, true, true);
+            }
+        }
+        catch (Exception e)
+        {
+            imgBrut = new Image("file:./img/coverBase.png", 200, 300, true, true, true);   
+        }
+        ImageView img = new ImageView(imgBrut);
+        img.setFitWidth(200);
+        img.setFitHeight(300);
+        
+        img.setPreserveRatio(true);
+
+        root.setLeft(img);
+
+        VBox right = new VBox(10);
+        right.setPadding(new Insets(20));
+        Label titre = new Label(l.getTitre());
+        titre.setStyle("-fx-font-weight : bold;" + 
+        "-fx-font-size : 30px;");
+    
+        Label isbn = new Label("" + l.getISBN());
+        titre.setStyle("-fx-font-size : 15px;");
+
+        Label nbPages = new Label("Nombre de pages : " + l.getNbpages());
+        nbPages.setStyle("-fx-font-size : 15px;");
+
+        Label publi = new Label("Date de publication : " + l.getDatepubli());
+        publi.setStyle("-fx-font-size : 15px;");
+
+        Label prix = new Label("Prix : " + l.getPrix() + "€");
+        prix.setStyle("-fx-font-size : 15px;");
+        prix.setPadding(new Insets(0, 0, 100, 0));
+        
+        Button boutonSuppr = new Button("Supprimer du Panier");
+        boutonSuppr.setOnAction(new ControleurSupprimerPanier(this.modele, this.app, l));
+        right.getChildren().addAll(titre, isbn, nbPages, publi, prix, boutonSuppr);
+
+        
+        
+
+        root.setRight(right);
+
+        Scene sc = new Scene(root);
+        sc.getStylesheets().add("file:./src/IHM/styles/globalCSS.css");
+        Image logo = new Image("file:./img/logo.jpg");
+        popup.getIcons().add(logo);
+        popup.setScene(sc);
+        popup.show();
+
+    }
+
+    public void panelChoixMag()
+    {
+        try
+        {   
+            this.titreCentre.setText("Choix Magasin");
+            this.centre.getChildren().clear();
+            for (Magasin m : this.modele.getAllMagasins())
+            {
+                VBox vb = new VBox();
+                vb.setStyle("-fx-border-color : black;" + 
+                "-fx-border-width : 2px;" + 
+                "-fx-border-radius : 10px;" + 
+                "-fx-background-color : #fcfcfc;" + 
+                "-fx-background-radius : 10px;");
+                HBox.setMargin(vb, new Insets(10));
+                vb.setPrefSize(350, 100);
+                vb.setMaxSize(350, 100);
+                vb.setMinSize(350, 100);
+                Label nom = new Label(m.getNomMag());
+                nom.setFont(new Font(20));
+                nom.setPadding(new Insets(20, 0, 0, 75));
+                nom.setStyle("-fx-font-weight : bold;");
+                Label ville = new Label(m.getVilleMag());
+                ville.setFont(new Font(20));
+                ville.setPadding(new Insets(10, 0, 20, 75));
+                vb.getChildren().addAll(nom, ville);
+                vb.setOnMouseClicked(new ControleurChosirMagasin(this.modele, this.app));
+                this.centre.getChildren().add(vb);
+            }
+        }
+        catch (SQLException e)
+        {
+            System.out.println("Erreur SQL");
+        }
+    }
+
+    public void setupRecommandations()
     {
         ProgressIndicator loading = new ProgressIndicator();
         VBox vb = new VBox();
@@ -330,300 +474,193 @@ public class VueClient extends BorderPane
         sp.setPrefHeight(400);
         sp.setFocusTraversable(false);
 
-        Task<VBox> task = new Task<>() {
+        Task<List<Livre>> task = new Task<>() {
             @Override
-            protected VBox call() throws Exception
+            protected List<Livre> call() throws Exception
             {
-                return centerRecommandation(client);
+                return getRecommandations();
             }
         };
+        this.titreCentre.setText("Recommandations");
+        this.centre.getChildren().clear();
+        this.centre.getChildren().addAll(loading);
         loading.visibleProperty().bind(task.runningProperty());
-        task.setOnSucceeded(e -> {
-            vb.getChildren().clear();
-            vb.getChildren().add(task.getValue());
+        task.setOnSucceeded(e ->{
+            panelAfficherLivres(task.getValue(), "Recommandations");
         });
-        
-        vb.getChildren().addAll(loading);
-        sp.setContent(vb);
-        this.box2.getChildren().clear();
-        this.box2.getChildren().add(sp);
-        
+
         new Thread(task).start();
     }
 
-    public VBox centerRecommandation(Client client) throws SQLException
+    public List<Livre> getRecommandations()
     {
-        VBox livresBox = new VBox();
-        livresBox.setPadding(new Insets(15, 15, 15, 15));
         try
         {
-            List<Livre> tabrecoC = this.modele.onVousRecommande(client);
-            if (tabrecoC == null || tabrecoC.isEmpty()) {
-                livresBox.getChildren().add(new Text("Aucune recommandation à afficher."));
-            } else {
-                for (Livre bouquin : tabrecoC)
-                {
-                    Label affichageT = new Label(bouquin.getTitre());
-                    affichageT.setPadding(new Insets(5));
-                    affichageT.setFont(new Font(15));
-                    affichageT.setStyle("-fx-underline : true;");
-                    affichageT.setMinSize(Region.USE_PREF_SIZE, Region.USE_PREF_SIZE);
-                    affichageT.setOnMouseClicked(new controleurSelectionLivre(this.modele, this.LEApp));
-                    livresBox.getChildren().add(affichageT);
-                }
-            }
-        } catch (PasDHistoriqueException pdh) {
-            livresBox.getChildren().add(new Text("Vous n'avez jamais rien commandé ou nous n'avons aucune recommandation à vous présenter"));
+            return this.modele.onVousRecommande(this.client);
         }
-        return livresBox;
+        catch (Exception e)
+        {
+            return null;
+        }
+        
     }
 
-    /**
-     * Permet d'afficher dans le center de la vue la liste de livres en fonction de la recherche
-     * @param livres
-     */
-    public void centerAfficherLivres(List<Livre> livres) 
+    public void panelAfficherLivres(List<Livre> liste, String titre)
     {
-        this.box2.getChildren().clear();
-        VBox libresbox = new VBox();
-        if (livres == null || livres.isEmpty()) {
-            libresbox.getChildren().add(new Text("Aucun livre à afficher."));
-        } else {
-            for (Livre livre : livres) {
-                Label affichageT = new Label(livre.getTitre());
-                affichageT.setPadding(new Insets(0, 0, 0, 10));
-                affichageT.setFont(new Font(15));
-                affichageT.setStyle("-fx-underline : true;");
-                affichageT.setOnMouseClicked(new controleurSelectionLivre(this.modele, this.LEApp));
-                libresbox.getChildren().add(affichageT);
-            }
-        }
-        ScrollPane sp = new ScrollPane(libresbox);
-        this.box2.getChildren().add(sp);
-    }
-
-    public void afficheInfoLivre(Livre livre)
-    {
-        this.box3.getChildren().clear();
-        VBox infoBox = new VBox(10);
-        infoBox.setPadding(new Insets(0, 0, 160, 0));
-        if (livre == null) {
-            infoBox.getChildren().add(new Text("Aucune information à afficher."));
-        } else {
-            try 
+        try
+        {
+            this.titreCentre.setText(titre);
+            this.centre.getChildren().clear();
+            for (Livre l : liste)
             {
-                Label titre = new Label("Titre : " + livre.getTitre());
-                titre.setStyle("-fx-font-weight : bold;");
-                titre.setFont(new Font(20));
-                Label prix = new Label("Prix : " + livre.getPrix() + " €");
-                prix.setFont(new Font(20));
+                HBox hb = new HBox(20);
+                hb.setStyle("-fx-border-color : black;" + 
+                "-fx-border-width : 2px;" + 
+                "-fx-border-radius : 10px;" + 
+                "-fx-background-color : #fcfcfc;" + 
+                "-fx-background-radius : 10px;");
+                hb.setPrefSize(350, 100);
+                hb.setMaxSize(350, 100);
+                hb.setMinSize(350, 100);
+                Image imgBrut = null;
+                try {
+                    imgBrut = new Image("https://covers.openlibrary.org/b/isbn/" + l.getISBN() + "-M.jpg", 60, 80, true, true, true);
+                    
+                    if (imgBrut.isError())
+                    {
+                        imgBrut = new Image("file:./img/coverBase.png", 60, 80, true, true, true);
+                    }
+                }
+                catch (Exception e)
+                {
+                    imgBrut = new Image("file:./img/coverBase.png", 60, 80, true, true, true);   
+                }
+                ImageView img = new ImageView(imgBrut);
+                img.setFitWidth(60);
+                img.setFitHeight(80);
+                
+                img.setPreserveRatio(true);
 
-                List<Auteur> auteurs = this.modele.getAuteurParIdLivre(livre.getISBN());
-                StringBuilder auteursStr = new StringBuilder("Auteurs : ");
-                if (auteurs.isEmpty()) auteursStr.append("Aucun");
-                else for (Auteur a : auteurs) auteursStr.append(a.getNomAuteur());
+                Label titreLivre = new Label(l.getTitre());
+                titreLivre.setFont(new Font(20));
 
-            Label auteursLabel = new Label(auteursStr.toString());
-            auteursLabel.setPadding(new Insets(10, 0, 0, 0));
-            auteursLabel.setFont(new Font(15));
-
-            List<Classification> classes = this.modele.getClassificationParIdLivre(livre.getISBN());
-            StringBuilder classStr = new StringBuilder("Classifications : ");
-            if (classes.isEmpty()) classStr.append("Aucune");
-            else for (Classification c : classes) classStr.append(c.getNomClass());
-            Label classLabel = new Label(classStr.toString());
-            classLabel.setPadding(new Insets(10, 0, 0, 0));
-            classLabel.setFont(new Font(15));
-
-            List<Editeur> editeurs = this.modele.getEditeurParIdLivre(livre.getISBN());
-            StringBuilder editStr = new StringBuilder("Editeurs : ");
-            if (editeurs.isEmpty()) editStr.append("Aucun");
-            else for (Editeur e : editeurs) editStr.append(e.getNomEdit());
-            Label editLabel = new Label(editStr.toString());
-            editLabel.setPadding(new Insets(10, 0, 0, 0));
-            editLabel.setFont(new Font(15));
-
-                infoBox.getChildren().addAll(titre, prix, auteursLabel, classLabel, editLabel);
-
-            } catch (Exception e) {
-                infoBox.getChildren().clear();
-                infoBox.getChildren().add(new Text("Erreur lors de l'affichage des informations du livre."));
+                hb.getChildren().addAll(img, titreLivre);
+                hb.setPadding(new Insets(10));
+                hb.setOnMouseClicked(new ControleurLookLivre(this.app, this.modele, l));
+                this.centre.getChildren().add(hb);
             }
         }
+        catch (Exception e)
+        {
+            System.out.println("Erreur");
+        }
+    }
+
+    public ScrollPane LivresAuPanier()
+    {
+        ScrollPane sp = new ScrollPane();
         VBox vb = new VBox();
-        vb.setPadding(new Insets(20));
-        vb.getChildren().addAll(infoBox, this.boutouAjouterPanier());
-        this.box3.getChildren().addAll(vb);
-        //this.boutouAjouterPanier();
-    }
+        for (Livre l : this.client.getPanier().keySet())
+        {
+            HBox hb = new HBox(20);
+                hb.setStyle("-fx-border-color : black;" + 
+                "-fx-border-width : 2px;" + 
+                "-fx-border-radius : 10px;" + 
+                "-fx-background-color : #fcfcfc;" + 
+                "-fx-background-radius : 10px;");
+                hb.setPrefSize(350, 100);
+                hb.setMaxSize(350, 100);
+                hb.setMinSize(350, 100);
+                Image imgBrut = null;
+                try {
+                    imgBrut = new Image("https://covers.openlibrary.org/b/isbn/" + l.getISBN() + "-M.jpg", 60, 80, true, true, true);
+                    
+                    if (imgBrut.isError())
+                    {
+                        imgBrut = new Image("file:./img/coverBase.png", 60, 80, true, true, true);
+                    }
+                }
+                catch (Exception e)
+                {
+                    imgBrut = new Image("file:./img/coverBase.png", 60, 80, true, true, true);   
+                }
+                ImageView img = new ImageView(imgBrut);
+                img.setFitWidth(60);
+                img.setFitHeight(80);
+                
+                img.setPreserveRatio(true);
+                VBox droite = new VBox();
+                Label titreLivre = new Label(l.getTitre());
+                titreLivre.setFont(new Font(20));
 
-    public Button boutouAjouterPanier()
+                Label qteLivre = new Label("Qte : " + this.client.getPanier().get(l));
+                qteLivre.setFont(new Font(20));
+
+                droite.getChildren().addAll(titreLivre, qteLivre);
+
+                hb.getChildren().addAll(img, droite);
+                hb.setPadding(new Insets(10));
+                hb.setOnMouseClicked(new ControleurLookLivrePanier(this.app, this.modele, l));
+                vb.getChildren().add(hb);
+            }
+        sp.setContent(vb);
+        return sp;
+        }
+
+    public void afficherPopUpPanier()
     {
-        Button ajtpanier = new Button("ajouter ce livre au panier");
-        ajtpanier.setOnAction(new ControleurAjouterPanier(this.modele, this.LEApp));
-        ajtpanier.setPadding(new Insets(10, 10, 10, 10));
-        //this.box3.getChildren().add(ajtpanier);
-        return ajtpanier;
-    } 
-
-    public void centerAfficheEditeur(List<Editeur> editeurs) {
-        VBox editeursBox = new VBox();
-        if (editeurs == null || editeurs.isEmpty()) {
-            editeursBox.getChildren().add(new Text("Aucun éditeur à afficher."));
-        } else {
-            for (Editeur editeur : editeurs) {
-                Label affichageE = new Label(editeur.getNomEdit());
-                affichageE.setOnMouseClicked(new controleurSelectionEditeur(this.modele, this.LEApp));
-                affichageE.setStyle("-fx-underline = true;");
-                affichageE.setFont(new Font(15));
-                affichageE.setPadding(new Insets(0, 0, 0, 10));
-                editeursBox.getChildren().add(affichageE);
-            }
-        }
-        ScrollPane sp = new ScrollPane(editeursBox);
-        this.box1.getChildren().add(sp);
-    }
-
-    public void centerAfficheClassification(List<Classification> classifications) {
-        VBox classificationsBox = new VBox();
-        if (classifications == null || classifications.isEmpty()) {
-            classificationsBox.getChildren().add(new Text("Aucune classification à afficher."));
-        } else {
-            for (Classification classification : classifications) {
-                Label affichageC = new Label(classification.getNomClass());
-                affichageC.setOnMouseClicked(new controleurSelectionClassification(this.modele, this.LEApp));
-                affichageC.setStyle("-fx-underline = true;");
-                affichageC.setFont(new Font(15));
-                affichageC.setPadding(new Insets(0, 0, 0, 10));
-                classificationsBox.getChildren().add(affichageC);
-            }
-        }
-        ScrollPane sp = new ScrollPane(classificationsBox);
-        this.box1.getChildren().add(sp);
-    }
-    
-
-    public void centerAfficheAuteur(List<Auteur> auteurs) {
-        VBox auteursBox = new VBox();
-        if (auteurs == null || auteurs.isEmpty()) {
-            auteursBox.getChildren().add(new Text("Aucun auteur à afficher."));
-        } else {
-            for (Auteur auteur : auteurs) {
-                Label affichageA = new Label(auteur.getNomAuteur());
-                affichageA.setOnMouseClicked(new controleurSelectionAuteur(this.modele, this.LEApp));
-                affichageA.setStyle("-fx-underline = true;");
-                affichageA.setFont(new Font(15));
-                affichageA.setPadding(new Insets(0, 0, 0, 10));
-                auteursBox.getChildren().add(affichageA);
-            }
-        }
-        ScrollPane sp = new ScrollPane(auteursBox);
-        this.box1.getChildren().add(sp);
-    }
-
-    
-
-    public void consulterPanier()
-    {
-        this.TitrePage.getChildren().clear();
-        Text titre = new Text("Votre Panier");
-        this.TitrePage.getChildren().addAll(titre);
-        VBox panierBox = new VBox();
-        HashMap<Livre, Integer> panier = this.getclient().getPanier();
-        if (panier == null || panier.isEmpty()) {
-            Label pVide = new Label("Votre panier est vide.");
-            panierBox.getChildren().add(pVide);
-        } else {
-            for (Livre livre : panier.keySet()) {
-                HBox ligne = new HBox();
-                Label quantiteLabel = new Label(String.valueOf(panier.get(livre)));
-                Label titreLabel = new Label(livre.getTitre());
-                titreLabel.setOnMouseClicked(new controleurSelectionLivre(modele, LEApp));
-
-                quantiteLabel.setPrefWidth(60);
-                quantiteLabel.setFont(new Font(20));
-                titreLabel.setPrefWidth(300);
-                titreLabel.setFont(new Font(20));
-
-                quantiteLabel.setAlignment(Pos.CENTER_LEFT);
-                titreLabel.setAlignment(Pos.CENTER_LEFT);
-                quantiteLabel.setStyle("-fx-border-radius : 15px;");
-                titre.setStyle("-fx-border-radius : 15px;");
-                ligne.getChildren().addAll(quantiteLabel, titreLabel);
-                ligne.setSpacing(10);
-                ligne.setStyle("-fx-border-radius : 15px;");
-                panierBox.getChildren().add(ligne);
-            }
-        }
-        ScrollPane sp = new ScrollPane(panierBox);
-        sp.setStyle("-fx-background-radius : 15px;");
-        sp.setPrefHeight(400);
-        VBox droite = new VBox();
-        droite.setPadding(new Insets(20));
-        VBox.setVgrow(sp, Priority.ALWAYS);
-
-        HBox boutons = new HBox(60);
-        boutons.setPadding(new Insets(300, 0, 0, 0));
+        Stage popup = new Stage();
+        popup.setTitle("Panier");
+        BorderPane root = new BorderPane();
+        
+        VBox droite = new VBox(10);
 
         Integer nbArticle = this.client.getNbArticles();
         Double prix = this.client.getPrixTotal();
 
         Label nombreArticles = new Label("Nombre total d'articles : " + nbArticle);
         nombreArticles.setFont(new Font(20));
+
         Label prixTotal = new Label("Prix total du panier : " + prix + "€");
         prixTotal.setFont(new Font(20));
 
-        Button suppr = new Button("Supprimer livre");
-        Button commander = new Button("Commander le panier");
+        if (prix > 0.0)
+        {
+            Button commanderPanier = new Button("Commander");
+            commanderPanier.setOnAction(new ControleurAllerCommander(this.app, this.modele));
 
-        boutons.getChildren().addAll(suppr, commander);
+            droite.getChildren().addAll(nombreArticles, prixTotal, commanderPanier);
+        }
+        else
+        {
+            droite.getChildren().addAll(nombreArticles, prixTotal);
+        }
+        
 
-        droite.getChildren().addAll(nombreArticles, prixTotal, boutons);
-        this.box3.getChildren().clear();
-        this.box2.getChildren().add(droite);
-        this.box1.getChildren().add(sp);
-        this.contenantRLIL.getChildren().clear();
-        this.contenantRLIL.getChildren().addAll(this.box1, this.box3, this.box2);
+        root.setLeft(this.LivresAuPanier());
+        root.setRight(droite);
+        root.setPrefSize(1300, 800);
+        Scene sc = new Scene(root);
+        sc.getStylesheets().add("file:./src/IHM/styles/globalCSS.css");
+        Image logo = new Image("file:./img/logo.jpg");
+        popup.getIcons().add(logo);
+        popup.setScene(sc);
+        popup.show();
+
     }
 
-    public void reset()
+    public void afficherPopUpParametres()
     {
-        this.box3.getChildren().clear();
-        this.box1.getChildren().clear();
-        this.box2.getChildren().clear();
-        this.barRecherche.clear();
-        this.TitrePage.getChildren().clear();
-    }
-
-    public void majCatalogue()
-    {
-        this.contenantRLIL.getChildren().clear();
-        this.contenantRLIL.getChildren().addAll(this.box1, this.box2, this.box3);
-    }
-
-    public void resetBox2()
-    {
-        this.box2.getChildren().clear();
-    }
-
-    public void majPanier()
-    {
-        this.consulterPanier();
-    }
-
-    public void menuParametre()
-    {
-        this.TitrePage.getChildren().clear();
-        Label titre = new Label("Parametres");
-        titre.setFont(new Font(30));
-        titre.setPadding(new Insets(0, 0, 0, 500));
-        this.TitrePage.getChildren().addAll(titre);
-        //changer mot de passe
+        Stage popup = new Stage();
+        popup.setTitle("Parametres");
+        BorderPane root = new BorderPane();
+        
+        //mdp
         VBox gauche = new VBox(10);
         gauche.setPadding(new Insets(10));
         Label titreGauche = new Label("Changement mot de passe");
         titreGauche.setFont(new Font(20));
-        titreGauche.setPadding(new Insets(0, 0, 0, 70));
+        titreGauche.setPadding(new Insets(0, 0, 0, 0));
         titreGauche.setStyle("-fx-font-weight : bold;");
 
         Label nvMdp = new Label("Nouveau mot de passe");
@@ -634,15 +671,14 @@ public class VueClient extends BorderPane
         Button bMdp = new Button("Changer Mot de Passe");
         bMdp.setOnAction(new ControleurChangerMdp(this.modele, this));
         VBox.setMargin(bMdp, new Insets(0, 100, 0, 100));
-
+        gauche.setAlignment(Pos.TOP_CENTER);
         gauche.getChildren().addAll(titreGauche, nvMdp, this.pwField, bMdp);
         
-        // changer adresse
         VBox droite = new VBox(10);
         droite.setPadding(new Insets(10));
         Label titreDroite = new Label("Changement d'adresse");
         titreDroite.setFont(new Font(20));
-        titreDroite.setPadding(new Insets(0, 0, 0, 70));
+        titreDroite.setPadding(new Insets(0, 0, 0, 0));
         titreDroite.setStyle("-fx-font-weight : bold;");
 
         Label lbVille = new Label("Ville");
@@ -658,14 +694,76 @@ public class VueClient extends BorderPane
         lbCodePostal.setPadding(new Insets(20, 0, 0, 10));
 
         Button bAdresse = new Button("Changer adresse");
-        bAdresse.setOnAction(new ControleurChangerAdresse(this.modele, this));
+        bAdresse.setOnAction(new ControleurChangerAdresse(this.modele, this.app));
         VBox.setMargin(bAdresse, new Insets(35, 100, 0, 120));
-
+        droite.setAlignment(Pos.TOP_CENTER);
         droite.getChildren().addAll(titreDroite, lbVille, tfVille, lbAdresse, tfAdresse, lbCodePostal, tfCodePostal, bAdresse);
 
+        root.setLeft(gauche);
+        root.setRight(droite);
 
-        this.box1.getChildren().add(gauche);
-        this.box3.getChildren().add(droite);
-
+        root.setPrefSize(1300, 400);
+        Scene sc = new Scene(root);
+        sc.getStylesheets().add("file:./src/IHM/styles/globalCSS.css");
+        Image logo = new Image("file:./img/logo.jpg");
+        popup.getIcons().add(logo);
+        popup.setScene(sc);
+        popup.show();
     }
+
+    public void afficherPopUpCommander()
+    {
+        Stage popup = new Stage();
+        popup.setTitle("Parametres");
+        BorderPane root = new BorderPane();
+        
+        VBox gauche = new VBox(10);
+
+        Integer nbArticle = this.client.getNbArticles();
+        Double prix = this.client.getPrixTotal();
+
+        Label nombreArticles = new Label("Nombre total d'articles : " + nbArticle);
+        nombreArticles.setFont(new Font(20));
+
+        Label prixTotal = new Label("Prix total du panier : " + prix + "€");
+        prixTotal.setFont(new Font(20));
+
+
+
+        this.livraison.getItems().addAll("A Domicile",
+        "En magasin");
+        
+        this.livraison.setPromptText("Choisissez une action"); 
+        Commande c = null;
+        try 
+        {
+            c = new Commande(0, this.modele);
+            c.setEnLigne("O");
+            c.setLivraison(liv);
+            c.setPanier(this.client.getPanier());
+            c.setDate(this.modele.getCurrentDate());
+        }
+        
+        catch (SQLException e)
+        {
+            System.out.println("Erreur SQL");
+        }
+        
+        Button commander = new Button("Commander");
+        commander.setOnAction(new ControleurPasserCommandeCli(this.app, this.modele, c));
+    
+        gauche.getChildren().addAll(nombreArticles, prixTotal, this.livraison);
+
+        root.setLeft(gauche);
+        root.setRight(commander);
+
+        root.setPrefSize(600, 400);
+        Scene sc = new Scene(root);
+        sc.getStylesheets().add("file:./src/IHM/styles/globalCSS.css");
+        Image logo = new Image("file:./img/logo.jpg");
+        popup.getIcons().add(logo);
+        popup.setScene(sc);
+        popup.show();
+    }
+
 }

@@ -8,7 +8,6 @@ import javafx.geometry.Insets;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
 import main.BD.ActionBD;
-import main.Exceptions.EmptySetException;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
@@ -24,41 +23,26 @@ import javafx.scene.control.ButtonBar.ButtonData ;
 import javafx.fxml.FXML;
 
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ArrayBlockingQueue;
 
 import IHM.vues.*;
 import main.app.*;
-public class controleurSelectionEditeur implements EventHandler<MouseEvent> 
-{
+import main.BD.*;
+
+public class ControleurChangerStore implements EventHandler<ActionEvent>{
     private LivreExpress app;
     private ActionBD modele;
 
-    public controleurSelectionEditeur(ActionBD modele, LivreExpress app)
+    public ControleurChangerStore(LivreExpress app, ActionBD modele)
     {
         this.app = app;
         this.modele = modele;
     }
 
-    public void handle(MouseEvent event) 
+    public void handle (ActionEvent event)
     {
-        Object source = event.getSource();
-        this.app.getVueClient().resetBox2();
-
-        if (source instanceof Label) 
-        {
-            try
-            { 
-                Label labelClique = (Label) source;
-                String nomedit = labelClique.getText();
-                Editeur edit = this.modele.getEditeurAPartirDeNom(nomedit);
-                String mag = this.app.getVueClient().getSelectionMagasin().getValue();
-                Magasin magasin = this.modele.magAPartirNom(mag);
-                this.app.getVueClient().centerAfficherLivres(this.modele.chercherLivreAPartiEditeur(edit, magasin));
-                
-            }
-            catch(SQLException sql) {System.out.println("Erreure sql");}
-
-        }
+        this.app.getVueClient().panelChoixMag();
     }
 }
-

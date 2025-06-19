@@ -205,7 +205,7 @@ public class ActionBD{
      * @throws SQLException
      */
     public void PasserCommande(Client client, Commande commande, Magasin mag) throws SQLException{
-        PreparedStatement com = this.connexion.prepareStatement("insert into COMMANDE values (?, ?, ?, ?, ?, ?)");
+        PreparedStatement com = this.connexion.prepareStatement("insert into COMMANDE(numcom, datecom, enligne, livraison, idcli, idmag) values (?, ?, ?, ?, ?, ?)");
         // insertion des informations de la commande dans la table CLIENT de la base de donnees
         int numcom = this.getMaxNumCom() + 1;
         com.setInt(1, numcom);
@@ -222,12 +222,12 @@ public class ActionBD{
         int numligne = 1;
         for (Livre l : panier.keySet())
         {
-            PreparedStatement detailCom = this.connexion.prepareStatement("insert into DETAILCOMMANDE VALUES (?, ?, ?, ?, ?)");    
+            PreparedStatement detailCom = this.connexion.prepareStatement("insert into DETAILCOMMANDE(numcom, numlig, qte, prixvente, isbn) VALUES (?, ?, ?, ?, ?)");    
             detailCom.setInt(1, numcom);
             detailCom.setInt(2, numligne);
-            detailCom.setLong(3, l.getISBN());
-            detailCom.setInt(4, panier.get(l));
-            detailCom.setDouble(5, l.getPrix() * panier.get(l)); 
+            detailCom.setLong(5, l.getISBN());
+            detailCom.setInt(3, panier.get(l));
+            detailCom.setDouble(4, l.getPrix() * panier.get(l)); 
             numligne ++;
             detailCom.executeUpdate();
         }

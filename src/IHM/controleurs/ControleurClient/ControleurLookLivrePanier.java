@@ -13,6 +13,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
@@ -28,19 +29,19 @@ import java.util.concurrent.ArrayBlockingQueue;
 
 import IHM.vues.*;
 import main.app.*;
-public class ControleurConsulterPanier implements EventHandler<ActionEvent> 
-{
-    private LivreExpress app;
+public class ControleurLookLivrePanier implements EventHandler<MouseEvent> {
     private ActionBD modele;
-
-    public ControleurConsulterPanier(ActionBD modele, LivreExpress app)
+    private LivreExpress app;
+    private Livre l;
+    public ControleurLookLivrePanier(LivreExpress app, ActionBD modele, Livre l)
     {
-        this.app = app;
         this.modele = modele;
+        this.app = app;
+        this.l = l;
     }
 
-    public void handle(ActionEvent event)
+    public void handle(MouseEvent event)
     {
-        this.app.getVueClient().afficherPopUpPanier();
+        this.app.getVueClient().afficherPopUpLivrePanier(this.l);
     }
 }

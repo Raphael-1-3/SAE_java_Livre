@@ -13,6 +13,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
@@ -28,19 +29,34 @@ import java.util.concurrent.ArrayBlockingQueue;
 
 import IHM.vues.*;
 import main.app.*;
-public class ControleurConsulterPanier implements EventHandler<ActionEvent> 
-{
-    private LivreExpress app;
+import main.BD.*;
+
+public class ControleurChosirMagasin implements EventHandler<MouseEvent>{
+
     private ActionBD modele;
+    private LivreExpress app;
 
-    public ControleurConsulterPanier(ActionBD modele, LivreExpress app)
+    public ControleurChosirMagasin(ActionBD modele, LivreExpress app)
     {
-        this.app = app;
         this.modele = modele;
+        this.app = app;
     }
 
-    public void handle(ActionEvent event)
+    public void handle(MouseEvent event)
     {
-        this.app.getVueClient().afficherPopUpPanier();
+        try {
+            VBox vb = (VBox) event.getSource();
+            Label l = (Label) vb.getChildren().get(0);
+            Magasin mag = this.modele.magAPartirNom(l.getText());
+            this.app.getVueClient().setMag(mag);
+            this.app.getVueClient().activer();
+            this.app.getVueClient().setupRecommandations();
+        }
+        catch (SQLException e)
+        {
+            System.out.println("Erreur SQL");
+        }
+        
     }
+    
 }

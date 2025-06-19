@@ -41,7 +41,6 @@ public class ControleurAllerParametres implements EventHandler<ActionEvent>
 
     public void handle(ActionEvent event)
     {
-        this.app.getVueClient().reset();
-        this.app.getVueClient().menuParametre();
+        this.app.getVueClient().afficherPopUpParametres();
     }
 }

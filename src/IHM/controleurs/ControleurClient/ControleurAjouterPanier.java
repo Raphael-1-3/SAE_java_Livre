@@ -32,17 +32,18 @@ public class ControleurAjouterPanier implements EventHandler<ActionEvent>
 {
     private LivreExpress app;
     private ActionBD modele;
+    private Livre l;
 
-    public ControleurAjouterPanier(ActionBD modele, LivreExpress app)
+    public ControleurAjouterPanier(ActionBD modele, LivreExpress app, Livre l)
     {
         this.app = app;
         this.modele = modele;
+        this.l = l;
     }
 
     public void handle(ActionEvent event)
     {
-        Livre choisi = this.app.getVueClient().getLivreChoisi();
-        this.app.getVueClient().getclient().ajoutePanier(choisi);
-        System.out.println("livre ajoute au panier" + choisi);
+        this.app.getVueClient().getClient().ajoutePanier(l);
+        this.app.getVueClient().popUpActionEffectuee().show();
     }
 }
