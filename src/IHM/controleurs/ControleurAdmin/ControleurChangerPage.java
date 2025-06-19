@@ -53,7 +53,7 @@ public class ControleurChangerPage implements EventHandler<ActionEvent>
                     this.app.getVueAdmin().transfererLivre();
                     break;
                 case "Obtenir les factures":
-                    this.app.getVueAdmin().obtenirFactures();
+                    this.app.getVueAdmin().choisirFactures();
                     break;
                 default:
                     // Rien

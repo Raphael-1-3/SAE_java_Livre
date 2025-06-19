@@ -9,6 +9,7 @@ import main.app.*;
 import main.BD.*;
 import main.Exceptions.*;
 import IHM.controleurs.*;
+import IHM.controleurs.ControleurAcceuil.ControleurSelectionnerClient;
 import IHM.vues.*;
 import javafx.application.Application;
 import javafx.concurrent.Task;
@@ -84,6 +85,7 @@ public class VueAdmin extends BorderPane
     private ComboBox<String> selectionRecherche;
     private Livre livreChoisi;
     private List<Livre> listeSuggestions;
+    private Client clientChosi;
 
     private TextField tfAdd = new TextField();
 
@@ -631,11 +633,104 @@ public class VueAdmin extends BorderPane
         this.centre.setCenter(grid);
     }
 
-    public void obtenirFactures() 
+    public void choisirFactures() 
     {
-        // Code pour afficher les factures
+        ToggleButton mag = new ToggleButton("Magasin");
+        ToggleButton cli = new ToggleButton("Client");
+
+        ToggleGroup toggleGroup = new ToggleGroup();
+        mag.setToggleGroup(toggleGroup);
+        cli.setToggleGroup(toggleGroup);
+
+        mag.setOnAction(new ControleurChoisirTypeFacture(this.LEApp, this.modele));
+        cli.setOnAction(new ControleurChoisirTypeFacture(this.LEApp, this.modele));
+
+        mag.setSelected(true); 
+        HBox boutons = new HBox();
+
+        boutons.getChildren().addAll(mag, cli);
+        boutons.setAlignment(Pos.TOP_CENTER);
+        this.centre.setTop(boutons);
     }
 
+    public void afficherPopUpChosirClient()
+    {
+        Stage stage = new Stage();
+        BorderPane root = new BorderPane();
+        Scene scene = new Scene(root, 800, 600);
+        stage.setScene(scene);
+        scene.getStylesheets().add("file:./src/IHM/styles/globalCSS.css");
+        stage.setTitle("Choix du client");
+        
+        Label titre = new Label("Choix du client");
+        titre.setStyle("-fx-font-size : 30px;" + 
+        "-fx-font-weight : bold;");
+        titre.setTextAlignment(TextAlignment.CENTER);
+
+        VBox vb = new VBox(10);
+
+        Label lbPrenom = new Label("Prenom");
+        Label lbNom = new Label("Nom");
+        Label lbCodePostal = new Label("Code postal");
+
+        this.tfPrenom = new TextField();
+        this.tfPrenom.setMinWidth(350);
+        this.tfPrenom.setMaxWidth(350);
+
+        this.tfNom = new TextField();
+        this.tfNom.setMaxWidth(350);
+        this.tfNom.setMinWidth(350);
+
+        this.tfCodePostal = new TextField();
+        this.tfCodePostal.setMinWidth(350);
+        this.tfCodePostal.setMaxWidth(350);
+        
+        Button selectionner = new Button("Selectionner");
+        selectionner.setOnAction(new ControleurSelectionnerClient(this.LEApp, this.modele));
+
+        vb.getChildren().addAll(lbPrenom, this.tfPrenom, lbNom, this.tfNom, lbCodePostal, this.tfCodePostal, selectionner);
+
+        root.setTop(titre);
+        root.setCenter(vb);
+
+        stage.show();   
+    }
+
+    public void pannelChoisirMoisAnnee()
+    {
+        VBox vb = new VBox();
+
+        Label titre = new Label("Selection de la date");
+
+        Label lbAn = new Label("Annee");
+        Label lbMois = new Label("Mois");
+
+        this.tfAnnee = new TextField();
+        this.tfAnnee.setMinWidth(350);
+        this.tfAnnee.setMaxWidth(350);
+        
+        this.tfMois = new TextField();
+        this.tfMois.setMinWidth(350);
+        this.tfAnnee.setMinWidth(350);
+
+        Button lancer = new Button("Lancer");
+        lancer.setOnAction(new ControleurEditerFacture(this.LEApp, this.modele, this.clientChosi));
+
+        vb.getChildren().addAll(lbAn, this.tfAnnee, lbMois, this.tfMois, lancer);
+    }
+
+    public void afficherPopUpFactures(String s)
+    {
+        Stage stage = new Stage();
+        BorderPane root = new BorderPane();
+        Scene scene = new Scene(root, 800, 600);
+        stage.setScene(scene);
+        stage.setTitle("Nombre de livre vendue par magasins par ans");
+        
+        Text texte = new Text(s);
+        root.setCenter(texte);
+        stage.show();
+    }
 
     public void afficheGraphiqueNombreDeLivreVendueParMagasinParAns(HashMap<Integer, HashMap<Magasin, Integer>> donnees) 
     {
@@ -973,5 +1068,9 @@ public class VueAdmin extends BorderPane
     public TextField getTfAnnee() { return tfAnnee; }
     public TextField getTfClassification() { return this.tfClassificiation; }
     public ComboBox<String> getSelectionAction() { return this.selectionAction; }
+    public void setClient( Client c)
+    {
+        this.clientChosi = c;
+    }
 
 }
