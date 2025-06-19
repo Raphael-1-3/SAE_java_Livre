@@ -2,12 +2,13 @@ package IHM.vues;
 
 import main.*;
 import IHM.controleurs.ControleurAdmin.*;
-
+import IHM.controleurs.ControleurVendeur.ControleurPasserCommande;
 import main.BD.ActionBD;
 import main.app.*;
 import main.BD.*;
 import main.Exceptions.*;
-
+import IHM.controleurs.*;
+import IHM.vues.*;
 import javafx.application.Application;
 import javafx.concurrent.Task;
 import javafx.fxml.FXMLLoader;
@@ -75,6 +76,8 @@ public class VueAdmin extends BorderPane
     private Livre livreChoisi;
     private List<Livre> listeSuggestions;
 
+    private TextField tfAdd = new TextField();
+
     private TextField tfEmail = new TextField();
     private PasswordField pfMDP = new PasswordField();
     private TextField tfNom = new TextField();
@@ -96,6 +99,9 @@ public class VueAdmin extends BorderPane
     private TextField tfQte = new TextField();
     private TextField tfMois = new TextField();
     private TextField tfAnnee = new TextField();
+    private TextField tfPrenomClient;
+    private TextField tfNomClient;
+    private TextField tfCodePostalClient;
 
     /**
      * Instancie la fenetre liee admin
@@ -160,7 +166,14 @@ public class VueAdmin extends BorderPane
         this.tfVille.setMaxWidth(380);
         //this.setBottom(this.bottom());
     }
-    
+    public TextField getTfAdd() { return tfAdd; }
+    public TextField getTfPrenomClient() { return tfPrenomClient; }
+    public TextField getTfNomClient() { return tfNomClient; }
+    public TextField getTfCodePostalClient() { return tfCodePostalClient; }
+    public ComboBox<String> getSelectionRecherche() { return selectionRecherche; }
+    public ComboBox<String> getSelectionMagasin() { return selectionMagasin; }
+    public List<Livre> getListeSuggestions() { return listeSuggestions; }
+    public Livre getLivreChoisi() { return livreChoisi; }
 
     public Alert popUpChampsVides()
     {
@@ -431,22 +444,119 @@ public class VueAdmin extends BorderPane
         topcenter.setSpacing(15);
         topcenter.getChildren().addAll(this.selectionRecherche, this.selectionMagasin, this.barRecherche);
         this.centre.setTop(topcenter);
+        Label add = new Label("Quantité à ajouter: ");
+        add.setStyle("-fx-text-fill: Black; -fx-font-size: 28px; -fx-font-weight: bold;");
+        GridPane gpadd = new GridPane();
+        Button btnAdd = new Button("Ajouter");
+        gpadd.add(add, 1,0);
+        gpadd.add(tfAdd,1,1);
+        gpadd.add(btnAdd, 1,3 );
+        this.centre.setRight(gpadd);
+        
     
     }
 
-    public void regarderDisponibilites() 
+    public void regarderDisponibilites() throws SQLException 
     {
-        // Code pour afficher les disponibilités
+        GridPane grid = new GridPane();
+
+        Label titreForm = new Label("Regarder les disponibilités");
+        titreForm.setStyle("-fx-text-fill: Black; -fx-font-size: 28px; -fx-font-weight: bold;");
+        titreForm.setPadding(new Insets(0, 0, 30, 0));
+        grid.add(titreForm, 0, 0, 2, 1);
+        this.barRecherche = new TextField();
+        this.barRecherche.setPromptText("Rechercher...");
+
+        ControleurRechercheDynamique controleurRecherche = new ControleurRechercheDynamique(this.LEApp, this.modele);
+        grid.add(controleurRecherche.getListeSuggestions(), 0,2,4,2);
+        tfLivre.setPrefWidth(300); tfLivre.setPrefHeight(40);
+        grid.add(barRecherche, 0, 1,2,1);
+        GridPane.setColumnSpan(controleurRecherche.getListeSuggestions(), 4);
+        controleurRecherche.getListeSuggestions().setPrefHeight(300);
+
+        this.centre.setCenter(grid);
     }
 
-    public void passerCommandeClient() 
+    public void passerCommandeClient() throws SQLException 
     {
-        // Code pour afficher la vue de commande client
+        GridPane grid = new GridPane();
+        grid.setPadding(new Insets(20));
+        grid.setHgap(10);
+        grid.setVgap(10);
+
+        Label lblNom = new Label("Nom du client :");
+        this.tfNomClient = new TextField();
+        tfNomClient.setPromptText("Nom");
+
+        Label lblPrenom = new Label("Prénom du client :");
+        this.tfPrenomClient = new TextField();
+        tfPrenomClient.setPromptText("Prénom");
+
+        Label lblCodePostal = new Label("Code postal :");
+        this.tfCodePostalClient = new TextField();
+        tfCodePostalClient.setPromptText("Code postal");
+        Button btnValider = new Button("Valider");
+        ControleurPasserCommandeCli control = new ControleurPasserCommandeCli(this.LEApp,this.modele);
+        btnValider.setOnAction(control);
+        grid.add(btnValider, 1, 3);
+
+        grid.add(lblNom, 0, 0);
+        grid.add(tfNomClient, 1, 0);
+        grid.add(lblPrenom, 0, 1);
+        grid.add(tfPrenomClient, 1, 1);
+        grid.add(lblCodePostal, 0, 2);
+        grid.add(tfCodePostalClient, 1, 2);
+
+        this.centre.setCenter(grid);
+        
+    }
+
+    public void vueCommandeClient(Client client) throws SQLException{
+        Stage stage = new Stage();
+        VueClient root = new VueClient(LEApp, client, modele);
+        this.LEApp.setVueClient(root);
+        Scene scene = new Scene(root, 800, 600);
+        stage.setScene(scene);
+        stage.setTitle("Passer Commande Pour un client");
+        stage.show();
     }
 
     public void transfererLivre() 
     {
-        // Code pour afficher la vue de transfert de livre
+        GridPane grid = new GridPane();
+        grid.setPadding(new Insets(20));
+        grid.setHgap(10);
+        grid.setVgap(10);
+
+        Label titre = new Label("Transférer un livre entre magasins");
+        titre.setFont(Font.font("Times New Roman", FontWeight.BOLD, 22));
+        grid.add(titre, 0, 0, 2, 1);
+
+        Label lblLivre = new Label("ISBN du livre :");
+        tfLivre.setPromptText("ISBN du livre");
+        grid.add(lblLivre, 0, 1);
+        grid.add(tfLivre, 1, 1);
+
+        Label lblMagDep = new Label("Magasin de départ :");
+        tfMagDep.setPromptText("Nom ou ID magasin départ");
+        grid.add(lblMagDep, 0, 2);
+        grid.add(tfMagDep, 1, 2);
+
+        Label lblMagArr = new Label("Magasin d'arrivée :");
+        tfMagArr.setPromptText("Nom ou ID magasin arrivée");
+        grid.add(lblMagArr, 0, 3);
+        grid.add(tfMagArr, 1, 3);
+
+        Label lblQte = new Label("Quantité à transférer :");
+        tfQte.setPromptText("Quantité");
+        grid.add(lblQte, 0, 4);
+        grid.add(tfQte, 1, 4);
+
+        Button btnTransferer = new Button("Transférer");
+        btnTransferer.setOnAction(new ControleurTransfererLivre(modele, LEApp));
+        grid.add(btnTransferer, 1, 5);
+
+        this.centre.setCenter(grid);
     }
 
     public void obtenirFactures() 
