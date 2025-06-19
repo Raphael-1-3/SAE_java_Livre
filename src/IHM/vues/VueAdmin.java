@@ -431,6 +431,7 @@ public class VueAdmin extends BorderPane
         BorderPane root = new BorderPane();
 
         VBox vb = new VBox(20);
+        vb.setPadding(new Insets(20));
         vb.setAlignment(Pos.CENTER);
         Label lbTitre = new Label("Ajouter un Livre");
         lbTitre.setFont(new Font(30));
@@ -444,6 +445,22 @@ public class VueAdmin extends BorderPane
         Button bAjouter = new Button("Ajouter");
         bAjouter.setOnAction(new ControleurAjouterLivre(this.LEApp, this.modele));
 
+
+        // Set min and max width for each TextField to 350
+        this.tfNom.setMinWidth(350);
+        this.tfNom.setMaxWidth(350);
+        this.tfNbPages.setMinWidth(350);
+        this.tfNbPages.setMaxWidth(350);
+        this.tfAnnee.setMinWidth(350);
+        this.tfAnnee.setMaxWidth(350);
+        this.tfPrix.setMinWidth(350);
+        this.tfPrix.setMaxWidth(350);
+        this.tfClassificiation.setMinWidth(350);
+        this.tfClassificiation.setMaxWidth(350);
+        this.tfAuteur.setMinWidth(350);
+        this.tfAuteur.setMaxWidth(350);
+        this.tfEditeur.setMinWidth(350);
+        this.tfEditeur.setMaxWidth(350);
 
         vb.getChildren().addAll(lbTitre, lbNom, this.tfNom, lbPages, this.tfNbPages, lbDatePub, this.tfAnnee, lbPrix, this.tfPrix, lbClass, this.tfClassificiation, lbAuteur, this.tfAuteur, lbEdit, this.tfEditeur, bAjouter);
         root.setCenter(vb);
