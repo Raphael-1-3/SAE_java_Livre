@@ -376,9 +376,13 @@ public class VueAdmin extends BorderPane
         Label titre = new Label("Créer un Vendeur");
         titre.setFont(Font.font("Times New Roman", FontWeight.BOLD, 24));
 
-        tfNom.setPromptText("Nom");
-        tfPrenom.setPromptText("Prénom");
-        tfEmail.setPromptText("Email");
+        this.tfNom = new TextField();
+        this.tfNom.setPromptText("Nom");
+        this.tfPrenom = new TextField();
+        this.tfPrenom.setPromptText("Prénom");
+        this.tfEmail = new TextField();
+        this.tfEmail.setPromptText("Email");
+        
         pfMDP = new PasswordField();
         pfMDP.setPromptText("Mot de passe");
 
@@ -414,6 +418,12 @@ public class VueAdmin extends BorderPane
 
         Button bAjouter = new Button("Ajouter");
         bAjouter.setOnAction(new ControleurAjouterLibrairie(this.LEApp, this.modele));
+
+
+        this.tfVille = new TextField();
+        this.tfNom = new TextField();
+        this.tfVille.setMaxWidth(350);
+        this.tfNom.setMaxWidth(350);
 
         vb.getChildren().addAll(lbTitre, lbNom, this.tfNom, lbVille, this.tfVille, bAjouter);
         root.setCenter(vb);
@@ -478,18 +488,31 @@ public class VueAdmin extends BorderPane
 
 
         // Set min and max width for each TextField to 350
+        this.tfNom = new TextField();
         this.tfNom.setMinWidth(350);
         this.tfNom.setMaxWidth(350);
+
+        this.tfNbPages = new TextField();
         this.tfNbPages.setMinWidth(350);
         this.tfNbPages.setMaxWidth(350);
+
+        this.tfAnnee = new TextField();
         this.tfAnnee.setMinWidth(350);
         this.tfAnnee.setMaxWidth(350);
+
+        this.tfPrix = new TextField();
         this.tfPrix.setMinWidth(350);
         this.tfPrix.setMaxWidth(350);
+
+        this.tfClassificiation = new TextField();
         this.tfClassificiation.setMinWidth(350);
         this.tfClassificiation.setMaxWidth(350);
+
+        this.tfAuteur = new TextField();
         this.tfAuteur.setMinWidth(350);
         this.tfAuteur.setMaxWidth(350);
+
+        this.tfEditeur = new TextField();
         this.tfEditeur.setMinWidth(350);
         this.tfEditeur.setMaxWidth(350);
 
