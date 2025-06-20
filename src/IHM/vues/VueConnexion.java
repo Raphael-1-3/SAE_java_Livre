@@ -21,7 +21,6 @@ import javafx.scene.control.ButtonBar.ButtonData ;
 import java.util.List;
 
 import IHM.controleurs.ControleurAcceuil.*;
-import main.*;
 public class VueConnexion {
 
     private TextField tfCo;

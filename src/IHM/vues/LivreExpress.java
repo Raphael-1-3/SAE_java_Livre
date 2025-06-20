@@ -59,7 +59,7 @@ public class LivreExpress extends Application {
 
         Properties props = new Properties();
 
-        try (FileInputStream fis = new FileInputStream("src/dbUser/db.properties")) {
+        try (FileInputStream fis = new FileInputStream("dbUser/db.properties")) {
             props.load(fis);
         } catch (IOException e) {
             System.err.println("Failed to load properties: " + e.getMessage());

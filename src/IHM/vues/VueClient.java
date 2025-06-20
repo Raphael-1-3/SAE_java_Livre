@@ -1,6 +1,5 @@
 package IHM.vues;
 
-import main.*;
 import IHM.controleurs.ControleurClient.*;
 import main.BD.ActionBD;
 import main.app.*;

@@ -45,7 +45,7 @@ public class ControleurConnexionBD implements EventHandler<ActionEvent>{
                 props.setProperty("db.password", passwd);
                 props.setProperty("db.base", "LibrairieJava");
                 
-                try (FileOutputStream fis = new FileOutputStream("src/dbUser/db.properties")) {
+                try (FileOutputStream fis = new FileOutputStream("dbUser/db.properties")) {
                     props.store(fis, "Configuration BD");
                 } catch (IOException e) {
                     System.err.println("Failed to load properties: " + e.getMessage());

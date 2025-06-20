@@ -1,6 +1,5 @@
 package IHM.vues;
 
-import main.*;
 import IHM.controleurs.ControleurAdmin.*;
 import IHM.controleurs.ControleurClient.ControleurChosirMagasin;
 import IHM.controleurs.ControleurClient.ControleurSupprimerPanier;
@@ -8,7 +7,6 @@ import main.BD.ActionBD;
 import main.app.*;
 import main.BD.*;
 import main.Exceptions.*;
-import IHM.controleurs.*;
 import IHM.vues.*;
 import IHM.controleurs.ControleurVendeur.*;
 import javafx.application.Application;
