@@ -1,4 +1,4 @@
-package IHM.controleurs.ControleurAdmin;
+package IHM.controleurs.ControleurVendeur;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
@@ -29,13 +29,13 @@ import java.util.concurrent.ArrayBlockingQueue;
 
 import IHM.vues.*;
 import main.app.*;
-public class ControleurPasserCommandeCli implements EventHandler<ActionEvent> 
+public class ControleurPasserCommandeCliV implements EventHandler<ActionEvent> 
 {
     private LivreExpress app;
     private ActionBD modele;
     private Client client;
 
-    public ControleurPasserCommandeCli(LivreExpress app,ActionBD modele)
+    public ControleurPasserCommandeCliV(LivreExpress app,ActionBD modele)
     {
         this.app = app;
         this.modele = modele;
@@ -48,26 +48,26 @@ public class ControleurPasserCommandeCli implements EventHandler<ActionEvent>
 
     public void handle(ActionEvent event)
     {
-        String nomCli = this.app.getVueAdmin().getTfNom().getText();
-        String prenomCli = this.app.getVueAdmin().getTfPrenom().getText();
+        String nomCli = this.app.getVueVendeur().getTfNom().getText();
+        String prenomCli = this.app.getVueVendeur().getTfPrenom().getText();
         Integer codePostalCli = null;
         try{
-            codePostalCli = Integer.parseInt(this.app.getVueAdmin().getTfCodePostal().getText());
+            codePostalCli = Integer.parseInt(this.app.getVueVendeur().getTfCodePostal().getText());
         }
         catch (NumberFormatException e)
         {
-            this.app.getVueAdmin().popUpPasUnNbr().show();
+            this.app.getVueVendeur().popUpPasUnNbr().show();
         }
         if (nomCli.isEmpty() || prenomCli.isEmpty() || codePostalCli == null) {
-            this.app.getVueAdmin().popUpChampsVides().show();;
+            this.app.getVueVendeur().popUpChampsVides().show();;
         }
         else{
             try {
                 this.client = this.modele.getClientAPartirNomPrenomCodePostal(nomCli, prenomCli, codePostalCli);
                 System.out.println(client);
-                this.app.getVueAdmin().vueCommandeClient(client);
+                this.app.getVueVendeur().vueCommandeClient(client);
             } catch (SQLException | PasDeTelUtilisateurException e) {
-                this.app.getVueAdmin().popUpClientInexistant().show();
+                this.app.getVueVendeur().popUpClientInexistant().show();
             }
         }
         

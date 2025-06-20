@@ -1,4 +1,4 @@
-package IHM.controleurs.ControleurAdmin;
+package IHM.controleurs.ControleurVendeur;
 
 import javafx.application.Application;
 import javafx.application.Platform;
@@ -38,16 +38,15 @@ import org.apache.pdfbox.pdmodel.common.PDRectangle;
 import org.apache.pdfbox.pdmodel.font.PDFont;
 import org.apache.pdfbox.pdmodel.font.PDType0Font;
 import org.apache.pdfbox.pdmodel.font.PDType1Font;
-
 import IHM.vues.*;
 import main.app.*;
 
-public class ControleurEditerFacture implements EventHandler<ActionEvent>{
+public class ControleurEditerFactureV implements EventHandler<ActionEvent>{
     private LivreExpress app;
     private ActionBD modele;
     private Client cli;
 
-    public ControleurEditerFacture(LivreExpress app, ActionBD modele, Client c)
+    public ControleurEditerFactureV(LivreExpress app, ActionBD modele, Client c)
     {
         this.app = app;
         this.modele = modele;
@@ -56,12 +55,12 @@ public class ControleurEditerFacture implements EventHandler<ActionEvent>{
 
     public void handle(ActionEvent event)
     {
-        String an = this.app.getVueAdmin().getTfAnnee().getText();
-        String mois = this.app.getVueAdmin().getTfMois().getText();
+        String an = this.app.getVueVendeur().getTfAnnee().getText();
+        String mois = this.app.getVueVendeur().getTfMois().getText();
 
         if (an.isEmpty() || mois.isEmpty())
         {
-            this.app.getVueAdmin().popUpChampsVides().show();
+            this.app.getVueVendeur().popUpChampsVides().show();
         }
         else
         {
@@ -72,7 +71,7 @@ public class ControleurEditerFacture implements EventHandler<ActionEvent>{
                 String fac = "";
                 if (this.cli == null)
                 {
-                    fac = this.modele.factureMagasin(this.app.getVueAdmin().getMagChoisi(), moisInt, annee);
+                    fac = this.modele.factureMagasin(this.app.getVueVendeur().getMagChoisi(), moisInt, annee);
                 }
                 else
                 {
@@ -123,12 +122,12 @@ public class ControleurEditerFacture implements EventHandler<ActionEvent>{
                 contentStream.close();
 
                 doc.save("Facture.pdf");
-                this.app.getVueAdmin().afficherPopUpFactures(fac);
-                this.app.getVueAdmin().panneauDeBord();
+                this.app.getVueVendeur().afficherPopUpFactures(fac);
+                this.app.getVueVendeur().panneauDeBord();
             }
             catch (NumberFormatException e)
             {
-                this.app.getVueAdmin().popUpPasUnNbr().show();
+                this.app.getVueVendeur().popUpPasUnNbr().show();
             }
             catch (SQLException e)
             {

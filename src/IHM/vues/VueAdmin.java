@@ -9,7 +9,6 @@ import main.app.*;
 import main.BD.*;
 import main.Exceptions.*;
 import IHM.controleurs.*;
-import IHM.controleurs.ControleurAcceuil.ControleurSelectionnerClient;
 import IHM.vues.*;
 import javafx.application.Application;
 import javafx.concurrent.Task;
@@ -522,6 +521,78 @@ public class VueAdmin extends BorderPane
         controleurRecherche.getListeSuggestions().setPrefHeight(300);
 
         this.centre.setCenter(grid);
+    }
+
+    public void afficherPopUpLivre(Livre l)
+    {
+        Stage popup = new Stage();
+        popup.setTitle(l.getTitre());
+        
+        BorderPane root = new BorderPane();
+
+        Image imgBrut = null;
+        try {
+            imgBrut = new Image("https://covers.openlibrary.org/b/isbn/" + l.getISBN() + "-M.jpg", 200, 300, true, true, true);
+            
+            if (imgBrut.isError())
+            {
+                imgBrut = new Image("file:./img/coverBase.png", 200, 300, true, true, true);
+            }
+        }
+        catch (Exception e)
+        {
+            imgBrut = new Image("file:./img/coverBase.png", 200, 300, true, true, true);   
+        }
+        ImageView img = new ImageView(imgBrut);
+        img.setFitWidth(200);
+        img.setFitHeight(300);
+        
+        img.setPreserveRatio(true);
+
+        root.setLeft(img);
+
+        VBox right = new VBox(10);
+        right.setPadding(new Insets(20));
+        Label titre = new Label(l.getTitre());
+        titre.setStyle("-fx-font-weight : bold;" + 
+        "-fx-font-size : 30px;");
+    
+        Label isbn = new Label("" + l.getISBN());
+        titre.setStyle("-fx-font-size : 15px;");
+
+        Label nbPages = new Label("Nombre de pages : " + l.getNbpages());
+        nbPages.setStyle("-fx-font-size : 15px;");
+
+        Label publi = new Label("Date de publication : " + l.getDatepubli());
+        publi.setStyle("-fx-font-size : 15px;");
+
+        Label prix = new Label("Prix : " + l.getPrix() + "€");
+        prix.setStyle("-fx-font-size : 15px;");
+        prix.setPadding(new Insets(0, 0, 60, 0));
+
+        Label Qte = new Label("QTE");
+        Qte.setStyle("-fx-font-size : 25px;");
+        
+        this.tfQte = new TextField();
+        this.tfQte.setMinWidth(100);
+        this.tfQte.setMaxWidth(100);
+
+        Button boutonSuppr = new Button("Modifier le stock");
+        boutonSuppr.setOnAction(new ControleurModiferStock(this.LEApp, this.modele, l));
+        right.getChildren().addAll(titre, isbn, nbPages, publi, prix, Qte, this.tfQte, boutonSuppr);
+
+        
+        
+
+        root.setRight(right);
+
+        Scene sc = new Scene(root);
+        sc.getStylesheets().add("file:./src/IHM/styles/globalCSS.css");
+        Image logo = new Image("file:./img/logo.jpg");
+        popup.getIcons().add(logo);
+        popup.setScene(sc);
+        popup.show();
+
     }
 
     public void passerCommandeClient() throws SQLException 

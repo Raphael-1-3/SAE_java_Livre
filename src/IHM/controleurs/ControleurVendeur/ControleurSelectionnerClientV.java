@@ -1,4 +1,4 @@
-package IHM.controleurs.ControleurAcceuil;
+package IHM.controleurs.ControleurVendeur;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
@@ -27,27 +27,25 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ArrayBlockingQueue;
-
-import IHM.controleurs.ControleurVendeur.ControleurPasserCommande;
 import IHM.vues.*;
 import main.app.*;
-public class ControleurSelectionnerClient implements EventHandler<ActionEvent> {
+public class ControleurSelectionnerClientV implements EventHandler<ActionEvent> {
     private LivreExpress app;
     private ActionBD modele;
 
-    public ControleurSelectionnerClient(LivreExpress app, ActionBD modele)
+    public ControleurSelectionnerClientV(LivreExpress app, ActionBD modele)
     {
         this.app = app;
         this.modele = modele;
     }
     public void handle (ActionEvent event)
     {
-        String nom = this.app.getVueAdmin().getTfNom().getText();
-        String prenom = this.app.getVueAdmin().getTfPrenom().getText();
-        String codePosRaw = this.app.getVueAdmin().getTfCodePostal().getText();
+        String nom = this.app.getVueVendeur().getTfNom().getText();
+        String prenom = this.app.getVueVendeur().getTfPrenom().getText();
+        String codePosRaw = this.app.getVueVendeur().getTfCodePostal().getText();
         if (nom.isEmpty() || prenom.isEmpty() || codePosRaw.isEmpty())
         {
-            this.app.getVueAdmin().popUpChampsVides().show();
+            this.app.getVueVendeur().popUpChampsVides().show();
         }
         else
         {
@@ -55,12 +53,12 @@ public class ControleurSelectionnerClient implements EventHandler<ActionEvent> {
             try {
                 codePo = Integer.parseInt(codePosRaw);
                 Client c = this.modele.getClientAPartirNomPrenomCodePostal(nom, prenom, codePo);
-                this.app.getVueAdmin().setClient(c);
-                this.app.getVueAdmin().pannelChoisirMoisAnnee();
+                this.app.getVueVendeur().setClient(c);
+                this.app.getVueVendeur().pannelChoisirMoisAnnee();
             }
             catch (NumberFormatException e)
             {
-                this.app.getVueAdmin().popUpPasUnNbr().show();
+                this.app.getVueVendeur().popUpPasUnNbr().show();
             }
             catch (SQLException e)
             {
@@ -68,7 +66,7 @@ public class ControleurSelectionnerClient implements EventHandler<ActionEvent> {
             }
             catch (PasDeTelUtilisateurException e)
             {
-                this.app.getVueAdmin().popUpClientInexistant().show();
+                this.app.getVueVendeur().popUpClientInexistant().show();
             }
         }
     }

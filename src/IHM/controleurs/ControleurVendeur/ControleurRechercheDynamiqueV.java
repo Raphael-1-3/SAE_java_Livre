@@ -1,4 +1,4 @@
-package IHM.controleurs.ControleurAdmin;
+package IHM.controleurs.ControleurVendeur;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -13,20 +13,21 @@ import java.util.stream.Collectors;
 
 import IHM.vues.LivreExpress;
 import IHM.vues.VueAdmin;
+import IHM.vues.VueVendeur;
 
-public class ControleurRechercheDynamique {
+public class ControleurRechercheDynamiqueV{
     private ObservableList<Livre> toutesLesValeurs;
     private  ActionBD modele;
-    private  VueAdmin vue;
+    private  VueVendeur vue;
     private  LivreExpress app;
     private ListView<Livre> listeSuggestions;
     
 
-    public ControleurRechercheDynamique(LivreExpress app, ActionBD modele) throws SQLException
+    public ControleurRechercheDynamiqueV(LivreExpress app, ActionBD modele) throws SQLException
     {
         this.app = app;
         this.modele = modele;
-        this.vue = app.getVueAdmin();
+        this.vue = app.getVueVendeur();
         this.listeSuggestions = new ListView<>();
         this.toutesLesValeurs = FXCollections.observableArrayList(this.modele.getAllLivre());
 
@@ -34,7 +35,7 @@ public class ControleurRechercheDynamique {
     }
 
     private void initialiserRecherche() {
-        this.app.getVueAdmin().getbarRecherche().textProperty().addListener((obs, ancienTexte, nouveauTexte) -> {
+        this.app.getVueVendeur().getbarRecherche().textProperty().addListener((obs, ancienTexte, nouveauTexte) -> {
             if (nouveauTexte == null || nouveauTexte.isEmpty()) {
                 listeSuggestions.getItems().clear();
             } else {
@@ -50,9 +51,9 @@ public class ControleurRechercheDynamique {
         listeSuggestions.setOnMouseClicked(e -> {
             Livre selection = listeSuggestions.getSelectionModel().getSelectedItem();
             if (selection != null) {
-                this.app.getVueAdmin().getbarRecherche().setText(selection.getTitre());
+                this.app.getVueVendeur().getbarRecherche().setText(selection.getTitre());
                 listeSuggestions.getItems().clear();
-                this.app.getVueAdmin().afficherPopUpLivre(selection);
+                this.app.getVueVendeur().afficherPopUpLivre(selection);
             }
         });
     

@@ -2,7 +2,6 @@ package IHM.vues;
 
 import main.*;
 import IHM.controleurs.ControleurClient.*;
-import IHM.controleurs.ControleurVendeur.ControleurPasserCommande;
 import main.BD.ActionBD;
 import main.app.*;
 import main.BD.*;

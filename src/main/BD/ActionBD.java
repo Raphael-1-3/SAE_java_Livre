@@ -2091,11 +2091,22 @@ public class ActionBD{
                 st.close();
             }
 
+            script = Files.readString(Paths.get("BASEDONNE/jeucomplet.sql"));
+
+            statements = script.split(";");
+            for (String raw : statements)
+            {
+                String sql = raw.trim();
+                Statement st = this.connexion.createStatement();
+                st.executeUpdate(sql);
+                st.close();
+            }
+
         } catch (IOException e) {
             System.out.println("Existe pas");
         }
         catch (SQLException e){
-            System.out.println("Erreur SQL");
+            System.out.println("Erreur SQL" + e);
         }
 
     }

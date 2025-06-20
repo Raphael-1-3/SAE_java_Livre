@@ -1,10 +1,11 @@
-package IHM.controleurs.ControleurAdmin;
+package IHM.controleurs.ControleurVendeur;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
 import main.BD.ActionBD;
+import main.app.Auteur;
 import main.app.Livre;
 
 import java.sql.SQLException;
@@ -13,34 +14,35 @@ import java.util.stream.Collectors;
 
 import IHM.vues.LivreExpress;
 import IHM.vues.VueAdmin;
+import IHM.vues.VueVendeur;
 
-public class ControleurRechercheDynamique {
-    private ObservableList<Livre> toutesLesValeurs;
+public class ControleurRechercheDynamiqueAuteurV {
+    private ObservableList<Auteur> toutesLesValeurs;
     private  ActionBD modele;
-    private  VueAdmin vue;
+    private  VueVendeur vue;
     private  LivreExpress app;
-    private ListView<Livre> listeSuggestions;
+    private ListView<Auteur> listeSuggestions;
     
 
-    public ControleurRechercheDynamique(LivreExpress app, ActionBD modele) throws SQLException
+    public ControleurRechercheDynamiqueAuteurV(LivreExpress app, ActionBD modele) throws SQLException
     {
         this.app = app;
         this.modele = modele;
-        this.vue = app.getVueAdmin();
+        this.vue = app.getVueVendeur();
         this.listeSuggestions = new ListView<>();
-        this.toutesLesValeurs = FXCollections.observableArrayList(this.modele.getAllLivre());
+        this.toutesLesValeurs = FXCollections.observableArrayList(this.modele.getAllAuteur());
 
         initialiserRecherche();
     }
 
     private void initialiserRecherche() {
-        this.app.getVueAdmin().getbarRecherche().textProperty().addListener((obs, ancienTexte, nouveauTexte) -> {
+        this.app.getVueVendeur().getbarRecherche().textProperty().addListener((obs, ancienTexte, nouveauTexte) -> {
             if (nouveauTexte == null || nouveauTexte.isEmpty()) {
                 listeSuggestions.getItems().clear();
             } else {
                 String filtre = nouveauTexte.toLowerCase();
-                List<Livre> resultatFiltre = toutesLesValeurs.stream()
-                                        .filter(livre -> livre.getTitre().toLowerCase().contains(filtre))
+                List<Auteur> resultatFiltre = toutesLesValeurs.stream()
+                                        .filter(aut -> aut.getNomAuteur().toLowerCase().contains(filtre))
                                         .collect(Collectors.toList());
                 listeSuggestions.setItems(FXCollections.observableArrayList(resultatFiltre));
 
@@ -48,11 +50,10 @@ public class ControleurRechercheDynamique {
         });
 
         listeSuggestions.setOnMouseClicked(e -> {
-            Livre selection = listeSuggestions.getSelectionModel().getSelectedItem();
+            Auteur selection = listeSuggestions.getSelectionModel().getSelectedItem();
             if (selection != null) {
-                this.app.getVueAdmin().getbarRecherche().setText(selection.getTitre());
+                this.app.getVueVendeur().getbarRecherche().setText(selection.getNomAuteur());
                 listeSuggestions.getItems().clear();
-                this.app.getVueAdmin().afficherPopUpLivre(selection);
             }
         });
     
@@ -60,19 +61,19 @@ public class ControleurRechercheDynamique {
 
     listeSuggestions.setCellFactory(param -> new javafx.scene.control.ListCell<>() {
         @Override
-        protected void updateItem(Livre item, boolean empty) {
+        protected void updateItem(Auteur item, boolean empty) {
             super.updateItem(item, empty);
             if (empty || item == null) {
                 setText(null);
             } else {
-                setText(item.getTitre()); 
+                setText(item.getNomAuteur()); 
             }
         }
     });
 
 }
 
-public ListView<Livre> getListeSuggestions() {
+public ListView<Auteur> getListeSuggestions() {
     return this.listeSuggestions;
 }
 }
