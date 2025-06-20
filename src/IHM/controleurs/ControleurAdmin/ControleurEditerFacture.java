@@ -73,6 +73,7 @@ public class ControleurEditerFacture implements EventHandler<ActionEvent>{
                 if (this.cli == null)
                 {
                     fac = this.modele.factureMagasin(this.app.getVueAdmin().getMagChoisi(), moisInt, annee);
+                    System.out.println(fac);
                 }
                 else
                 {
