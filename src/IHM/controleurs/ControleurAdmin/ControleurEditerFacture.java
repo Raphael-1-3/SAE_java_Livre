@@ -82,7 +82,6 @@ public class ControleurEditerFacture implements EventHandler<ActionEvent>{
 
                 PDPageContentStream contentStream = new PDPageContentStream(doc, page);
                 contentStream.beginText();
-                contentStream.setFont(PDType1Font.HELVETICA, 12);
                 contentStream.newLineAtOffset(100, 700);
                 contentStream.showText(fac);
                 contentStream.endText();
