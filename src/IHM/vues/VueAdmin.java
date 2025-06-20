@@ -1109,7 +1109,25 @@ public class VueAdmin extends BorderPane
     }
     public void afficheGraphiqueAuteurLePlusVenduParAnnee(HashMap<Integer, HashMap<Auteur, Integer>> donnees) 
     {
-        
+        VBox vbox = new VBox(10);
+        vbox.setAlignment(Pos.CENTER);
+        for (HashMap.Entry<Integer, HashMap<Auteur, Integer>> e : donnees.entrySet()) 
+        {
+            int annee = e.getKey();
+            Map.Entry<Auteur, Integer> top = e.getValue().entrySet().iterator().next();
+                Auteur auteur = top.getKey();
+            int ventes = top.getValue();
+
+            Label titre = new Label("🏆 Année " + annee);
+            Label gagnant = new Label("🥇 " + auteur.getNomAuteur() + " - " + ventes + " ventes");
+
+            VBox anneeBox = new VBox(titre, gagnant);
+            anneeBox.setStyle("-fx-border-color: gold; -fx-padding: 10; -fx-background-color: #fff8dc;");
+            anneeBox.setAlignment(Pos.CENTER);
+
+            vbox.getChildren().add(anneeBox);
+        }
+    this.centre.setCenter(vbox);
     }
 
 
