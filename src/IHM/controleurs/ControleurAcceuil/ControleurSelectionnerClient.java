@@ -56,8 +56,7 @@ public class ControleurSelectionnerClient implements EventHandler<ActionEvent> {
                 codePo = Integer.parseInt(codePosRaw);
                 Client c = this.modele.getClientAPartirNomPrenomCodePostal(nom, prenom, codePo);
                 this.app.getVueAdmin().setClient(c);
-                this.app.getVueAdmin().popUpActionEffectuee().show();
-                // TODO link la vue pour selectionner le mois et l'annee
+                this.app.getVueAdmin().pannelChoisirMoisAnnee();
             }
             catch (NumberFormatException e)
             {

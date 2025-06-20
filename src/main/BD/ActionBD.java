@@ -1,4 +1,7 @@
 package main.BD;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -2072,6 +2075,29 @@ public class ActionBD{
         rs.close();
         ps.close();
         return res;
+    }
+
+    public void CreerBD()
+    {
+        try {
+            String script = Files.readString(Paths.get("BASEDONNE/creationLivreExpress.sql"));
+
+            String [] statements = script.split(";");
+            for (String raw : statements)
+            {
+                String sql = raw.trim();
+                Statement st = this.connexion.createStatement();
+                st.executeUpdate(sql);
+                st.close();
+            }
+
+        } catch (IOException e) {
+            System.out.println("Existe pas");
+        }
+        catch (SQLException e){
+            System.out.println("Erreur SQL");
+        }
+
     }
 
     // ----------- Fin Fonction concernant le tableau de bord Admistrateur ---------------------------------------------

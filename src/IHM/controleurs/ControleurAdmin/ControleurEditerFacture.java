@@ -23,6 +23,7 @@ import javafx.scene.text.TextAlignment;
 import javafx.scene.control.ButtonBar.ButtonData ;
 import javafx.fxml.FXML;
 
+import java.io.File;
 import java.io.IOException;
 import java.lang.classfile.attribute.LocalVariableTypeTableAttribute;
 import java.sql.SQLException;
@@ -33,6 +34,7 @@ import java.util.concurrent.ArrayBlockingQueue;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
 import org.apache.pdfbox.pdmodel.PDPageContentStream;
+import org.apache.pdfbox.pdmodel.common.PDRectangle;
 import org.apache.pdfbox.pdmodel.font.PDFont;
 import org.apache.pdfbox.pdmodel.font.PDType0Font;
 import org.apache.pdfbox.pdmodel.font.PDType1Font;
@@ -82,14 +84,48 @@ public class ControleurEditerFacture implements EventHandler<ActionEvent>{
 
                 PDPageContentStream contentStream = new PDPageContentStream(doc, page);
                 contentStream.beginText();
-                contentStream.setFont(PDType1Font.HELVETICA, 12);
-                contentStream.newLineAtOffset(100, 700);
-                contentStream.showText(fac);
+                File font = new File("fonts/times.ttf");
+                PDType0Font tnrFont = PDType0Font.load(doc, font);
+                float fontsize = 12f;
+                float leading = 1.5f*fontsize;
+
+                PDRectangle pageSize = page.getMediaBox();
+                float marge = 50;
+                float startX = marge;
+                float startY = pageSize.getHeight() - marge;
+                
+                float yPosition = startX;
+                contentStream.setFont(tnrFont, fontsize);
+                contentStream.setLeading(leading);
+                contentStream.newLineAtOffset(startX, yPosition);
+                List<String> texte = java.util.Arrays.asList(fac.split("\n"));
+                for (int i = 0; i< texte.size(); i++)
+                {
+                    if (yPosition <= marge +leading)
+                    {
+                        contentStream.endText();
+                        contentStream.close();
+
+                        page = new PDPage();
+                        doc.addPage(page);
+                        yPosition = startY;
+
+                        contentStream = new PDPageContentStream(doc,page);
+                        contentStream.beginText();
+                        contentStream.setFont(tnrFont, fontsize);
+                        contentStream.setLeading(leading);
+                        contentStream.newLineAtOffset(startX, startY);
+                    }
+                    contentStream.showText(texte.get(i));
+                    contentStream.newLine();
+                    yPosition -= leading;
+                }
                 contentStream.endText();
                 contentStream.close();
 
                 doc.save("Facture.pdf");
                 this.app.getVueAdmin().afficherPopUpFactures(fac);
+                this.app.getVueAdmin().panneauDeBord();
             }
             catch (NumberFormatException e)
             {

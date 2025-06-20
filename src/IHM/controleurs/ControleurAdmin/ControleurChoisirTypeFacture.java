@@ -5,6 +5,7 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.ToggleButton;
 
 import java.sql.SQLException;
 
@@ -25,7 +26,7 @@ public class ControleurChoisirTypeFacture implements EventHandler<ActionEvent>{
 
     public void handle (ActionEvent event)
     {
-        Button b = (Button) event.getSource();
+        ToggleButton b = (ToggleButton) event.getSource();
         String s = b.getText();
         switch (s) {
             case "Magasin":

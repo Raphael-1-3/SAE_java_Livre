@@ -268,15 +268,11 @@ public class VueAdmin extends BorderPane
             "Regarder les disponibilités",
             "Passer une commande pour un Client",
             "Transférer un livre",
-            "Obtenir les factures",
-            "Choisir un magasin"
-            
+            "Obtenir les factures"
         );
         selectionAction.setOnAction(new ControleurChangerPage(modele, LEApp, selectionAction));
         this.selectionAction.setPromptText("Choisissez une action");
         this.selectionAction.setPadding(new Insets(0, 0, 0, 15));
-
-        this.selectionAction.setPromptText("Selectionner un magasin");
 
     
         sstop2.setPadding(new Insets(10, 0, 10, 50));
@@ -509,6 +505,7 @@ public class VueAdmin extends BorderPane
     public void regarderDisponibilites() throws SQLException 
     {
         GridPane grid = new GridPane();
+        grid.setAlignment(Pos.CENTER);
 
         Label titreForm = new Label("Regarder les disponibilités");
         titreForm.setStyle("-fx-text-fill: Black; -fx-font-size: 28px; -fx-font-weight: bold;");
@@ -622,12 +619,12 @@ public class VueAdmin extends BorderPane
         mag.setOnAction(new ControleurChoisirTypeFacture(this.LEApp, this.modele));
         cli.setOnAction(new ControleurChoisirTypeFacture(this.LEApp, this.modele));
 
-        mag.setSelected(true); 
-        HBox boutons = new HBox();
+        HBox boutons = new HBox(40);
 
         boutons.getChildren().addAll(mag, cli);
         boutons.setAlignment(Pos.TOP_CENTER);
         this.centre.setTop(boutons);
+        this.centre.setCenter(new VBox());
     }
 
     public void afficherPopUpChosirClient()
@@ -645,6 +642,7 @@ public class VueAdmin extends BorderPane
         titre.setTextAlignment(TextAlignment.CENTER);
 
         VBox vb = new VBox(10);
+        vb.setAlignment(Pos.CENTER);
 
         Label lbPrenom = new Label("Prenom");
         Label lbNom = new Label("Nom");
@@ -675,12 +673,20 @@ public class VueAdmin extends BorderPane
 
     public void pannelChoisirMoisAnnee()
     {
-        VBox vb = new VBox();
-
+        VBox vb = new VBox(20);
+        vb.setAlignment(Pos.CENTER);
+        HBox boxTitre = new HBox();
         Label titre = new Label("Selection de la date");
+        titre.setStyle("-fx-font-size : 30px;" + 
+        "-fx-font-weight : bold;");
+        titre.setTextAlignment(TextAlignment.CENTER);
+        boxTitre.getChildren().add(titre);
+        boxTitre.setAlignment(Pos.CENTER);
 
         Label lbAn = new Label("Annee");
+        lbAn.setStyle("-fx-font-size : 20px;");
         Label lbMois = new Label("Mois");
+        lbMois.setStyle("-fx-font-size : 20px;");
 
         this.tfAnnee = new TextField();
         this.tfAnnee.setMinWidth(350);
@@ -688,12 +694,15 @@ public class VueAdmin extends BorderPane
         
         this.tfMois = new TextField();
         this.tfMois.setMinWidth(350);
-        this.tfAnnee.setMinWidth(350);
+        this.tfMois.setMaxWidth(350);
 
         Button lancer = new Button("Lancer");
         lancer.setOnAction(new ControleurEditerFacture(this.LEApp, this.modele, this.clientChosi));
 
         vb.getChildren().addAll(lbAn, this.tfAnnee, lbMois, this.tfMois, lancer);
+
+        this.centre.setTop(boxTitre);
+        this.centre.setCenter(vb);
     }
 
     public void afficherPopUpFactures(String s)
@@ -703,9 +712,13 @@ public class VueAdmin extends BorderPane
         Scene scene = new Scene(root, 800, 600);
         stage.setScene(scene);
         stage.setTitle("Nombre de livre vendue par magasins par ans");
-        
+        ScrollPane sp = new ScrollPane();
+        VBox vp = new VBox();
+        vp.setAlignment(Pos.CENTER);
         Text texte = new Text(s);
-        root.setCenter(texte);
+        vp.getChildren().addAll(texte);
+        sp.setContent(vp);
+        root.setCenter(sp);
         stage.show();
     }
 
