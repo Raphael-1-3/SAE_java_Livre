@@ -434,6 +434,7 @@ public class VueAdmin extends BorderPane
         ControleurRechercheDynamiqueAuteur controleurRechercheAuteur = new ControleurRechercheDynamiqueAuteur(this.LEApp, this.modele); 
         executerrecherche.setOnAction(new ControleurSelectionGraphique(this.modele, this.LEApp));
         this.contenaBox.getChildren().addAll(controleurRechercheAuteur.getListeSuggestions());
+        VBox.setVgrow(contenaBox, Priority.ALWAYS);
         this.centre.setCenter(contenaBox);
         
     }
